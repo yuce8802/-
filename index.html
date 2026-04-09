@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VortinT | 智能儿童空间设计</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .hover-lift { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .hover-lift:hover { transform: translateY(-10px); }
+        .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f8fafc; }
+        ::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 10px; }
+    </style>
+</head>
+<body class="bg-white text-gray-900 overflow-x-hidden">
+
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
+        <div class="flex justify-between items-center p-6 max-w-6xl mx-auto">
+            <div class="text-2xl font-black tracking-tighter italic uppercase">VortinT.</div>
+            <div class="flex items-center space-x-6 text-xs md:text-sm font-semibold uppercase tracking-widest">
+                <a href="#about" class="text-gray-400 hover:text-black transition">设计理念</a>
+                <a href="#store" class="text-gray-400 hover:text-black transition">官方商店</a>
+                <a href="mailto:vortint@example.com" class="bg-black text-white px-5 py-2 rounded-full hover:bg-blue-600 transition">联系我们</a>
+            </div>
+        </div>
+    </nav>
+
+    <header id="about" class="max-w-6xl mx-auto px-6 py-20 md:py-32 text-left">
+        <h1 class="text-5xl sm:text-7xl md:text-9xl font-extrabold leading-[0.9] tracking-tighter">
+            Smart Space <br>
+            <span class="hero-gradient">For Kids.</span>
+        </h1>
+        <p class="mt-10 text-xl md:text-2xl text-gray-400 font-light italic">
+            Focusing on <span id="typed" class="text-black font-semibold border-b-4 border-blue-500"></span>
+        </p>
+    </header>
+
+    <section id="store" class="max-w-6xl mx-auto px-4 py-16 border-t border-gray-100 bg-slate-50 rounded-[2.5rem] md:rounded-[4rem] my-10 text-center shadow-inner">
+        <div class="mb-16">
+            <h2 class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-gray-800">VortinT Collection</h2>
+            <p class="text-gray-400 mt-4 uppercase tracking-[0.3em] text-[10px]">Amazon Official Storefront</p>
+            
+            <a href="https://www.amazon.com/stores/VortinT/page/E975A681-5E23-424A-873D-51816883FE36" 
+               target="_blank" 
+               class="inline-block mt-10 bg-[#FF9900] text-white px-10 py-4 rounded-2xl font-bold hover:bg-black transition-all shadow-xl hover:shadow-orange-200 transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest text-sm">
+               🛒 进入亚马逊官方店
+            </a>
+        </div>
+
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-2 md:px-6">
+            </div>
+    </section>
+
+    <footer class="py-20 text-center text-gray-400 text-[10px] uppercase tracking-[0.5em]">
+        © 2026 VortinT Design Lab | All Rights Reserved
+    </footer>
+
+    <script>
+        // 1. 打字效果
+        new Typed('#typed', {
+            strings: ['毛绒玩具收纳.', '儿童阅读空间.', '弹力绳创意设计.', '多功能储物方案.'],
+            typeSpeed: 70, backSpeed: 40, loop: true
+        });
+
+        // ============================================================
+        // 2. 【上新专区】 以后你只需在这里增加或修改内容
+        // ============================================================
+        
+        // 你的 Cloudinary 基础链接前缀
+        const cloudBase = "https://res.cloudinary.com/dpr2pn5rs/image/upload/f_auto,q_auto/";
+
+        const products = [
+            {
+                name: "弹力绳收纳架 - 经典款",
+                image: "https://m.media-amazon.com/images/I/81VOboTeuWL._SL1500_.jpg", // 使用亚马逊直链
+                link: "https://www.amazon.com/dp/B0GK8D9HPR",
+                tag: "热销"
+            },
+            {
+                name: "VortinT 空间装饰系列",
+                image: "015C.jpg", // 如果你把图传到了 Cloudinary，这里可以改用 Cloudinary 链接
+                link: "https://www.amazon.com/stores/VortinT",
+                tag: "新品"
+            },
+            {
+                name: "创意生活场景图",
+                image: "套图1.jpg", 
+                link: "https://www.amazon.com/stores/VortinT",
+                tag: "细节"
+            }
+        ];
+
+        // 3. 渲染逻辑
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = products.map(p => `
+                <a href="${p.link}" target="_blank" class="group relative bg-white p-4 rounded-[2rem] shadow-sm hover:shadow-2xl hover-lift transition-all duration-500 block">
+                    ${p.tag ? `<span class="absolute top-8 left-8 z-10 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">${p.tag}</span>` : ''}
+                    <div class="aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-gray-100">
+                        <img src="${p.image}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${p.name}">
+                    </div>
+                    <div class="mt-6 mb-4 text-left px-2">
+                        <h3 class="text-lg font-extrabold text-gray-800 tracking-tight">${p.name}</h3>
+                        <div class="flex items-center mt-2 text-blue-600 font-bold text-xs">
+                            Shop on Amazon
+                            <svg class="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                        </div>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>
