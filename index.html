@@ -3,15 +3,20 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortinT | </title>
+    <title>VortinT | Smart Kids' Space & Creative Storage</title>
+    <meta name="description" content="VortinT specializes in innovative children's furniture and elastic cord toy storage solutions.">
+    
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
+    
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         .hover-lift { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .hover-lift:hover { transform: translateY(-10px); }
         .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        
+        /* 滚动条美化 */
         ::-webkit-scrollbar { width: 6px; }
         ::-webkit-scrollbar-track { background: #f8fafc; }
         ::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 10px; }
@@ -23,9 +28,9 @@
         <div class="flex justify-between items-center p-6 max-w-6xl mx-auto">
             <div class="text-2xl font-black tracking-tighter italic uppercase">VortinT.</div>
             <div class="flex items-center space-x-6 text-xs md:text-sm font-semibold uppercase tracking-widest">
-                <a href="#about" class="text-gray-400 hover:text-black transition">Design concept</a>
-                <a href="#store" class="text-gray-400 hover:text-black transition">Official store</a>
-                <a href="mailto:vortint@example.com" class="bg-black text-white px-5 py-2 rounded-full hover:bg-blue-600 transition">Contact us</a>
+                <a href="#about" class="text-gray-400 hover:text-black transition">Concept</a>
+                <a href="#store" class="text-gray-400 hover:text-black transition">Store</a>
+                <a href="mailto:vortint@example.com" class="bg-black text-white px-5 py-2 rounded-full hover:bg-blue-600 transition">Contact</a>
             </div>
         </div>
     </nav>
@@ -48,7 +53,7 @@
             <a href="https://www.amazon.com/stores/VortinT/page/E975A681-5E23-424A-873D-51816883FE36" 
                target="_blank" 
                class="inline-block mt-10 bg-[#FF9900] text-white px-10 py-4 rounded-2xl font-bold hover:bg-black transition-all shadow-xl hover:shadow-orange-200 transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest text-sm">
-               🛒 Official store
+               🛒 Visit Official Store
             </a>
         </div>
 
@@ -56,69 +61,76 @@
             </div>
     </section>
 
-    <footer class="py-20 text-center text-gray-400 text-[10px] uppercase tracking-[0.5em]">
-        © 2026 VortinT Design Lab | All Rights Reserved
+    <footer class="pt-20 pb-10 text-center">
+        <p class="text-[10px] text-gray-400 uppercase tracking-[0.5em]">© 2026 VortinT Design Lab | All Rights Reserved</p>
+        <div class="mt-6 inline-block bg-white px-6 py-2 rounded-full shadow-sm border border-gray-50">
+            <p class="text-[10px] text-gray-400 uppercase tracking-widest">
+                Total Visitors: <span id="busuanzi_value_site_pv" class="font-bold text-blue-600">...</span>
+            </p>
+        </div>
     </footer>
-<div class="py-4 text-center border-t border-gray-50 bg-white">
-    <p class="text-[10px] text-gray-300 uppercase tracking-widest">
-        Total Visitors: <span id="busuanzi_value_site_pv" class="font-bold text-blue-500">...</span>
-    </p>
-</div>
 
-<script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+
     <script>
-        // 1. 打字效果
+        // 1. 打字效果优化（处理了英文单引号转义）
         new Typed('#typed', {
-            strings: ['Plush toy storage.', 'Children's reading space.', 'Elastic rope design.', 'Multi-functional storage plan.'],
+            strings: ['Plush toy storage.', 'Children\'s reading space.', 'Vertical elastic cord design.', 'Multi-functional storage.'],
             typeSpeed: 70, backSpeed: 40, loop: true
         });
 
         // ============================================================
-        // 2. 【上新专区】 以后你只需在这里增加或修改内容
+        // 2. 【数据维护区】
         // ============================================================
-        
-        // 你的 Cloudinary 基础链接前缀
-        const cloudBase = "https://res.cloudinary.com/dpr2pn5rs/image/upload/f_auto,q_auto/";
+        const CLOUD_BASE = "https://res.cloudinary.com/dpr2pn5rs/image/upload/f_auto,q_auto/";
 
         const products = [
             {
-                name: "弹力绳收纳架 - 经典款",
-                image: "https://m.media-amazon.com/images/I/81VOboTeuWL._SL1500_.jpg", // 使用亚马逊直链
+                name: "Elastic Cord Storage - Classic",
+                image: "https://m.media-amazon.com/images/I/81VOboTeuWL._SL1500_.jpg", 
                 link: "https://www.amazon.com/dp/B0GK8D9HPR",
-                tag: "热销"
+                tag: "Best Seller"
             },
             {
-                name: "VortinT 空间装饰系列",
-                image: "015C.jpg", // 如果你把图传到了 Cloudinary，这里可以改用 Cloudinary 链接
+                name: "VortinT Creative Decor",
+                image: "015C.jpg", 
                 link: "https://www.amazon.com/stores/VortinT",
-                tag: "新品"
+                tag: "New"
             },
             {
-                name: "创意生活场景图",
+                name: "Lifestyle & Aesthetic",
                 image: "套图1.jpg", 
                 link: "https://www.amazon.com/stores/VortinT",
-                tag: "细节"
+                tag: "Inspire"
             }
         ];
 
-        // 3. 渲染逻辑
+        // 3. 渲染逻辑优化
         function renderProducts() {
             const grid = document.getElementById('product-grid');
-            grid.innerHTML = products.map(p => `
+            grid.innerHTML = products.map(p => {
+                // 如果图片不是 http 开头，自动拼接 Cloudinary 前缀
+                const fullImgUrl = p.image.startsWith('http') ? p.image : `${CLOUD_BASE}${p.image}`;
+                
+                return `
                 <a href="${p.link}" target="_blank" class="group relative bg-white p-4 rounded-[2rem] shadow-sm hover:shadow-2xl hover-lift transition-all duration-500 block">
-                    ${p.tag ? `<span class="absolute top-8 left-8 z-10 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full">${p.tag}</span>` : ''}
+                    ${p.tag ? `<span class="absolute top-8 left-8 z-10 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${p.tag}</span>` : ''}
                     <div class="aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-gray-100">
-                        <img src="${p.image}" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" alt="${p.name}">
+                        <img src="${fullImgUrl}" 
+                             loading="lazy"
+                             class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
+                             alt="${p.name}">
                     </div>
                     <div class="mt-6 mb-4 text-left px-2">
                         <h3 class="text-lg font-extrabold text-gray-800 tracking-tight">${p.name}</h3>
-                        <div class="flex items-center mt-2 text-blue-600 font-bold text-xs">
+                        <div class="flex items-center mt-2 text-blue-600 font-bold text-xs uppercase tracking-widest">
                             Shop on Amazon
                             <svg class="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </div>
                     </div>
                 </a>
-            `).join('');
+                `;
+            }).join('');
         }
 
         renderProducts();
