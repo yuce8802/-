@@ -3,9 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortinT | Smart Kids' Space & Creative Storage</title>
-    <meta name="description" content="VortinT specializes in innovative children's furniture and elastic cord toy storage solutions.">
-    
+    <title>VortinT | Smart Kids' Space</title>
     <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg">
 
     <script src="https://cdn.tailwindcss.com"></script>
@@ -14,130 +12,100 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
         body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .hover-lift { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .hover-lift:hover { transform: translateY(-10px); }
-        .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        
-        /* 滚动条美化 */
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-track { background: #f8fafc; }
-        ::-webkit-scrollbar-thumb { background: #2563eb; border-radius: 10px; }
     </style>
 </head>
 <body class="bg-white text-gray-900 overflow-x-hidden">
 
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
         <div class="flex justify-between items-center p-3 max-w-6xl mx-auto">
-            <a href="#" class="flex items-center">
+            <a href="#">
                 <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                     alt="VortinT Logo" 
-                     class="h-10 md:h-12 w-auto object-contain"
-                     loading="eager">
+                     class="h-10 w-auto object-contain">
             </a>
             <div class="flex items-center space-x-5 text-xs font-semibold uppercase tracking-widest">
-                <a href="#about" class="text-gray-400 hover:text-black transition">Concept</a>
                 <a href="#store" class="text-gray-400 hover:text-black transition">Store</a>
                 <a href="mailto:gd@vortexd.com" class="bg-black text-white px-4 py-1.5 rounded-full hover:bg-blue-600 transition">Contact</a>
             </div>
         </div>
     </nav>
 
-    <header id="about" class="max-w-6xl mx-auto px-6 py-10 md:py-16 text-left">
-        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[0.9] tracking-tighter text-gray-900">
-            Smart Space <br>
-            <span class="hero-gradient">For Kids.</span>
+    <header class="max-w-6xl mx-auto px-6 py-16 text-left">
+        <h1 class="text-5xl md:text-6xl font-extrabold tracking-tighter">
+            Smart Space <br><span class="hero-gradient">For Kids.</span>
         </h1>
-        <p class="mt-5 text-lg md:text-xl text-gray-400 font-light italic">
+        <p class="mt-5 text-lg text-gray-400 italic font-light">
             Focusing on <span id="typed" class="text-black font-semibold border-b-2 border-blue-500"></span>
         </p>
     </header>
 
-    <section id="store" class="max-w-6xl mx-auto px-4 py-8 bg-slate-50 rounded-[2rem] md:rounded-[3rem] my-4 text-center shadow-inner">
-        <div class="mb-10 flex flex-col md:flex-row md:items-center md:justify-between px-2 md:px-6 text-left">
-            <div>
-                <h2 class="text-2xl md:text-3xl font-black italic uppercase tracking-tighter text-gray-800">VortinT Collection</h2>
-                <p class="text-gray-400 mt-1 uppercase tracking-[0.3em] text-[9px]">Amazon Official Storefront</p>
-            </div>
-            
-            <a href="https://www.amazon.com/stores/VortinT/page/E975A681-5E23-424A-873D-51816883FE36" 
-               target="_blank" 
-               class="inline-block mt-4 md:mt-0 bg-[#FF9900] text-white px-6 py-3 rounded-xl font-bold hover:bg-black transition-all shadow-md hover:shadow-orange-100 transform hover:-translate-y-0.5 active:scale-95 uppercase tracking-widest text-xs">
+    <section id="store" class="max-w-6xl mx-auto px-4 py-12 bg-slate-50 rounded-[3rem] my-4 shadow-inner">
+        <div class="mb-10 flex flex-col md:flex-row justify-between px-6">
+            <h2 class="text-3xl font-black italic uppercase text-gray-800">VortinT Collection</h2>
+            <a href="https://www.amazon.com/stores/VortinT" target="_blank" class="mt-4 md:mt-0 bg-[#FF9900] text-white px-6 py-3 rounded-xl font-bold uppercase text-xs">
                🛒 Visit Official Store
             </a>
         </div>
 
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-2 md:px-6">
-            </div>
+        <div id="loading" class="py-20 text-center text-gray-400 animate-pulse">
+            Syncing with Google Sheets...
+        </div>
+        
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6"></div>
     </section>
 
-    <footer class="pt-16 pb-8 text-center">
-        <p class="text-[10px] text-gray-400 uppercase tracking-[0.5em]">© 2026 VortinT Design Lab | All Rights Reserved</p>
-        <div class="mt-5 inline-block bg-white px-5 py-1.5 rounded-full shadow-sm border border-gray-50">
-            <p class="text-[10px] text-gray-400 uppercase tracking-widest">
-                Total Visitors: <span id="busuanzi_value_site_pv" class="font-bold text-blue-600">...</span>
-            </p>
-        </div>
+    <footer class="pt-16 pb-8 text-center text-gray-400 text-[10px] uppercase tracking-[0.5em]">
+        © 2026 VortinT Design Lab
     </footer>
 
-    <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
-
     <script>
-        // 1. 打字机特效
+        // 1. 打字动画内容
         new Typed('#typed', {
-            strings: ['Plush toy storage.', 'Children\'s reading space.', 'Vertical elastic cord design.', 'Multi-functional storage.'],
+            strings: ['Plush toy storage.', 'Children\'s reading space.', 'Vertical elastic cord design.'],
             typeSpeed: 70, backSpeed: 40, loop: true
         });
 
-        // 2. 产品数据管理
-        const CLOUD_BASE = "https://res.cloudinary.com/dpr2pn5rs/image/upload/f_auto,q_auto/";
+        // 2. 核心：使用您最新的全英文 Sheety API 链接
+        const API_URL = "https://api.sheety.co/5ee78cd3a33f8c64df38dbf4c7a16338/products/products"; 
 
-        const products = [
-            {
-                name: "VortinT Kids Storage 011A",
-                image: "https://m.media-amazon.com/images/I/81LWYQTAqvL._AC_SY300_SX300_QL70_FMwebp_.jpg", 
-                link: "https://www.amazon.com/dp/B0GFMDX8XG?maas=maas_adg_F685D581B08E0DAD455C2B5A2B13E79F_afap_abs&ref_=aa_maas&tag=maas&th=1",
-                tag: "New"
-            },
-            {
-                name: "Elastic Cord Storage - Classic",
-                image: "https://m.media-amazon.com/images/I/81VOboTeuWL._SL1500_.jpg", 
-                link: "https://www.amazon.com/dp/B0GK8D9HPR",
-                tag: "Best Seller"
-            },
-            {
-                name: "Lifestyle & Aesthetic Design",
-                image: "套图1.jpg", 
-                link: "https://www.amazon.com/stores/VortinT",
-                tag: "Inspire"
+        async function fetchProducts() {
+            try {
+                const response = await fetch(API_URL);
+                const data = await response.json();
+                
+                // Sheety 会根据路径生成对象名，这里对应 data.products
+                const products = data.products; 
+                
+                document.getElementById('loading').style.display = 'none';
+                renderProducts(products);
+            } catch (error) {
+                console.error("加载失败:", error);
+                document.getElementById('loading').innerText = "Sync failed. Please check Google Sheets & Sheety.";
             }
-        ];
+        }
 
-        // 3. 页面渲染逻辑
-        function renderProducts() {
+        function renderProducts(products) {
             const grid = document.getElementById('product-grid');
-            grid.innerHTML = products.map(p => {
-                const fullImgUrl = p.image.startsWith('http') ? p.image : `${CLOUD_BASE}${p.image}`;
-                return `
-                <a href="${p.link}" target="_blank" class="group relative bg-white p-3 rounded-[1.8rem] shadow-sm hover:shadow-xl hover-lift transition-all duration-500 block text-left">
-                    ${p.tag ? `<span class="absolute top-6 left-6 z-10 bg-blue-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-md">${p.tag}</span>` : ''}
+            grid.innerHTML = products.map(p => `
+                <a href="${p.link}" target="_blank" class="group relative bg-white p-3 rounded-[1.8rem] shadow-sm hover:shadow-xl hover-lift transition-all block text-left">
+                    ${p.tag ? `<span class="absolute top-6 left-6 z-10 bg-blue-600 text-white text-[9px] font-bold px-2 py-1 rounded-full shadow-md">${p.tag}</span>` : ''}
                     <div class="aspect-[4/5] overflow-hidden rounded-[1.3rem] bg-gray-100">
-                        <img src="${fullImgUrl}" 
+                        <img src="${p.image}" 
                              loading="lazy"
                              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                              alt="${p.name}">
                     </div>
                     <div class="mt-5 mb-3 px-1">
-                        <h3 class="text-base font-extrabold text-gray-800 tracking-tight leading-tight">${p.name}</h3>
-                        <div class="flex items-center mt-1.5 text-blue-600 font-bold text-[10px] uppercase tracking-widest">
-                            Shop on Amazon
-                            <svg class="w-3.5 h-3.5 ml-1.5 group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
-                        </div>
+                        <h3 class="text-base font-extrabold text-gray-800 tracking-tight">${p.name}</h3>
+                        <p class="text-blue-600 font-bold text-[10px] mt-1 uppercase tracking-widest">Shop on Amazon →</p>
                     </div>
                 </a>
-                `;
-            }).join('');
+            `).join('');
         }
-        renderProducts();
+
+        fetchProducts();
     </script>
 </body>
 </html>
