@@ -6,6 +6,8 @@
     <title>VortinT | Smart Kids' Space & Creative Storage</title>
     <meta name="description" content="VortinT specializes in innovative children's furniture and elastic cord toy storage solutions.">
     
+    <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 60'%3E%3Cdefs%3E%3ClinearGradient id='g1' x1='0%25' y1='0%25' x2='100%25' y2='0%25'%3E%3Cstop offset='0%25' style='stop-color:%231d70b8;stop-opacity:1' /%3E%3Cstop offset='100%25' style='stop-color:%2328a745;stop-opacity:1' /%3E%3C/linearGradient%3E%3C/defs%3E%3Cpath d='M10,10 L45,50 L55,50 L90,10 M15,10 L48,45 L52,45 L85,10' fill='none' stroke='url(%23g1)' stroke-width='5' /%3E%3C/svg%3E">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     
@@ -14,6 +16,8 @@
         body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
         .hover-lift { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .hover-lift:hover { transform: translateY(-10px); }
+        
+        /* 网页自带的蓝紫渐变 */
         .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         
         /* 滚动条美化 */
@@ -25,45 +29,59 @@
 <body class="bg-white text-gray-900 overflow-x-hidden">
 
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
-        <div class="flex justify-between items-center p-6 max-w-6xl mx-auto">
-            <div class="text-2xl font-black tracking-tighter italic uppercase">VortinT.</div>
-            <div class="flex items-center space-x-6 text-xs md:text-sm font-semibold uppercase tracking-widest">
+        <div class="flex justify-between items-center p-3 max-w-6xl mx-auto">
+            
+            <a href="#" class="flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 80" class="h-8 md:h-10 w-auto" aria-label="VortinT Logo">
+                    <defs>
+                        <linearGradient id="logo-g" x1="0%" y1="0%" x2="100%" y2="0%">
+                            <stop offset="0%" style="stop-color:#1d70b8;stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#28a745;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <path d="M10,10 L45,50 L55,50 L90,10 M15,10 L48,45 L52,45 L85,10" fill="none" stroke="url(#logo-g)" stroke-width="5" />
+                    <text x="50" y="75" text-anchor="middle" font-family="'Inter', sans-serif" font-weight="700" font-size="20" fill="url(#logo-g)" letter-spacing="1">VortinT</text>
+                </svg>
+            </a>
+            <div class="flex items-center space-x-5 text-xs font-semibold uppercase tracking-widest">
                 <a href="#about" class="text-gray-400 hover:text-black transition">Concept</a>
                 <a href="#store" class="text-gray-400 hover:text-black transition">Store</a>
-                <a href="mailto:vortint@example.com" class="bg-black text-white px-5 py-2 rounded-full hover:bg-blue-600 transition">Contact</a>
+                <a href="mailto:vortint@example.com" class="bg-black text-white px-4 py-1.5 rounded-full hover:bg-blue-600 transition">Contact</a>
             </div>
         </div>
     </nav>
 
-    <header id="about" class="max-w-6xl mx-auto px-6 py-20 md:py-32 text-left">
-        <h1 class="text-5xl sm:text-7xl md:text-9xl font-extrabold leading-[0.9] tracking-tighter">
+    <header id="about" class="max-w-6xl mx-auto px-6 py-10 md:py-16 text-left">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[0.9] tracking-tighter">
             Smart Space <br>
             <span class="hero-gradient">For Kids.</span>
         </h1>
-        <p class="mt-10 text-xl md:text-2xl text-gray-400 font-light italic">
-            Focusing on <span id="typed" class="text-black font-semibold border-b-4 border-blue-500"></span>
+        <p class="mt-5 text-lg md:text-xl text-gray-400 font-light italic">
+            Focusing on <span id="typed" class="text-black font-semibold border-b-2 border-blue-500"></span>
         </p>
     </header>
 
-    <section id="store" class="max-w-6xl mx-auto px-4 py-16 border-t border-gray-100 bg-slate-50 rounded-[2.5rem] md:rounded-[4rem] my-10 text-center shadow-inner">
-        <div class="mb-16">
-            <h2 class="text-3xl md:text-5xl font-black italic uppercase tracking-tighter text-gray-800">VortinT Collection</h2>
-            <p class="text-gray-400 mt-4 uppercase tracking-[0.3em] text-[10px]">Amazon Official Storefront</p>
+    <section id="store" class="max-w-6xl mx-auto px-4 py-8 bg-slate-50 rounded-[2rem] md:rounded-[3rem] my-4 text-center shadow-inner">
+        <div class="mb-10 flex flex-col md:flex-row md:items-center md:justify-between px-2 md:px-6 text-left">
+            <div>
+                <h2 class="text-2xl md:text-3xl font-black italic uppercase tracking-tighter text-gray-800">VortinT Collection</h2>
+                <p class="text-gray-400 mt-1 uppercase tracking-[0.3em] text-[9px]">Amazon Official Storefront</p>
+            </div>
             
             <a href="https://www.amazon.com/stores/VortinT/page/E975A681-5E23-424A-873D-51816883FE36" 
                target="_blank" 
-               class="inline-block mt-10 bg-[#FF9900] text-white px-10 py-4 rounded-2xl font-bold hover:bg-black transition-all shadow-xl hover:shadow-orange-200 transform hover:-translate-y-1 active:scale-95 uppercase tracking-widest text-sm">
+               class="inline-block mt-4 md:mt-0 bg-[#FF9900] text-white px-6 py-3 rounded-xl font-bold hover:bg-black transition-all shadow-md hover:shadow-orange-100 transform hover:-translate-y-0.5 active:scale-95 uppercase tracking-widest text-xs">
                🛒 Visit Official Store
             </a>
         </div>
 
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10 px-2 md:px-6">
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-2 md:px-6">
             </div>
     </section>
 
-    <footer class="pt-20 pb-10 text-center">
+    <footer class="pt-16 pb-8 text-center">
         <p class="text-[10px] text-gray-400 uppercase tracking-[0.5em]">© 2026 VortinT Design Lab | All Rights Reserved</p>
-        <div class="mt-6 inline-block bg-white px-6 py-2 rounded-full shadow-sm border border-gray-50">
+        <div class="mt-5 inline-block bg-white px-5 py-1.5 rounded-full shadow-sm border border-gray-50">
             <p class="text-[10px] text-gray-400 uppercase tracking-widest">
                 Total Visitors: <span id="busuanzi_value_site_pv" class="font-bold text-blue-600">...</span>
             </p>
@@ -73,7 +91,7 @@
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
     <script>
-        // 1. 打字效果优化（处理了英文单引号转义）
+        // 1. 打字效果优化
         new Typed('#typed', {
             strings: ['Plush toy storage.', 'Children\'s reading space.', 'Vertical elastic cord design.', 'Multi-functional storage.'],
             typeSpeed: 70, backSpeed: 40, loop: true
@@ -113,19 +131,19 @@
                 const fullImgUrl = p.image.startsWith('http') ? p.image : `${CLOUD_BASE}${p.image}`;
                 
                 return `
-                <a href="${p.link}" target="_blank" class="group relative bg-white p-4 rounded-[2rem] shadow-sm hover:shadow-2xl hover-lift transition-all duration-500 block">
-                    ${p.tag ? `<span class="absolute top-8 left-8 z-10 bg-blue-600 text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-lg">${p.tag}</span>` : ''}
-                    <div class="aspect-[4/5] overflow-hidden rounded-[1.5rem] bg-gray-100">
+                <a href="${p.link}" target="_blank" class="group relative bg-white p-3 rounded-[1.8rem] shadow-sm hover:shadow-xl hover-lift transition-all duration-500 block">
+                    ${p.tag ? `<span class="absolute top-6 left-6 z-10 bg-blue-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-md">${p.tag}</span>` : ''}
+                    <div class="aspect-[4/5] overflow-hidden rounded-[1.3rem] bg-gray-100">
                         <img src="${fullImgUrl}" 
                              loading="lazy"
                              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                              alt="${p.name}">
                     </div>
-                    <div class="mt-6 mb-4 text-left px-2">
-                        <h3 class="text-lg font-extrabold text-gray-800 tracking-tight">${p.name}</h3>
-                        <div class="flex items-center mt-2 text-blue-600 font-bold text-xs uppercase tracking-widest">
+                    <div class="mt-5 mb-3 text-left px-1">
+                        <h3 class="text-base font-extrabold text-gray-800 tracking-tight leading-tight">${p.name}</h3>
+                        <div class="flex items-center mt-1.5 text-blue-600 font-bold text-[10px] uppercase tracking-widest">
                             Shop on Amazon
-                            <svg class="w-4 h-4 ml-2 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
+                            <svg class="w-3.5 h-3.5 ml-1.5 group-hover:translate-x-1.5 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                         </div>
                     </div>
                 </a>
