@@ -82,16 +82,22 @@
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
     <script>
-        // 1. 打字机动画
+        // 1. 打字机特效
         new Typed('#typed', {
             strings: ['Plush toy storage.', 'Children\'s reading space.', 'Vertical elastic cord design.', 'Multi-functional storage.'],
             typeSpeed: 70, backSpeed: 40, loop: true
         });
 
-        // 2. 数据维护
+        // 2. 产品数据管理
         const CLOUD_BASE = "https://res.cloudinary.com/dpr2pn5rs/image/upload/f_auto,q_auto/";
 
         const products = [
+            {
+                name: "VortinT Kids Storage 011A",
+                image: "https://m.media-amazon.com/images/I/81LWYQTAqvL._AC_SY300_SX300_QL70_FMwebp_.jpg", 
+                link: "https://www.amazon.com/dp/B0GFMDX8XG?maas=maas_adg_F685D581B08E0DAD455C2B5A2B13E79F_afap_abs&ref_=aa_maas&tag=maas&th=1",
+                tag: "New"
+            },
             {
                 name: "Elastic Cord Storage - Classic",
                 image: "https://m.media-amazon.com/images/I/81VOboTeuWL._SL1500_.jpg", 
@@ -99,28 +105,20 @@
                 tag: "Best Seller"
             },
             {
-               {
-    name: "VortinT Kids Storage 011A",
-    image: "https://m.media-amazon.com/images/I/81LWYQTAqvL._AC_SY300_SX300_QL70_FMwebp_.jpg", 
-    link: "https://www.amazon.com/dp/B0GFMDX8XG?maas=maas_adg_F685D581B08E0DAD455C2B5A2B13E79F_afap_abs&ref_=aa_maas&tag=maas&th=1",
-    tag: "New"
-},
-            },
-            {
-                name: "Lifestyle & Aesthetic",
+                name: "Lifestyle & Aesthetic Design",
                 image: "套图1.jpg", 
                 link: "https://www.amazon.com/stores/VortinT",
                 tag: "Inspire"
             }
         ];
 
-        // 3. 渲染逻辑
+        // 3. 页面渲染逻辑
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = products.map(p => {
                 const fullImgUrl = p.image.startsWith('http') ? p.image : `${CLOUD_BASE}${p.image}`;
                 return `
-                <a href="${p.link}" target="_blank" class="group relative bg-white p-3 rounded-[1.8rem] shadow-sm hover:shadow-xl hover-lift transition-all duration-500 block">
+                <a href="${p.link}" target="_blank" class="group relative bg-white p-3 rounded-[1.8rem] shadow-sm hover:shadow-xl hover-lift transition-all duration-500 block text-left">
                     ${p.tag ? `<span class="absolute top-6 left-6 z-10 bg-blue-600 text-white text-[9px] font-bold px-2.5 py-1 rounded-full shadow-md">${p.tag}</span>` : ''}
                     <div class="aspect-[4/5] overflow-hidden rounded-[1.3rem] bg-gray-100">
                         <img src="${fullImgUrl}" 
@@ -128,7 +126,7 @@
                              class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110" 
                              alt="${p.name}">
                     </div>
-                    <div class="mt-5 mb-3 text-left px-1">
+                    <div class="mt-5 mb-3 px-1">
                         <h3 class="text-base font-extrabold text-gray-800 tracking-tight leading-tight">${p.name}</h3>
                         <div class="flex items-center mt-1.5 text-blue-600 font-bold text-[10px] uppercase tracking-widest">
                             Shop on Amazon
