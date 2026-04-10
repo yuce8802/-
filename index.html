@@ -6,6 +6,8 @@
     <title>VortinT | Smart Kids' Space & Creative Storage</title>
     <meta name="description" content="VortinT specializes in innovative children's furniture and elastic cord toy storage solutions.">
     
+    <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     
@@ -27,9 +29,10 @@
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
         <div class="flex justify-between items-center p-3 max-w-6xl mx-auto">
             <a href="#" class="flex items-center">
-                <img src="data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAASABIAAD/4QCMRXhpZgAATU0AKgAAAAgABQESAAMAAAABAAEAAAEaAAUAAAABAAAASgEbAAUAAAABAAAAUgEoAAMAAAABAAIAAIdpAAQAAAABAAAAWgAAAAAAAABIAAAAAQAAAEgAAAABAAOgAQADAAAAAQABAACgAgAEAAAAAQAAAJCgAwAEAAAAAQAAAJAAAAAA/+0AOFBob3Rvc2hvcCAzLjAAOEJJTQQEAAAAAAAAOEJJTQQlAAAAAAAQ1B2M2Y8AsgTpgAmY7PhCfv/AABEIAJAAkAMBIgACEQEDEQH/xAAfAAABBQEBAQEBAQAAAAAAAAADAgEBAAYFBwgJCgsBAAEBAQEBAQEBAAAAAAAAAAECAwQFBgcICQoL/8QAOBBAAAIBAwMCBAMFBAYDAAAAAAECAwQFERIhBjETByJBUWFxgRQykSNCobHBUnKC0eHw8f/EAB8BAAMBAQEBAQEBAQEAAAAAAAABAgMEBQYHCAkKC//EADgRAAICAQIDBQUGAwYDAAAAAAABAhEDECEhMUEEUWFxBRKBoRMiMkKRscHR8PBygvEUFkNig7L/2gAMAwEAAhEDEQA/APL8UKKKVCEIUEAhQUAgUKKKKFIUKKEAhCgEIUoQUFCiBAhSgEIUoBCFKAQhShAIUFAIFCiggEKKEAhCgEChRShCH//Z" 
+                <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
                      alt="VortinT Logo" 
-                     class="h-10 md:h-12 w-auto object-contain">
+                     class="h-10 md:h-12 w-auto object-contain"
+                     loading="eager">
             </a>
             <div class="flex items-center space-x-5 text-xs font-semibold uppercase tracking-widest">
                 <a href="#about" class="text-gray-400 hover:text-black transition">Concept</a>
@@ -40,7 +43,7 @@
     </nav>
 
     <header id="about" class="max-w-6xl mx-auto px-6 py-10 md:py-16 text-left">
-        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[0.9] tracking-tighter">
+        <h1 class="text-4xl sm:text-5xl md:text-6xl font-extrabold leading-[0.9] tracking-tighter text-gray-900">
             Smart Space <br>
             <span class="hero-gradient">For Kids.</span>
         </h1>
@@ -79,7 +82,7 @@
     <script async src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
 
     <script>
-        // 1. 打字机动画：强调垂直弹力绳
+        // 1. 打字机动画
         new Typed('#typed', {
             strings: ['Plush toy storage.', 'Children\'s reading space.', 'Vertical elastic cord design.', 'Multi-functional storage.'],
             typeSpeed: 70, backSpeed: 40, loop: true
@@ -109,7 +112,7 @@
             }
         ];
 
-        // 3. 渲染
+        // 3. 渲染逻辑
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = products.map(p => {
