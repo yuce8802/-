@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortinT | 智能儿童空间</title>
+    <title>VortinT | Children's Furniture</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
@@ -17,60 +17,86 @@
     <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100 p-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-8 w-auto">
-            <a href="https://ncn9cn4hfp6k.feishu.cn/base/RjAGbIVhKaRI0usUsGnc9lwPnBg" target="_blank" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest border-b-2 border-blue-100 hover:border-blue-600 transition-all">后台编辑 (飞书)</a>
+            
+            <div class="flex items-center space-x-4">
+                <button onclick="toggleLang()" id="langBtn" class="bg-gray-100 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter hover:bg-gray-200 transition">English / 中文</button>
+                <a href="https://ncn9cn4hfp6k.feishu.cn/base/RjAGbIVhKaRI0usUsGnc9lwPnBg" target="_blank" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest border-b-2 border-blue-100">CMS</a>
+            </div>
         </div>
     </nav>
 
     <header class="max-w-6xl mx-auto px-6 py-20">
-        <h1 class="text-6xl font-black tracking-tighter leading-tight">Smart Space <br><span class="hero-gradient italic">For Kids.</span></h1>
-        <p class="mt-6 text-lg text-gray-400">专注于 <span id="typed" class="text-black font-bold border-b-4 border-blue-500"></span></p>
+        <h1 class="text-6xl font-black tracking-tighter leading-tight" id="hero-title">Smart Space <br><span class="hero-gradient italic">For Kids.</span></h1>
+        <p class="mt-6 text-lg text-gray-400"><span id="sub-title-pre">专注于</span> <span id="typed" class="text-black font-bold border-b-4 border-blue-500"></span></p>
     </header>
 
     <main class="max-w-6xl mx-auto px-6 pb-24">
-        <div id="loading" class="text-center py-20 text-gray-300 animate-pulse font-bold tracking-widest">同步飞书数据中...</div>
+        <div id="loading" class="text-center py-20 text-gray-300 animate-pulse font-bold tracking-widest">SYNCING DATA...</div>
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
     </main>
 
     <script>
-        // 指向我们刚才建的 Vercel 后端接口
-        const API_URL = "/api/get-products"; 
+        let currentLang = 'en'; // 默认英文，跨境站的基操
+        let allProducts = [];
 
-        new Typed('#typed', {
-            strings: ['毛绒玩具收纳.', '儿童阅读空间.', '垂直弹力绳设计.'],
-            typeSpeed: 60, loop: true
-        });
+        const translations = {
+            zh: { pre: "专注于", strings: ['毛绒玩具收纳.', '儿童阅读空间.', '垂直弹力绳设计.'], btn: "Shop Now →", loading: "同步飞书数据中..." },
+            en: { pre: "Focusing on", strings: ['Plush Toy Storage.', 'Reading Spaces.', 'Vertical Elastic Cords.'], btn: "Shop Now →", loading: "Syncing Bitable..." }
+        };
+
+        const API_URL = "/api/get-products"; 
+        let typedInstance;
+
+        function initTyped() {
+            if (typedInstance) typedInstance.destroy();
+            typedInstance = new Typed('#typed', {
+                strings: translations[currentLang].strings,
+                typeSpeed: 60, loop: true
+            });
+        }
 
         async function fetchProducts() {
             try {
                 const response = await fetch(API_URL);
-                const items = await response.json();
+                allProducts = await response.json();
                 document.getElementById('loading').style.display = 'none';
-                renderProducts(items);
+                renderProducts();
             } catch (e) {
-                document.getElementById('loading').innerText = "数据同步中，请刷新页面...";
+                document.getElementById('loading').innerText = "Network Error.";
             }
         }
 
-        function renderProducts(items) {
+        function renderProducts() {
             const grid = document.getElementById('product-grid');
-            grid.innerHTML = items.map(item => {
+            document.getElementById('sub-title-pre').innerText = translations[currentLang].pre;
+            
+            grid.innerHTML = allProducts.map(item => {
                 const p = item.fields;
-                // 处理图片：如果是飞书附件，这里需要解析链接；如果是直接贴的链接，直接显示
                 const imgUrl = Array.isArray(p.image) ? p.image[0].url : p.image;
+                // 核心逻辑：如果是英文模式且有 name_en，则显示英文名，否则回退显示中文名
+                const displayName = (currentLang === 'en' && p.name_en) ? p.name_en : p.name;
+                
                 return `
                 <a href="${p.link || '#'}" target="_blank" class="group bg-white rounded-[2.5rem] p-4 shadow-sm hover:shadow-2xl transition-all block">
                     <div class="aspect-[4/5] overflow-hidden rounded-[2rem] bg-gray-100 mb-6">
                         <img src="${imgUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     </div>
                     <div class="px-2">
-                        <h3 class="text-xl font-bold text-gray-800">${p.name || '未命名产品'}</h3>
-                        <p class="text-blue-600 font-black text-[10px] mt-2 uppercase tracking-widest">Shop Now →</p>
+                        <h3 class="text-xl font-bold text-gray-800">${displayName || 'New Product'}</h3>
+                        <p class="text-blue-600 font-black text-[10px] mt-2 uppercase tracking-widest">${translations[currentLang].btn}</p>
                     </div>
                 </a>
                 `;
             }).join('');
         }
 
+        function toggleLang() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            initTyped();
+            renderProducts();
+        }
+
+        initTyped();
         fetchProducts();
     </script>
 </body>
