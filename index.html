@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortinT | 智能儿童成长空间</title>
+    <title>VortinT | Smart Kids' Space</title>
     <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
@@ -20,9 +20,12 @@
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
         <div class="flex justify-between items-center p-3 max-w-6xl mx-auto">
             <a href="#"><img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-10 w-auto object-contain"></a>
-            <div class="flex items-center space-x-5 text-xs font-semibold uppercase tracking-widest">
-                <a href="#store" id="nav-collection" class="text-gray-400 hover:text-black transition">Collection</a>
-                <a href="mailto:gd@vortexd.com" id="nav-contact" class="bg-black text-white px-4 py-1.5 rounded-full hover:bg-blue-600 transition">Contact</a>
+            <div class="flex items-center space-x-4">
+                <div class="flex bg-gray-100 p-1 rounded-full text-[10px] font-bold">
+                    <button id="btn-en" onclick="setLang('en')" class="px-3 py-1 rounded-full bg-black text-white transition">EN</button>
+                    <button id="btn-cn" onclick="setLang('cn')" class="px-3 py-1 rounded-full text-gray-400 transition">中文</button>
+                </div>
+                <a href="mailto:gd@vortexd.com" class="hidden md:block bg-black text-white px-4 py-1.5 rounded-full text-xs hover:bg-blue-600 transition">Contact</a>
             </div>
         </div>
     </nav>
@@ -39,10 +42,10 @@
     <section id="store" class="max-w-6xl mx-auto px-4 py-12 bg-slate-50 rounded-[3rem] my-4 shadow-inner">
         <div class="mb-10 flex flex-col md:flex-row justify-between px-6">
             <h2 id="store-title" class="text-3xl font-black italic uppercase text-gray-800">VortinT Collection</h2>
-            <div id="cta-button"></div>
+            <a href="https://www.amazon.com/stores/VortinT" target="_blank" id="amazon-btn" class="mt-4 md:mt-0 bg-[#FF9900] text-white px-6 py-3 rounded-xl font-bold uppercase text-xs">🛒 Visit Amazon Store</a>
         </div>
 
-        <div id="loading" class="py-20 text-center text-gray-400 animate-pulse">正在智能识别地区并同步数据...</div>
+        <div id="loading" class="py-20 text-center text-gray-400 animate-pulse">Loading collection...</div>
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6"></div>
     </section>
 
@@ -52,27 +55,94 @@
 
     <script>
         const SHEETY_URL = "https://api.sheety.co/5ee78cd3a33f8c64df38dbf4c7a16338/products/products";
-        let isCN = false;
+        let currentLang = 'en';
+        let typedInstance = null;
 
-        // 1. 获取地区并启动
-        async function init() {
-            try {
-                const res = await fetch('https://ipapi.co/json/');
-                const data = await res.json();
-                isCN = (data.country_code === 'CN');
-                
-                applyLanguage();
-                startTyped();
-                fetchProducts(data.country_code);
-            } catch (e) {
-                // 识别失败默认海外版
-                isCN = false;
-                applyLanguage();
-                startTyped();
-                fetchProducts("Global");
+        // 1. 切换语言逻辑
+        function setLang(lang) {
+            currentLang = lang;
+            
+            // 按钮样式切换
+            const btnEn = document.getElementById('btn-en');
+            const btnCn = document.getElementById('btn-cn');
+            if(lang === 'cn') {
+                btnCn.className = "px-3 py-1 rounded-full bg-black text-white transition";
+                btnEn.className = "px-3 py-1 rounded-full text-gray-400 transition";
+            } else {
+                btnEn.className = "px-3 py-1 rounded-full bg-black text-white transition";
+                btnCn.className = "px-3 py-1 rounded-full text-gray-400 transition";
+            }
+
+            // 更新系统文案
+            updateTexts();
+            // 重启打字机
+            startTyped();
+            // 重新渲染产品列表（为了更新按钮文字）
+            fetchProducts();
+        }
+
+        function updateTexts() {
+            if (currentLang === 'cn') {
+                document.getElementById('hero-main').innerHTML = `智能空间 <br><span class="hero-gradient">伴童成长</span>`;
+                document.getElementById('hero-prefix').innerText = "专注于";
+                document.getElementById('store-title').innerText = "VortinT 官方系列";
+                document.getElementById('amazon-btn').innerText = "🛒 访问亚马逊商店";
+            } else {
+                document.getElementById('hero-main').innerHTML = `Smart Space <br><span class="hero-gradient">For Kids.</span>`;
+                document.getElementById('hero-prefix').innerText = "Focusing on";
+                document.getElementById('store-title').innerText = "VortinT Collection";
+                document.getElementById('amazon-btn').innerText = "🛒 Visit Amazon Store";
             }
         }
 
-        // 2. 应用语言切换
-        function applyLanguage() {
-            if (isCN
+        function startTyped() {
+            if (typedInstance) typedInstance.destroy();
+            const strings = currentLang === 'cn' 
+                ? ['毛绒玩具收纳', '儿童阅读空间', '垂直弹力绳设计'] 
+                : ['Plush toy storage.', 'Children\'s reading space.', 'Vertical elastic cord design.'];
+            
+            typedInstance = new Typed('#typed', {
+                strings: strings,
+                typeSpeed: 70, loop: true
+            });
+        }
+
+        // 2. 数据获取（表格完全不变，不增加 region 过滤）
+        async function fetchProducts() {
+            try {
+                const response = await fetch(SHEETY_URL);
+                const data = await response.json();
+                const products = data.products;
+                
+                document.getElementById('loading').style.display = 'none';
+                renderProducts(products);
+            } catch (error) {
+                document.getElementById('loading').innerText = "Sync failed. Please check table.";
+            }
+        }
+
+        function renderProducts(products) {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = products.map(p => `
+                <a href="${p.link}" target="_blank" class="group relative bg-white p-3 rounded-[1.8rem] shadow-sm hover:shadow-xl hover-lift transition-all block text-left">
+                    ${p.tag ? `<span class="absolute top-6 left-6 z-10 bg-blue-600 text-white text-[9px] font-bold px-2 py-1 rounded-full shadow-md">${p.tag}</span>` : ''}
+                    <div class="aspect-[4/5] overflow-hidden rounded-[1.3rem] bg-gray-100">
+                        <img src="${p.image}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                    </div>
+                    <div class="mt-5 mb-3 px-1">
+                        <h3 class="text-base font-extrabold text-gray-800 tracking-tight">${p.name}</h3>
+                        <p class="text-blue-600 font-bold text-[10px] mt-1 uppercase tracking-widest">
+                            ${currentLang === 'cn' ? '立即查看 →' : 'Shop on Amazon →'}
+                        </p>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        // 初始化
+        updateTexts();
+        startTyped();
+        fetchProducts();
+    </script>
+</body>
+</html>
