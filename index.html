@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortinT | Smart Kids' Space</title>
+    <title>VortinT | 智能儿童成长空间</title>
     <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&display=swap');
-        body { font-family: 'Inter', sans-serif; scroll-behavior: smooth; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; scroll-behavior: smooth; }
         .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
         .hover-lift { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .hover-lift:hover { transform: translateY(-10px); }
@@ -20,19 +20,19 @@
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
         <div class="flex justify-between items-center p-3 max-w-6xl mx-auto">
             <a href="#"><img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-10 w-auto object-contain"></a>
-            <div id="nav-links" class="flex items-center space-x-5 text-xs font-semibold uppercase tracking-widest">
-                <a href="#store" class="text-gray-400 hover:text-black transition">Collection</a>
-                <a href="mailto:gd@vortexd.com" class="bg-black text-white px-4 py-1.5 rounded-full hover:bg-blue-600 transition">Contact</a>
+            <div class="flex items-center space-x-5 text-xs font-semibold uppercase tracking-widest">
+                <a href="#store" id="nav-collection" class="text-gray-400 hover:text-black transition">Collection</a>
+                <a href="mailto:gd@vortexd.com" id="nav-contact" class="bg-black text-white px-4 py-1.5 rounded-full hover:bg-blue-600 transition">Contact</a>
             </div>
         </div>
     </nav>
 
     <header class="max-w-6xl mx-auto px-6 py-16 text-left">
-        <h1 class="text-5xl md:text-6xl font-extrabold tracking-tighter">
-            Smart Space <br><span class="hero-gradient" id="hero-title">For Kids.</span>
+        <h1 class="text-5xl md:text-6xl font-extrabold tracking-tighter" id="hero-main">
+            Smart Space <br><span class="hero-gradient">For Kids.</span>
         </h1>
         <p class="mt-5 text-lg text-gray-400 italic font-light">
-            Focusing on <span id="typed" class="text-black font-semibold border-b-2 border-blue-500"></span>
+            <span id="hero-prefix">Focusing on</span> <span id="typed" class="text-black font-semibold border-b-2 border-blue-500"></span>
         </p>
     </header>
 
@@ -42,7 +42,7 @@
             <div id="cta-button"></div>
         </div>
 
-        <div id="loading" class="py-20 text-center text-gray-400 animate-pulse">Checking region & syncing data...</div>
+        <div id="loading" class="py-20 text-center text-gray-400 animate-pulse">正在智能识别地区并同步数据...</div>
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6"></div>
     </section>
 
@@ -52,85 +52,27 @@
 
     <script>
         const SHEETY_URL = "https://api.sheety.co/5ee78cd3a33f8c64df38dbf4c7a16338/products/products";
-        let userCountry = "Global"; // 默认全球
+        let isCN = false;
 
-        // 1. 初始化打字动画
-        new Typed('#typed', {
-            strings: ['Plush toy storage.', 'Children\'s reading space.', 'Vertical elastic cord design.'],
-            typeSpeed: 70, loop: true
-        });
-
-        // 2. 检测 IP 位置
-        async function checkRegion() {
+        // 1. 获取地区并启动
+        async function init() {
             try {
                 const res = await fetch('https://ipapi.co/json/');
                 const data = await res.json();
-                userCountry = data.country_code; // 例如 'CN', 'US'
-                updateUI(userCountry);
-            } catch (e) {
-                console.log("IP Check failed, using default.");
-                updateUI("Global");
-            }
-            fetchProducts();
-        }
-
-        // 3. 根据地区更新界面文案
-        function updateUI(country) {
-            const isCN = country === 'CN';
-            document.getElementById('hero-title').innerText = isCN ? "陪伴孩子成长" : "For Kids.";
-            document.getElementById('store-title').innerText = isCN ? "VortinT 产品系列" : "VortinT Collection";
-            
-            const cta = document.getElementById('cta-button');
-            if(isCN) {
-                cta.innerHTML = `<button onclick="alert('请联系客服微信：VortinT_Design')" class="bg-blue-600 text-white px-6 py-3 rounded-xl font-bold text-xs">💬 联系国内客服</button>`;
-            } else {
-                cta.innerHTML = `<a href="https://www.amazon.com/stores/VortinT" target="_blank" class="bg-[#FF9900] text-white px-6 py-3 rounded-xl font-bold uppercase text-xs">🛒 Visit Official Store</a>`;
-            }
-        }
-
-        // 4. 读取并智能过滤产品
-        async function fetchProducts() {
-            try {
-                const response = await fetch(SHEETY_URL);
-                const data = await response.json();
-                const allProducts = data.products;
+                isCN = (data.country_code === 'CN');
                 
-                // 核心过滤逻辑
-                const filtered = allProducts.filter(p => {
-                    if (userCountry === 'CN') {
-                        return p.region === 'CN' || p.region === 'All';
-                    } else {
-                        return p.region === 'Global' || p.region === 'All' || !p.region;
-                    }
-                });
-
-                document.getElementById('loading').style.display = 'none';
-                renderProducts(filtered);
-            } catch (error) {
-                document.getElementById('loading').innerText = "Sync failed. Check connection.";
+                applyLanguage();
+                startTyped();
+                fetchProducts(data.country_code);
+            } catch (e) {
+                // 识别失败默认海外版
+                isCN = false;
+                applyLanguage();
+                startTyped();
+                fetchProducts("Global");
             }
         }
 
-        function renderProducts(products) {
-            const grid = document.getElementById('product-grid');
-            const isCN = userCountry === 'CN';
-            grid.innerHTML = products.map(p => `
-                <a href="${p.link}" target="_blank" class="group relative bg-white p-3 rounded-[1.8rem] shadow-sm hover:shadow-xl hover-lift transition-all block text-left">
-                    ${p.tag ? `<span class="absolute top-6 left-6 z-10 bg-blue-600 text-white text-[9px] font-bold px-2 py-1 rounded-full shadow-md">${p.tag}</span>` : ''}
-                    <div class="aspect-[4/5] overflow-hidden rounded-[1.3rem] bg-gray-100">
-                        <img src="${p.image}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
-                    </div>
-                    <div class="mt-5 mb-3 px-1">
-                        <h3 class="text-base font-extrabold text-gray-800 tracking-tight">${p.name}</h3>
-                        <p class="text-blue-600 font-bold text-[10px] mt-1 uppercase tracking-widest">
-                            ${isCN ? '查看详情 →' : 'Shop on Amazon →'}
-                        </p>
-                    </div>
-                </a>
-            `).join('');
-        }
-
-        checkRegion();
-    </script>
-</body>
-</html>
+        // 2. 应用语言切换
+        function applyLanguage() {
+            if (isCN
