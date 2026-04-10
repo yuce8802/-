@@ -1,147 +1,73 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortinT | Smart Kids' Space</title>
-    <link rel="icon" type="image/jpeg" href="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg">
+    <title>VortinT | 智能儿童成长空间</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;800&family=Noto+Sans+SC:wght@400;700;900&display=swap');
-        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; scroll-behavior: smooth; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;700;900&family=Noto+Sans+SC:wght@500;900&display=swap');
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; }
         .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .hover-lift { transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-        .hover-lift:hover { transform: translateY(-10px); }
     </style>
 </head>
-<body class="bg-white text-gray-900 overflow-x-hidden">
+<body>
 
-    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100">
-        <div class="flex justify-between items-center p-3 max-w-6xl mx-auto">
-            <a href="#"><img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-10 w-auto object-contain"></a>
-            <div class="flex items-center space-x-4">
-                <div class="flex bg-gray-100 p-1 rounded-full text-[10px] font-bold">
-                    <button id="btn-en" onclick="setLang('en')" class="px-3 py-1 rounded-full bg-black text-white transition">EN</button>
-                    <button id="btn-cn" onclick="setLang('cn')" class="px-3 py-1 rounded-full text-gray-400 transition">中文</button>
-                </div>
-                <a href="mailto:gd@vortexd.com" class="hidden md:block bg-black text-white px-4 py-1.5 rounded-full text-xs hover:bg-blue-600 transition">Contact</a>
-            </div>
+    <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100 p-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-8 w-auto">
+            <a href="https://docs.google.com/spreadsheets/d/1N58RVAfXQdnp2_5OqFTRFDq-5HTyPFYLYk53httoGVQ/edit" target="_blank" class="text-[10px] font-bold text-gray-400 uppercase tracking-widest">Edit Table</a>
         </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto px-6 py-16 text-left">
-        <h1 class="text-5xl md:text-6xl font-extrabold tracking-tighter" id="hero-main">
-            Smart Space <br><span class="hero-gradient">For Kids.</span>
-        </h1>
-        <p class="mt-5 text-lg text-gray-400 italic font-light">
-            <span id="hero-prefix">Focusing on</span> <span id="typed" class="text-black font-semibold border-b-2 border-blue-500"></span>
-        </p>
+    <header class="max-w-6xl mx-auto px-6 py-20">
+        <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-tight">Smart Space <br><span class="hero-gradient italic">For Kids.</span></h1>
+        <p class="mt-6 text-lg text-gray-400">专注于 <span id="typed" class="text-black font-bold border-b-4 border-blue-500"></span></p>
     </header>
 
-    <section id="store" class="max-w-6xl mx-auto px-4 py-12 bg-slate-50 rounded-[3rem] my-4 shadow-inner">
-        <div class="mb-10 flex flex-col md:flex-row justify-between px-6">
-            <h2 id="store-title" class="text-3xl font-black italic uppercase text-gray-800">VortinT Collection</h2>
-            <a href="https://www.amazon.com/stores/VortinT" target="_blank" id="amazon-btn" class="mt-4 md:mt-0 bg-[#FF9900] text-white px-6 py-3 rounded-xl font-bold uppercase text-xs">🛒 Visit Amazon Store</a>
-        </div>
-
-        <div id="loading" class="py-20 text-center text-gray-400 animate-pulse">Loading collection...</div>
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 px-6"></div>
-    </section>
-
-    <footer class="pt-16 pb-8 text-center text-gray-400 text-[10px] uppercase tracking-[0.5em]">
-        © 2026 VortinT Design Lab
-    </footer>
+    <main class="max-w-6xl mx-auto px-6 pb-24">
+        <div id="loading" class="text-center py-20 text-gray-300 animate-pulse font-bold uppercase tracking-widest">Loading Collection...</div>
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+    </main>
 
     <script>
-        const SHEETY_URL = "https://api.sheety.co/5ee78cd3a33f8c64df38dbf4c7a16338/products/products";
-        let currentLang = 'en';
-        let typedInstance = null;
+        // 使用 OpenSheet 中转，解决国内访问 Google 的问题
+        const SHEET_ID = "1N58RVAfXQdnp2_5OqFTRFDq-5HTyPFYLYk53httoGVQ";
+        const TAB_NAME = "Sheet1"; // 如果你的表格页签改名了，请同步修改这里
+        const API_URL = `https://opensheet.elk.sh/${SHEET_ID}/${TAB_NAME}`;
 
-        // 1. 切换语言逻辑
-        function setLang(lang) {
-            currentLang = lang;
-            
-            // 按钮样式切换
-            const btnEn = document.getElementById('btn-en');
-            const btnCn = document.getElementById('btn-cn');
-            if(lang === 'cn') {
-                btnCn.className = "px-3 py-1 rounded-full bg-black text-white transition";
-                btnEn.className = "px-3 py-1 rounded-full text-gray-400 transition";
-            } else {
-                btnEn.className = "px-3 py-1 rounded-full bg-black text-white transition";
-                btnCn.className = "px-3 py-1 rounded-full text-gray-400 transition";
-            }
+        new Typed('#typed', {
+            strings: ['毛绒玩具收纳.', '儿童阅读空间.', '垂直弹力绳设计.'],
+            typeSpeed: 60, loop: true
+        });
 
-            // 更新系统文案
-            updateTexts();
-            // 重启打字机
-            startTyped();
-            // 重新渲染产品列表（为了更新按钮文字）
-            fetchProducts();
-        }
-
-        function updateTexts() {
-            if (currentLang === 'cn') {
-                document.getElementById('hero-main').innerHTML = `智能空间 <br><span class="hero-gradient">伴童成长</span>`;
-                document.getElementById('hero-prefix').innerText = "专注于";
-                document.getElementById('store-title').innerText = "VortinT 官方系列";
-                document.getElementById('amazon-btn').innerText = "🛒 访问亚马逊商店";
-            } else {
-                document.getElementById('hero-main').innerHTML = `Smart Space <br><span class="hero-gradient">For Kids.</span>`;
-                document.getElementById('hero-prefix').innerText = "Focusing on";
-                document.getElementById('store-title').innerText = "VortinT Collection";
-                document.getElementById('amazon-btn').innerText = "🛒 Visit Amazon Store";
-            }
-        }
-
-        function startTyped() {
-            if (typedInstance) typedInstance.destroy();
-            const strings = currentLang === 'cn' 
-                ? ['毛绒玩具收纳', '儿童阅读空间', '垂直弹力绳设计'] 
-                : ['Plush toy storage.', 'Children\'s reading space.', 'Vertical elastic cord design.'];
-            
-            typedInstance = new Typed('#typed', {
-                strings: strings,
-                typeSpeed: 70, loop: true
-            });
-        }
-
-        // 2. 数据获取（表格完全不变，不增加 region 过滤）
         async function fetchProducts() {
             try {
-                const response = await fetch(SHEETY_URL);
-                const data = await response.json();
-                const products = data.products;
-                
+                const response = await fetch(API_URL);
+                const products = await response.json();
                 document.getElementById('loading').style.display = 'none';
                 renderProducts(products);
-            } catch (error) {
-                document.getElementById('loading').innerText = "Sync failed. Please check table.";
+            } catch (e) {
+                document.getElementById('loading').innerText = "表格加载失败，请确保表格已开启'任何人可查看'。";
             }
         }
 
         function renderProducts(products) {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = products.map(p => `
-                <a href="${p.link}" target="_blank" class="group relative bg-white p-3 rounded-[1.8rem] shadow-sm hover:shadow-xl hover-lift transition-all block text-left">
-                    ${p.tag ? `<span class="absolute top-6 left-6 z-10 bg-blue-600 text-white text-[9px] font-bold px-2 py-1 rounded-full shadow-md">${p.tag}</span>` : ''}
-                    <div class="aspect-[4/5] overflow-hidden rounded-[1.3rem] bg-gray-100">
-                        <img src="${p.image}" loading="lazy" class="w-full h-full object-cover transition-transform duration-700 group-hover:scale-110">
+                <a href="${p.link || '#'}" target="_blank" class="group bg-white rounded-[2.5rem] p-4 shadow-sm hover:shadow-2xl transition-all block">
+                    <div class="aspect-[4/5] overflow-hidden rounded-[2rem] bg-gray-100 mb-6">
+                        <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
                     </div>
-                    <div class="mt-5 mb-3 px-1">
-                        <h3 class="text-base font-extrabold text-gray-800 tracking-tight">${p.name}</h3>
-                        <p class="text-blue-600 font-bold text-[10px] mt-1 uppercase tracking-widest">
-                            ${currentLang === 'cn' ? '立即查看 →' : 'Shop on Amazon →'}
-                        </p>
+                    <div class="px-2 pb-2">
+                        <h3 class="text-xl font-bold text-gray-800">${p.name}</h3>
+                        <p class="text-blue-600 font-black text-[10px] mt-2 uppercase tracking-widest">Shop on Amazon →</p>
                     </div>
                 </a>
             `).join('');
         }
 
-        // 初始化
-        updateTexts();
-        startTyped();
         fetchProducts();
     </script>
 </body>
