@@ -3,58 +3,86 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortinT | Children's Furniture</title>
+    <title>VortinT | Children's Furniture & Storage</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@500;900&display=swap');
         body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; }
         .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .logo-shadow { filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05)); }
     </style>
 </head>
 <body>
 
-    <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-xl border-b border-gray-100 p-4">
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 p-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-8 w-auto">
+            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
+                 class="h-16 md:h-24 w-auto logo-shadow rounded-lg transition-all duration-300">
             
-            <div class="flex items-center space-x-4">
-                <button onclick="toggleLang()" id="langBtn" class="bg-gray-100 px-3 py-1 rounded-full text-[10px] font-black uppercase tracking-tighter hover:bg-gray-200 transition">English / 中文</button>
-                <a href="https://ncn9cn4hfp6k.feishu.cn/base/RjAGbIVhKaRI0usUsGnc9lwPnBg" target="_blank" class="text-[10px] font-bold text-blue-600 uppercase tracking-widest border-b-2 border-blue-100">CMS</a>
+            <div class="flex items-center space-x-6">
+                <button onclick="toggleLang()" id="langBtn" class="bg-blue-600 text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
+                    EN / 中文
+                </button>
+                <a href="https://ncn9cn4hfp6k.feishu.cn/base/RjAGbIVhKaRI0usUsGnc9lwPnBg" target="_blank" class="hidden md:block text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] hover:text-blue-600">Admin</a>
             </div>
         </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto px-6 py-20">
-        <h1 class="text-6xl font-black tracking-tighter leading-tight" id="hero-title">Smart Space <br><span class="hero-gradient italic">For Kids.</span></h1>
-        <p class="mt-6 text-lg text-gray-400"><span id="sub-title-pre">专注于</span> <span id="typed" class="text-black font-bold border-b-4 border-blue-500"></span></p>
+    <header class="max-w-6xl mx-auto px-6 py-24 text-center md:text-left">
+        <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9]">
+            Smart Space <br><span class="hero-gradient italic">For Kids.</span>
+        </h1>
+        <p class="mt-8 text-xl text-gray-400 font-medium">
+            <span id="sub-title-pre">专注于</span> 
+            <span id="typed" class="text-black font-extrabold border-b-8 border-blue-500/20"></span>
+        </p>
     </header>
 
-    <main class="max-w-6xl mx-auto px-6 pb-24">
-        <div id="loading" class="text-center py-20 text-gray-300 animate-pulse font-bold tracking-widest">SYNCING DATA...</div>
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+    <main class="max-w-6xl mx-auto px-6 pb-32">
+        <div id="loading" class="text-center py-24">
+            <div class="inline-block w-10 h-10 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
+            <p class="mt-4 text-gray-400 font-black tracking-widest text-xs uppercase">Connecting Bitable...</p>
+        </div>
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"></div>
     </main>
 
     <script>
-        let currentLang = 'en'; // 默认英文，跨境站的基操
+        let currentLang = 'en'; // 默认英文
         let allProducts = [];
-
-        const translations = {
-            zh: { pre: "专注于", strings: ['毛绒玩具收纳.', '儿童阅读空间.', '垂直弹力绳设计.'], btn: "Shop Now →", loading: "同步飞书数据中..." },
-            en: { pre: "Focusing on", strings: ['Plush Toy Storage.', 'Reading Spaces.', 'Vertical Elastic Cords.'], btn: "Shop Now →", loading: "Syncing Bitable..." }
-        };
-
         const API_URL = "/api/get-products"; 
         let typedInstance;
 
+        // 多语言文案配置
+        const i18n = {
+            zh: {
+                pre: "专注于",
+                typed: ['毛绒玩具收纳.', '儿童阅读空间.', '垂直弹力绳设计.'],
+                btn: "立即查看 →",
+                loading: "同步飞书数据中...",
+                empty: "暂无产品"
+            },
+            en: {
+                pre: "Focusing on",
+                typed: ['Plush Toy Storage.', 'Reading Spaces.', 'Vertical Elastic Cords.'],
+                btn: "Shop Now →",
+                loading: "Syncing Catalog...",
+                empty: "No items found."
+            }
+        };
+
+        // 初始化打字机效果
         function initTyped() {
             if (typedInstance) typedInstance.destroy();
             typedInstance = new Typed('#typed', {
-                strings: translations[currentLang].strings,
-                typeSpeed: 60, loop: true
+                strings: i18n[currentLang].typed,
+                typeSpeed: 50,
+                backSpeed: 30,
+                loop: true
             });
         }
 
+        // 获取飞书数据
         async function fetchProducts() {
             try {
                 const response = await fetch(API_URL);
@@ -62,42 +90,59 @@
                 document.getElementById('loading').style.display = 'none';
                 renderProducts();
             } catch (e) {
-                document.getElementById('loading').innerText = "Network Error.";
+                document.getElementById('loading').innerHTML = `<p class="text-red-400 font-bold uppercase">Connection Failed</p>`;
             }
         }
 
+        // 渲染产品卡片
         function renderProducts() {
             const grid = document.getElementById('product-grid');
-            document.getElementById('sub-title-pre').innerText = translations[currentLang].pre;
+            document.getElementById('sub-title-pre').innerText = i18n[currentLang].pre;
             
+            if (allProducts.length === 0) {
+                grid.innerHTML = `<p class="col-span-full text-center text-gray-300 font-bold">${i18n[currentLang].empty}</p>`;
+                return;
+            }
+
             grid.innerHTML = allProducts.map(item => {
                 const p = item.fields;
+                // 支持飞书附件图片或直接链接
                 const imgUrl = Array.isArray(p.image) ? p.image[0].url : p.image;
-                // 核心逻辑：如果是英文模式且有 name_en，则显示英文名，否则回退显示中文名
+                // 中英文名称逻辑：如果有 name_en 且当前是英文模式，则显示英文
                 const displayName = (currentLang === 'en' && p.name_en) ? p.name_en : p.name;
                 
                 return `
-                <a href="${p.link || '#'}" target="_blank" class="group bg-white rounded-[2.5rem] p-4 shadow-sm hover:shadow-2xl transition-all block">
-                    <div class="aspect-[4/5] overflow-hidden rounded-[2rem] bg-gray-100 mb-6">
-                        <img src="${imgUrl}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                <a href="${p.link || '#'}" target="_blank" class="group bg-white rounded-[3rem] p-5 shadow-sm hover:shadow-2xl transition-all duration-500 block">
+                    <div class="aspect-[4/5] overflow-hidden rounded-[2.2rem] bg-gray-50 mb-8">
+                        <img src="${imgUrl}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
-                    <div class="px-2">
-                        <h3 class="text-xl font-bold text-gray-800">${displayName || 'New Product'}</h3>
-                        <p class="text-blue-600 font-black text-[10px] mt-2 uppercase tracking-widest">${translations[currentLang].btn}</p>
+                    <div class="px-4 pb-4">
+                        <h3 class="text-2xl font-black text-gray-900 tracking-tight leading-tight">${displayName || 'New Collection'}</h3>
+                        <div class="mt-6 flex items-center text-blue-600 font-black text-xs uppercase tracking-widest">
+                            <span class="border-b-2 border-blue-100 group-hover:border-blue-600 transition-all">${i18n[currentLang].btn}</span>
+                        </div>
                     </div>
                 </a>
                 `;
             }).join('');
         }
 
+        // 切换语言
         function toggleLang() {
             currentLang = currentLang === 'en' ? 'zh' : 'en';
-            initTyped();
             renderProducts();
+            initTyped();
+            // 保存用户偏好
+            localStorage.setItem('vortint_lang', currentLang);
         }
 
-        initTyped();
-        fetchProducts();
+        // 启动
+        window.onload = () => {
+            const savedLang = localStorage.getItem('vortint_lang');
+            if (savedLang) currentLang = savedLang;
+            initTyped();
+            fetchProducts();
+        };
     </script>
 </body>
 </html>
