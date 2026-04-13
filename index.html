@@ -10,48 +10,28 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@900&display=swap');
         body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; -webkit-tap-highlight-color: transparent; }
         
-        /* 💡 核心：伪3D立体发光文字 */
+        /* 🔥 立体文字和光效 (保留) */
         .glow-3d {
             color: #fff;
-            /* 蓝色基调 */
             background: linear-gradient(180deg, #93c5fd 0%, #2563eb 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
-            
-            /* 🔥 多层 text-shadow 叠加出厚度和光晕 */
-            text-shadow: 
-                0 1px 0 #1d4ed8,
-                0 2px 0 #1e40af,
-                0 3px 0 #1e3a8a,
-                0 4px 0 #172554,
-                0 5px 0 #0f172a,
-                0 6px 1px rgba(0,0,0,.1),
-                0 0 5px rgba(37,99,235,.1),
-                0 1px 3px rgba(37,99,235,.3),
-                0 3px 5px rgba(37,99,235,.2),
-                0 5px 10px rgba(37,99,235,.2),
-                0 10px 10px rgba(37,99,235,.2),
-                0 20px 20px rgba(37,99,235,.15);
+            text-shadow: 0 1px 0 #1d4ed8, 0 2px 0 #1e40af, 0 3px 0 #1e3a8a, 0 4px 0 #172554, 0 5px 0 #0f172a, 0 6px 1px rgba(0,0,0,.1), 0 0 5px rgba(37,99,235,.1), 0 1px 3px rgba(37,99,235,.3), 0 3px 5px rgba(37,99,235,.2), 0 5px 10px rgba(37,99,235,.2), 0 10px 10px rgba(37,99,235,.2), 0 20px 20px rgba(37,99,235,.15);
+        }
+        .glow-wrapper { position: relative; display: inline-block; animation: breathe3d 4s ease-in-out infinite; }
+        @keyframes breathe3d { 0%, 100% { transform: translateY(0); opacity: 0.9; } 50% { transform: translateY(-5px); opacity: 1; } }
+
+        /* 💡 Logo 悬浮光效 (新增) */
+        .logo-hover {
+            transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            box-shadow: 0 0 0px rgba(37, 99, 235, 0);
+        }
+        .logo-hover:hover {
+            transform: scale(1.1) rotate(-3deg);
+            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.2);
         }
 
-        /* 💡 增加整体悬浮感和呼吸 */
-        .glow-wrapper {
-            position: relative;
-            display: inline-block;
-            animation: breathe3d 4s ease-in-out infinite;
-        }
-
-        @keyframes breathe3d { 
-            0%, 100% { transform: translateY(0); opacity: 0.9; }
-            50% { transform: translateY(-5px); opacity: 1; }
-        }
-
-        #copy-toast { 
-            position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); 
-            background: #2563eb; color: white; padding: 16px 32px; border-radius: 99px; 
-            font-weight: 900; font-size: 14px; opacity: 0; pointer-events: none; 
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; 
-        }
+        #copy-toast { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); background: #2563eb; color: white; padding: 16px 32px; border-radius: 99px; font-weight: 900; font-size: 14px; opacity: 0; pointer-events: none; transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; box-shadow: 0 20px 40px rgba(37, 99, 235, 0.4); }
         #copy-toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
         .admin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-blur: 10px; z-index: 999; align-items: center; justify-content: center; }
     </style>
@@ -73,33 +53,38 @@
     </div>
 
     <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-gray-100 p-4">
-        <div class="max-w-6xl mx-auto flex justify-between items-center">
+        <div class="max-w-6xl mx-auto flex justify-end items-center space-x-3 md:space-x-5">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                 onclick="handleLogoClick()" class="h-10 w-auto rounded-lg active:scale-90 transition-transform">
-            <div class="flex items-center space-x-2">
-                <button onclick="toggleLang()" class="border-2 border-black px-3 py-1.5 rounded-full text-[10px] font-black">EN/中</button>
-                <button onclick="copyEmail()" class="bg-blue-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase active:bg-black">Email</button>
-            </div>
+                 onclick="handleLogoClick()" 
+                 class="logo-hover h-8 md:h-10 w-auto rounded-lg active:scale-90 transition-transform cursor-pointer">
+            
+            <button onclick="toggleLang()" class="border-2 border-black px-3 py-1 md:py-1.5 rounded-full text-[9px] md:text-[10px] font-black active:scale-95 transition-transform">
+                EN/中
+            </button>
+            
+            <button onclick="copyEmail()" class="bg-blue-600 text-white px-3 md:px-4 py-1.5 md:py-2 rounded-full text-[9px] md:text-[10px] font-black uppercase active:bg-black active:scale-95 transition-transform">
+                Email
+            </button>
         </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto px-6 py-20 text-center md:text-left">
+    <header class="max-w-6xl mx-auto px-6 py-16 md:py-24 text-center md:text-left">
         <div class="glow-wrapper">
-            <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-none mb-6 uppercase glow-3d">
+            <h1 class="text-5xl md:text-8xl font-black tracking-tighter leading-none mb-4 md:mb-6 uppercase glow-3d">
                 Smart Space
             </h1>
         </div>
         <br>
-        <h1 class="text-5xl md:text-7xl font-black tracking-tighter italic text-gray-900 mb-8 opacity-90">For Kids.</h1>
-        <p class="text-xl text-gray-400 font-bold">Focusing on <span id="typed" class="text-black"></span></p>
+        <h1 class="text-4xl md:text-7xl font-black tracking-tighter italic text-gray-900 mb-6 md:mb-8 opacity-90">For Kids.</h1>
+        <p class="text-lg md:text-xl text-gray-400 font-bold">Focusing on <span id="typed" class="text-black"></span></p>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 pb-24">
+    <main class="max-w-6xl mx-auto px-4 pb-12 md:pb-24">
         <div id="loading" class="text-center py-20 font-black text-gray-200 text-2xl animate-pulse">CONNECTING...</div>
         <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8"></div>
     </main>
 
-    <footer class="py-12 border-t text-center bg-white">
+    <footer class="py-10 border-t text-center bg-white">
         <button onclick="copyEmail()" class="text-sm font-black text-blue-600 border-b-2 border-blue-100 mb-4">contact@vortexd.com</button>
         <div class="text-[9px] text-gray-300 font-black uppercase tracking-widest">© 2026 VORTINT STUDIO</div>
     </footer>
@@ -156,9 +141,9 @@
                 const f = r.fields;
                 const img = (Array.isArray(f.图片) ? f.图片[0].url : (f.图片 || "")).replace("http://", "https://");
                 return `
-                <a href="${f.链接 || '#'}" target="_blank" onclick="vib(10)" class="bg-white rounded-[1.5rem] p-3 shadow-sm border border-gray-50 active:scale-95 transition-all text-left">
-                    <img src="${img}" class="w-full aspect-square object-cover rounded-[1rem] mb-3">
-                    <h3 class="text-xs font-black line-clamp-2 h-8 mb-2 leading-tight">${f.标题 || 'Item'}</h3>
+                <a href="${f.链接 || '#'}" target="_blank" onclick="vib(10)" class="bg-white rounded-[1.2rem] p-3 shadow-sm border border-gray-50 active:scale-95 transition-all text-left">
+                    <img src="${img}" class="w-full aspect-square object-cover rounded-[0.8rem] mb-3">
+                    <h3 class="text-[11px] md:text-sm font-black line-clamp-2 h-8 mb-1 leading-tight text-gray-900">${f.标题 || 'Item'}</h3>
                     <span class="text-[8px] font-black uppercase text-blue-600">Explore →</span>
                 </a>`;
             }).join('');
