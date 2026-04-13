@@ -9,18 +9,48 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@900&display=swap');
         body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; -webkit-tap-highlight-color: transparent; }
-        .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .admin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-blur: 10px; z-index: 999; align-items: center; justify-content: center; }
         
-        /* 💡 绝对显眼的复制提示 */
+        /* 💡 核心光效：极光流动文字 */
+        .glow-text {
+            position: relative;
+            display: inline-block;
+            background: linear-gradient(120deg, #1d4ed8 20%, #6366f1 40%, #a5b4fc 60%, #1d4ed8 80%);
+            background-size: 200% auto;
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            animation: shine 4s linear infinite;
+        }
+
+        /* 💡 核心光效：背景呼吸晕 */
+        .glow-wrapper {
+            position: relative;
+            display: inline-block;
+        }
+        .glow-wrapper::after {
+            content: '';
+            position: absolute;
+            top: 50%; left: 50%;
+            width: 120%; height: 120%;
+            background: radial-gradient(circle, rgba(37,99,235,0.15) 0%, rgba(255,255,255,0) 70%);
+            transform: translate(-50%, -50%);
+            z-index: -1;
+            animation: breathe 3s ease-in-out infinite;
+        }
+
+        @keyframes shine { to { background-position: 200% center; } }
+        @keyframes breathe { 
+            0%, 100% { opacity: 0.5; transform: translate(-50%, -50%) scale(0.9); }
+            50% { opacity: 1; transform: translate(-50%, -50%) scale(1.1); }
+        }
+
         #copy-toast { 
             position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0.5); 
             background: #2563eb; color: white; padding: 16px 32px; border-radius: 99px; 
             font-weight: 900; font-size: 14px; opacity: 0; pointer-events: none; 
             transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); z-index: 2000; 
-            box-shadow: 0 20px 40px rgba(37, 99, 235, 0.4); 
         }
         #copy-toast.show { opacity: 1; transform: translate(-50%, -50%) scale(1); }
+        .admin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-blur: 10px; z-index: 999; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
@@ -34,7 +64,7 @@
                 <div class="flex justify-between border-b pb-2"><span class="text-gray-400 text-[10px] font-bold uppercase">Visits</span><span id="visitCount" class="text-2xl font-black">0</span></div>
                 <div class="flex justify-between border-b pb-2"><span class="text-gray-400 text-[10px] font-bold uppercase">Items</span><span id="liveProducts" class="text-2xl font-black">0</span></div>
             </div>
-            <button onclick="copyEmail()" class="mt-6 w-full py-3 bg-gray-100 rounded-xl text-[10px] font-black uppercase text-gray-500">Copy Support Email</button>
+            <button onclick="copyEmail()" class="mt-6 w-full py-3 bg-gray-100 rounded-xl text-[10px] font-black uppercase text-gray-500">Copy Support</button>
             <button onclick="document.getElementById('adminPanel').style.display='none'" class="mt-2 w-full py-3 bg-black text-white rounded-xl text-[10px] font-black uppercase">Close</button>
         </div>
     </div>
@@ -42,29 +72,33 @@
     <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-gray-100 p-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                 onclick="handleLogoClick()" class="h-10 w-auto rounded-lg cursor-pointer active:scale-90 transition-transform">
+                 onclick="handleLogoClick()" class="h-10 w-auto rounded-lg active:scale-90 transition-transform">
             <div class="flex items-center space-x-2">
                 <button onclick="toggleLang()" class="border-2 border-black px-3 py-1.5 rounded-full text-[10px] font-black">EN/中</button>
-                <button onclick="copyEmail()" class="bg-blue-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase active:bg-black transition-all">
-                    Email
-                </button>
+                <button onclick="copyEmail()" class="bg-blue-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase active:bg-black">Email</button>
             </div>
         </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto px-6 py-16 text-center md:text-left">
-        <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] mb-6 uppercase">Smart Space <br><span class="hero-gradient italic">For Kids.</span></h1>
-        <p class="text-lg text-gray-400 font-bold">Focusing on <span id="typed" class="text-black"></span></p>
+    <header class="max-w-6xl mx-auto px-6 py-20 text-center md:text-left">
+        <div class="glow-wrapper">
+            <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-none mb-6 uppercase glow-text">
+                Smart Space
+            </h1>
+        </div>
+        <br>
+        <h1 class="text-5xl md:text-7xl font-black tracking-tighter italic text-gray-900 mb-8 opacity-90">For Kids.</h1>
+        <p class="text-xl text-gray-400 font-bold">Focusing on <span id="typed" class="text-black"></span></p>
     </header>
 
-    <main class="max-w-6xl mx-auto px-4 pb-12">
-        <div id="loading" class="text-center py-20 font-black text-gray-200 text-2xl animate-pulse">SYNCING...</div>
+    <main class="max-w-6xl mx-auto px-4 pb-24">
+        <div id="loading" class="text-center py-20 font-black text-gray-200 text-2xl animate-pulse">CONNECTING...</div>
         <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8"></div>
     </main>
 
     <footer class="py-12 border-t text-center bg-white">
-        <button onclick="copyEmail()" class="text-sm font-black text-blue-600 border-b-2 border-blue-100 mb-6">contact@vortexd.com</button>
-        <div class="text-[9px] text-gray-300 font-black uppercase tracking-[0.2em]">© 2026 VORTINT STUDIO</div>
+        <button onclick="copyEmail()" class="text-sm font-black text-blue-600 border-b-2 border-blue-100 mb-4">contact@vortexd.com</button>
+        <div class="text-[9px] text-gray-300 font-black uppercase tracking-widest">© 2026 VORTINT STUDIO</div>
     </footer>
 
     <script>
@@ -76,37 +110,14 @@
 
         function vib(ms) { if(navigator.vibrate) navigator.vibrate(ms); }
 
-        // 💡 真正的一键复制逻辑
         function copyEmail() {
             const email = "contact@vortexd.com";
-            vib([30, 50]); // 哒哒两声
-            
-            // 尝试现代复制 API
-            if (navigator.clipboard) {
-                navigator.clipboard.writeText(email).then(() => {
-                    showToast();
-                }).catch(() => {
-                    fallbackCopy(email);
-                });
-            } else {
-                fallbackCopy(email);
-            }
-        }
-
-        function fallbackCopy(text) {
-            const temp = document.createElement("input");
-            temp.value = text;
-            document.body.appendChild(temp);
-            temp.select();
-            document.execCommand("copy");
-            document.body.removeChild(temp);
-            showToast();
-        }
-
-        function showToast() {
-            const t = document.getElementById('copy-toast');
-            t.classList.add('show');
-            setTimeout(() => t.classList.remove('show'), 2000);
+            vib([30, 50]);
+            navigator.clipboard.writeText(email).then(() => {
+                const t = document.getElementById('copy-toast');
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 2000);
+            });
         }
 
         function handleLogoClick() {
@@ -145,7 +156,7 @@
                 <a href="${f.链接 || '#'}" target="_blank" onclick="vib(10)" class="bg-white rounded-[1.5rem] p-3 shadow-sm border border-gray-50 active:scale-95 transition-all text-left">
                     <img src="${img}" class="w-full aspect-square object-cover rounded-[1rem] mb-3">
                     <h3 class="text-xs font-black line-clamp-2 h-8 mb-2 leading-tight">${f.标题 || 'Item'}</h3>
-                    <span class="text-[8px] font-black uppercase text-blue-600">Shop →</span>
+                    <span class="text-[8px] font-black uppercase text-blue-600">Explore →</span>
                 </a>`;
             }).join('');
         }
