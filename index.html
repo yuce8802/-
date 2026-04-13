@@ -3,114 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VortinT | Smart Space</title>
+    <title>VortinT | Smart Space For Kids</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&family=Noto+Sans+SC:wght@900&display=swap');
         
-        body { margin: 0; padding: 0; background-color: #000; font-family: 'Inter', 'Noto Sans SC', sans-serif; overflow-x: hidden; }
-
-        /* 💡 品牌视频背景层 */
-        .video-container {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            z-index: -2; overflow: hidden;
-        }
-        .video-container video {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            min-width: 100%; min-height: 100%;
-            width: auto; height: auto;
-            object-fit: cover;
-            filter: brightness(0.85); /* 略微调暗，确保 3D 文字清晰 */
+        body { 
+            margin: 0; 
+            padding: 0; 
+            /* 💡 温馨配色：奶油色到浅肤色的微渐变 */
+            background: linear-gradient(135deg, #FFFDF9 0%, #F7F3ED 100%); 
+            font-family: 'Inter', 'Noto Sans SC', sans-serif; 
+            min-height: 100vh;
         }
 
-        /* 渐变遮罩层：让顶部和底部更好读 */
-        .overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 40%, rgba(0,0,0,0.6) 100%);
-            z-index: -1;
-        }
-
-        /* 蓝色 3D 立体发光字 */
+        /* 蓝色 3D 立体字 - 在浅色背景下做了阴影优化 */
         .glow-3d {
             color: #fff;
-            background: linear-gradient(180deg, #93c5fd 0%, #2563eb 100%);
+            background: linear-gradient(180deg, #60A5FA 0%, #2563EB 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             text-shadow: 
-                0 1px 0 #1d4ed8, 0 2px 0 #1e40af, 0 3px 0 #1e3a8a, 0 4px 0 #172554,
-                0 10px 30px rgba(37,99,235,0.7);
+                0 1px 0 #1D4ED8, 
+                0 2px 0 #1E40AF, 
+                0 3px 0 #1E3A8A, 
+                0 10px 20px rgba(37,99,235,0.2);
             display: inline-block;
             animation: float 4s ease-in-out infinite;
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-12px); }
+            50% { transform: translateY(-10px); }
         }
 
-        /* 玻璃质感产品卡片 */
-        .glass-card {
-            background: rgba(255, 255, 255, 0.12);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 2.5rem;
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
+        /* 温馨圆角卡片 */
+        .product-card {
+            background: #FFFFFF;
+            border-radius: 2rem;
+            border: 1px solid rgba(0,0,0,0.03);
+            box-shadow: 0 10px 30px rgba(183, 153, 123, 0.1); /* 采用棕色系阴影更温馨 */
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
         }
-        .glass-card:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-15px) scale(1.02);
-            border-color: rgba(37, 99, 235, 0.6);
-            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
+        .product-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 40px rgba(183, 153, 123, 0.15);
         }
 
         #toast {
-            position: fixed; top: 40px; left: 50%; transform: translateX(-50%);
-            background: #2563eb; color: white; padding: 12px 28px; border-radius: 50px;
-            font-weight: 900; opacity: 0; transition: 0.4s; z-index: 9999;
+            position: fixed; top: 30px; left: 50%; transform: translateX(-50%);
+            background: #2563EB; color: white; padding: 10px 24px; border-radius: 50px;
+            font-weight: 900; font-size: 12px; opacity: 0; transition: 0.3s; z-index: 9999;
         }
-        #toast.show { opacity: 1; transform: translateX(-50%) translateY(20px); }
+        #toast.show { opacity: 1; top: 50px; }
     </style>
 </head>
 <body>
 
     <div id="toast">EMAIL COPIED</div>
 
-    <div class="video-container">
-        <video autoplay muted loop playsinline>
-            <source src="https://res.cloudinary.com/dpr2pn5rs/video/upload/v1776062846/jimeng-2026-03-11-6328-_22A_logo_reveal_animation__starts_with_a_..._oxdwxx.mp4" type="video/mp4">
-        </video>
-    </div>
-    <div class="overlay"></div>
-
-    <nav class="sticky top-0 z-50 p-6 flex justify-between items-center">
-        <div class="bg-white/10 backdrop-blur-xl p-2 rounded-2xl border border-white/20">
-            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-10 rounded-lg">
-        </div>
-        <div class="flex space-x-3">
-            <button onclick="toggleLang()" class="bg-white/10 backdrop-blur-xl text-white border border-white/20 px-4 py-2 rounded-full font-black text-[10px] uppercase">EN/中</button>
-            <button onclick="copyEmail()" class="bg-blue-600 text-white px-5 py-2 rounded-full font-black text-[10px] uppercase shadow-xl">Email</button>
+    <nav class="sticky top-0 z-50 p-6 flex justify-between items-center bg-white/50 backdrop-blur-md">
+        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-10 rounded-xl shadow-sm">
+        <div class="flex space-x-2">
+            <button onclick="toggleLang()" class="bg-black/5 px-4 py-2 rounded-full font-black text-[10px] uppercase">EN/中</button>
+            <button onclick="copyEmail()" class="bg-blue-600 text-white px-5 py-2 rounded-full font-black text-[10px] uppercase shadow-lg shadow-blue-500/30">Email</button>
         </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto px-6 py-20 md:py-32 text-center md:text-left">
-        <h1 class="text-7xl md:text-9xl font-black uppercase glow-3d leading-none mb-6">Smart Space</h1>
-        <h1 class="text-4xl md:text-6xl font-black italic text-white/90 mb-12 drop-shadow-2xl">For Kids.</h1>
-        <div class="inline-block bg-black/40 backdrop-blur-lg border border-white/10 px-6 py-4 rounded-2xl">
-            <p class="text-xl md:text-2xl text-white font-bold tracking-tight">Focusing on <span id="typed" class="text-blue-400"></span></p>
-        </div>
+    <header class="max-w-6xl mx-auto px-6 py-20 text-center md:text-left">
+        <h1 class="text-7xl md:text-9xl font-black uppercase glow-3d leading-none mb-4">Smart Space</h1>
+        <h1 class="text-4xl md:text-6xl font-black italic text-gray-800 mb-8">For Kids.</h1>
+        <p class="text-xl md:text-2xl text-gray-400 font-bold">Focusing on <span id="typed" class="text-blue-600"></span></p>
     </header>
 
-    <main class="max-w-6xl mx-auto px-6 pb-40">
-        <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
-            <div id="loading" class="col-span-full text-center py-20 text-white/30 font-black text-xl animate-pulse uppercase tracking-widest">Loading Vika Data...</div>
+    <main class="max-w-6xl mx-auto px-6 pb-32">
+        <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
+            <div id="loading" class="col-span-full text-center py-20 text-gray-300 font-black animate-pulse">CONNECTING TO VIKA...</div>
         </div>
     </main>
 
-    <footer class="py-20 text-center bg-black/20 backdrop-blur-sm">
-        <button onclick="copyEmail()" class="text-white/40 font-black text-[10px] tracking-[0.2em] hover:text-white transition-all uppercase">contact@vortexd.com</button>
+    <footer class="py-20 text-center border-t border-gray-100">
+        <button onclick="copyEmail()" class="text-gray-300 font-black text-[10px] tracking-widest hover:text-blue-600 transition-colors uppercase">contact@vortexd.com</button>
     </footer>
 
     <script>
@@ -130,27 +104,22 @@
                     if(document.getElementById('loading')) document.getElementById('loading').remove();
                     renderUI();
                 }
-            } catch (e) {
-                console.error("Fetch Failed", e);
-            }
+            } catch (e) { console.error(e); }
         }
 
         function renderUI() {
             const grid = document.getElementById('product-grid');
             grid.innerHTML = allProducts.map(r => {
                 const f = r.fields;
-                // 智能图片抓取
                 let img = f['图片'] || "";
                 if (Array.isArray(img)) img = img[0].url;
                 img = img.replace("http://", "https://");
 
                 return `
-                <a href="${f['链接'] || '#'}" target="_blank" class="glass-card p-5 block group">
-                    <div class="overflow-hidden rounded-[1.8rem] mb-5">
-                        <img src="${img}" class="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/400x400?text=VortinT'">
-                    </div>
-                    <h3 class="text-white text-[11px] font-black line-clamp-2 h-10 mb-3 leading-tight opacity-90">${f['标题'] || 'Untitled'}</h3>
-                    <div class="text-blue-400 text-[9px] font-black uppercase tracking-[0.2em] group-hover:tracking-normal transition-all">Explore →</div>
+                <a href="${f['链接'] || '#'}" target="_blank" class="product-card p-4 block group">
+                    <img src="${img}" class="w-full aspect-square object-cover rounded-[1.5rem] mb-4 bg-gray-50" onerror="this.src='https://placehold.co/400x400?text=VortinT'">
+                    <h3 class="text-gray-900 text-[11px] font-black line-clamp-2 h-10 mb-2 leading-tight">${f['标题'] || 'Item'}</h3>
+                    <div class="text-blue-600 text-[9px] font-black uppercase tracking-widest">Explore →</div>
                 </a>`;
             }).join('');
         }
@@ -173,7 +142,7 @@
             fetchProducts();
             new Typed('#typed', { 
                 strings: currentLang === 'en' ? ['Plush Toy Storage.', 'Reading Spaces.', 'Tidy Habits.'] : ['毛绒玩具收纳.', '阅读空间打造.', '好习惯养成.'], 
-                typeSpeed: 60, loop: true, backDelay: 3000 
+                typeSpeed: 50, loop: true 
             });
         };
     </script>
