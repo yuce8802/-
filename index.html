@@ -8,7 +8,7 @@
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@500;900&display=swap');
-        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; }
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; color: #111; }
         .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
     </style>
 </head>
@@ -16,20 +16,35 @@
 
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 p-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
-            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-14 md:h-20 w-auto rounded-xl">
-            <button onclick="toggleLang()" id="langBtn" class="bg-black text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase hover:bg-blue-600 transition-all">EN / 中文</button>
+            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
+                 class="h-14 md:h-20 w-auto rounded-xl">
+            <div class="flex items-center space-x-6">
+                <a href="mailto:contact@vortexd.com" class="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 transition-colors">Contact</a>
+                <button onclick="toggleLang()" id="langBtn" class="bg-black text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase hover:bg-blue-600 transition-all">
+                    EN / 中文
+                </button>
+            </div>
         </div>
     </nav>
 
     <header class="max-w-6xl mx-auto px-6 py-20 text-center md:text-left">
-        <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9]">Smart Space <br><span class="hero-gradient italic">For Kids.</span></h1>
-        <p class="mt-8 text-xl text-gray-400 font-medium"><span id="sub-title-pre">专注于</span> <span id="typed" class="text-black font-extrabold border-b-4 border-blue-500/20"></span></p>
+        <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9]">
+            Smart Space <br><span class="hero-gradient italic">For Kids.</span>
+        </h1>
+        <p class="mt-8 text-xl text-gray-400 font-medium">
+            <span id="sub-title-pre">专注于</span> 
+            <span id="typed" class="text-black font-extrabold border-b-4 border-blue-500/20"></span>
+        </p>
     </header>
 
     <main class="max-w-6xl mx-auto px-6 pb-24">
         <div id="loading" class="text-center py-20 font-black text-gray-200 text-4xl animate-pulse">SYNCING...</div>
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
     </main>
+
+    <footer class="max-w-6xl mx-auto px-6 py-12 border-t border-gray-100 text-[10px] font-bold text-gray-400 tracking-[0.3em] uppercase text-center md:text-left">
+        © 2026 VORTINT STUDIO.
+    </footer>
 
     <script>
         let currentLang = 'en';
@@ -50,15 +65,26 @@
         }
 
         async function fetchProducts() {
-            const API_URL = "https://api.sheety.co/5ee78cd3a33f8c64df38dbf4c7a16338/products/products";
+            const VIKA_TOKEN = "usk6WsQlH4X6ST2hQRk4vAz"; 
+            const SHEET_ID = "dstUcVqARey53sJnMh"; 
+            const URL = `https://api.vika.cn/fusion/v1/datasheets/${SHEET_ID}/records`;
+
             try {
-                const response = await fetch(API_URL);
-                const data = await response.json();
-                allProducts = data.products || [];
-                document.getElementById('loading').style.display = 'none';
-                renderProducts();
+                const response = await fetch(URL, {
+                    headers: { 'Authorization': `Bearer ${VIKA_TOKEN}` }
+                });
+                const result = await response.json();
+                
+                if (result.success) {
+                    allProducts = result.data.records;
+                    document.getElementById('loading').style.display = 'none';
+                    renderProducts();
+                } else {
+                    throw new Error(result.message);
+                }
             } catch (e) {
-                document.getElementById('loading').innerText = "API ERROR";
+                document.getElementById('loading').innerText = "CONFIG ERROR";
+                console.error(e);
             }
         }
 
@@ -66,21 +92,23 @@
             const grid = document.getElementById('product-grid');
             document.getElementById('sub-title-pre').innerText = i18n[currentLang].pre;
             
-            grid.innerHTML = allProducts.map(p => {
-                // Sheety 会强制将列名转为小写。
-                // 确保你的表格第一行分别是：name, image, link
-                const name = p.name || "Product";
-                const image = p.image || "";
-                const link = p.link || "#";
+            grid.innerHTML = allProducts.map(r => {
+                const f = r.fields;
+                // 自动处理图片：支持附件或链接
+                const imgUrl = Array.isArray(f.图片) ? f.图片[0].url : (f.图片 || "");
+                const name = f.标题 || "Product";
+                const link = f.链接 || "#";
 
                 return `
                 <a href="${link}" target="_blank" class="group block bg-white border border-gray-100 rounded-[2.5rem] p-4 hover:shadow-2xl transition-all duration-500">
                     <div class="aspect-square overflow-hidden rounded-[2rem] bg-gray-50 mb-6">
-                        <img src="${image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <img src="${imgUrl}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="px-2 pb-2">
-                        <h3 class="text-2xl font-black text-gray-900 tracking-tight leading-tight mb-4">${name}</h3>
-                        <span class="text-[10px] font-black uppercase text-blue-600 border-b-2 border-blue-100">${i18n[currentLang].btn}</span>
+                        <h3 class="text-2xl font-black text-gray-900 tracking-tight leading-tight mb-4 text-left">${name}</h3>
+                        <span class="inline-block text-[10px] font-black uppercase tracking-widest text-blue-600 border-b-2 border-blue-100 group-hover:border-blue-600 transition-all">
+                            ${i18n[currentLang].btn}
+                        </span>
                     </div>
                 </a>`;
             }).join('');
