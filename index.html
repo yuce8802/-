@@ -8,56 +8,35 @@
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@900&display=swap');
-        
-        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FDFBF7; overflow-x: hidden; }
-        
-        /* 骨架屏动画 */
-        @keyframes shimmer { 0% { opacity: 0.5; } 50% { opacity: 1; } 100% { opacity: 0.5; } }
-        .skeleton { background: #eee; animation: shimmer 1.5s infinite; border-radius: 1.5rem; }
-
-        /* 3D 卡片与浮起动效 - 加入 GPU 加速属性 */
-        .product-card { 
-            background: white; border-radius: 2rem; padding: 1rem;
-            box-shadow: 0 10px 25px rgba(183, 153, 123, 0.1);
-            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
-            will-change: transform, opacity; transform-style: preserve-3d;
-            backface-visibility: hidden; /* 减少渲染压力 */
-        }
-
-        .product-card:hover {
-            transform: translateY(-20px) translateZ(150px) scale(1.05) !important;
-            box-shadow: 0 40px 80px rgba(183, 153, 123, 0.25);
-            z-index: 999 !important;
-        }
-
-        /* 统一容器样式 */
-        #product-grid { position: relative; transition: all 0.8s ease; transform-style: preserve-3d; min-height: 400px; }
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FDFBF7; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+        .glow-3d { color: #fff; background: linear-gradient(180deg, #93c5fd 0%, #2563eb 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; text-shadow: 0 1px 0 #1d4ed8, 0 8px 15px rgba(37,99,235,0.2); }
+        .product-card { background: white; border-radius: 2rem; padding: 1rem; box-shadow: 0 10px 25px rgba(183,153,123,0.1); transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1); will-change: transform; transform-style: preserve-3d; }
+        .product-card:hover { transform: translateY(-20px) translateZ(150px) scale(1.05) !important; box-shadow: 0 40px 80px rgba(183,153,123,0.25); z-index: 999 !important; }
+        #product-grid { position: relative; transition: all 0.8s ease; transform-style: preserve-3d; min-height: 500px; }
         .mode-stack { display: flex !important; flex-direction: column; align-items: center; perspective: 2000px; padding-top: 60px; }
-        .mode-stack .product-card { width: 85vw; max-width: 360px; margin-top: -140px; transform: rotateX(25deg) translateZ(calc(var(--idx) * 5px)); }
+        .mode-stack .product-card { width: 85vw; max-width: 360px; margin-top: -140px; transform: rotateX(25deg) translateZ(calc(var(--idx) * 8px)); }
         .mode-ring { display: block !important; height: 500px; perspective: 1200px; animation: rotateRing 25s linear infinite; }
-        .mode-ring .product-card { position: absolute; left: 50%; top: 50%; width: 160px; margin-left: -80px; margin-top: -80px; transform: rotateY(var(--ry)) translateZ(280px); }
+        .mode-ring .product-card { position: absolute; left: 50%; top: 50%; width: 160px; margin-left: -80px; margin-top: -80px; transform: rotateY(var(--ry)) translateZ(280px); backface-visibility: hidden; }
         @keyframes rotateRing { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
-
         .press-ring { position: absolute; inset: -4px; border: 4px solid #2563eb; border-radius: 16px; clip-path: inset(0 100% 0 0); transition: clip-path 0.8s linear; }
         .pressing .press-ring { clip-path: inset(0 0 0 0); }
-        
-        .glow-3d {
-            color: #fff;
-            background: linear-gradient(180deg, #93c5fd 0%, #2563eb 100%);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-shadow: 0 1px 0 #1d4ed8, 0 4px 10px rgba(37,99,235,.2);
-        }
+        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #2563eb; color: white; padding: 10px 24px; border-radius: 99px; font-weight: 900; opacity: 0; transition: 0.3s; z-index: 2000; }
+        #toast.show { opacity: 1; top: 40px; }
+        .skeleton { background: #eee; animation: shimmer 1.5s infinite; border-radius: 2rem; }
+        @keyframes shimmer { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
     </style>
 </head>
 <body>
+
+    <div id="toast">MODE SWITCHED</div>
 
     <nav class="sticky top-0 z-50 bg-white/60 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-orange-50">
         <div id="logoWrapper" class="relative">
             <div class="press-ring"></div>
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                 class="h-10 rounded-lg cursor-pointer active:scale-90 transition-transform">
+                 onclick="handleLogoClick()" class="h-10 rounded-lg cursor-pointer active:scale-90 transition-transform select-none">
         </div>
-        <button onclick="copyEmail()" class="bg-blue-600 text-white px-5 py-2 rounded-full font-black text-[10px] uppercase shadow-lg">Contact</button>
+        <button onclick="toggleLang()" class="bg-black/5 px-4 py-2 rounded-full font-black text-[10px]">EN/中</button>
     </nav>
 
     <header class="max-w-6xl mx-auto px-6 py-12 text-center md:text-left">
@@ -66,11 +45,9 @@
     </header>
 
     <main class="max-w-7xl mx-auto px-4">
-        <section class="max-w-4xl mx-auto mb-16 bg-white rounded-[2.5rem] border border-orange-50 overflow-hidden shadow-xl p-2">
+        <section class="max-w-4xl mx-auto mb-16 bg-white rounded-[2.5rem] border border-orange-50 shadow-xl p-2 overflow-hidden">
             <div class="aspect-video w-full rounded-[1.8rem] overflow-hidden bg-gray-50 relative">
-                <video id="brandVideo" class="w-full h-full object-cover" autoplay muted loop playsinline controls>
-                    <source id="videoSource" src="" type="video/mp4">
-                </video>
+                <video id="brandVideo" class="w-full h-full object-cover" autoplay muted loop playsinline controls></video>
             </div>
         </section>
 
@@ -82,26 +59,37 @@
     <script>
         const VIKA_TOKEN = "usk6WsQlH4X6ST2hQRk4vAz"; 
         const SHEET_ID = "dstUcVqARey53sJnMh";
-        const DEFAULT_VIDEO = "https://res.cloudinary.com/dpr2pn5rs/video/upload/v1776075209/4%E6%9C%8813%E6%97%A5_1_iiorev.mp4";
-        
-        let allProducts = [];
-        let viewMode = 0;
+        // 原始高清地址
+        const HIGH_RES_URL = "https://res.cloudinary.com/dpr2pn5rs/video/upload/v1776075209/4%E6%9C%8813%E6%97%A5_1_iiorev.mp4";
+        // 💡 自动生成的低画质地址（Cloudinary 实时转码：压缩率调高，分辨率调低）
+        const LOW_RES_URL = HIGH_RES_URL.replace("/upload/", "/upload/c_scale,w_480,q_auto:low,br_500k/");
 
-        // 💡 提速策略：先打字，再异步拿数据
-        new Typed('#typed', { 
-            strings: ['Toy Storage Magic.', 'Habit Building.', 'Space Aesthetic.'], 
-            typeSpeed: 40, loop: true 
-        });
+        let allProducts = []; let viewMode = 0; let currentLang = localStorage.getItem('vortint_lang') || 'en';
+
+        // 视频渐进式加载逻辑
+        function loadVideoProgressively() {
+            const v = document.getElementById('brandVideo');
+            v.src = LOW_RES_URL; // 1. 先加载极小的预览版
+            
+            v.onplaying = () => {
+                // 2. 当低画质跑起来后，静默创建新 Video 对象加载高清版
+                const highResVideo = new Array(); 
+                const preload = document.createElement('video');
+                preload.src = HIGH_RES_URL;
+                preload.oncanplaythrough = () => {
+                    // 3. 高清下载完了，无缝替换
+                    const currentTime = v.currentTime;
+                    v.src = HIGH_RES_URL;
+                    v.currentTime = currentTime;
+                    v.play();
+                    console.log("High-res video swapped.");
+                    v.onplaying = null; // 防止重复触发
+                };
+            };
+        }
 
         async function init() {
-            // 1. 延时加载视频（不阻塞首屏渲染）
-            setTimeout(() => {
-                const v = document.getElementById('brandVideo');
-                document.getElementById('videoSource').src = DEFAULT_VIDEO;
-                v.load();
-            }, 500);
-
-            // 2. 获取 Vika 数据
+            loadVideoProgressively();
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${SHEET_ID}/records`, {
                     headers: { 'Authorization': `Bearer ${VIKA_TOKEN}` }
@@ -109,30 +97,59 @@
                 const data = await res.json();
                 if (data.success) {
                     allProducts = data.data.records;
-                    renderUI();
+                    updateContent();
                 }
-            } catch (e) { console.error("Loading Error", e); }
+            } catch (e) { console.error(e); }
         }
+
+        // --- 以下保留原有 3D 切换、长按、双语、连击等所有功能 ---
+        const logo = document.getElementById('logoWrapper');
+        let pressTimer;
+        logo.onmousedown = logo.ontouchstart = () => {
+            logo.classList.add('pressing');
+            pressTimer = setTimeout(() => {
+                viewMode = (viewMode + 1) % 3;
+                renderUI();
+                logo.classList.remove('pressing');
+                showToast(["GRID", "STACK", "RING"][viewMode] + " MODE");
+            }, 800);
+        };
+        logo.onmouseup = logo.ontouchend = () => { clearTimeout(pressTimer); logo.classList.remove('pressing'); };
 
         function renderUI() {
             const grid = document.getElementById('product-grid');
+            grid.className = viewMode === 0 ? "grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10" : 
+                             viewMode === 1 ? "mode-stack" : "mode-ring";
             grid.innerHTML = allProducts.map((r, i) => {
                 const f = r.fields;
                 let img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || "");
-                img = img.replace("http://", "https://");
-                const angle = (360 / allProducts.length) * i;
-                
-                return `
-                <div class="product-card" style="--idx: ${i}; --ry: ${angle}deg; z-index: ${i};">
-                    <img src="${img}" class="w-full aspect-square object-cover rounded-[1.5rem] mb-4">
-                    <h3 class="text-[11px] font-black line-clamp-2 h-10 mb-2 text-gray-800">${f['标题'] || 'VortinT Item'}</h3>
-                    <a href="${f['链接'] || '#'}" target="_blank" class="text-[9px] font-black text-blue-600 uppercase">Explore →</a>
+                return `<div class="product-card" style="--idx: ${i}; --ry: ${(360/allProducts.length)*i}deg; z-index: ${i};">
+                    <img src="${img.replace("http://", "https://")}" class="w-full aspect-square object-cover rounded-[1.5rem] mb-4">
+                    <h3 class="text-[11px] font-black line-clamp-2 h-10 mb-2">${f['标题'] || 'Item'}</h3>
+                    <a href="${f['链接'] || '#'}" target="_blank" class="text-[9px] font-black text-blue-600">EXPLORE →</a>
                 </div>`;
             }).join('');
         }
 
-        function copyEmail() {
-            navigator.clipboard.writeText("contact@vortexd.com").then(() => alert("Email Copied!"));
+        function updateContent() {
+            const isEn = currentLang === 'en';
+            new Typed('#typed', { 
+                strings: isEn ? ['Toy Storage.', 'Habit Building.'] : ['玩具收纳.', '习惯养成.'], 
+                typeSpeed: 50, loop: true 
+            });
+            renderUI();
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            localStorage.setItem('vortint_lang', currentLang);
+            location.reload(); 
+        }
+
+        function showToast(msg) {
+            const t = document.getElementById('toast');
+            t.innerText = msg; t.classList.add('show');
+            setTimeout(() => t.classList.remove('show'), 1500);
         }
 
         window.onload = init;
