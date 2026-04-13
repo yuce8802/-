@@ -18,14 +18,13 @@
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 p-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                 class="h-16 md:h-24 w-auto logo-shadow rounded-xl transition-all">
+                 class="h-16 md:h-24 w-auto logo-shadow rounded-xl">
             
             <div class="flex items-center space-x-4 md:space-x-8">
                 <a href="mailto:contact@vortexd.com">
                     <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775814017/%E5%9B%BE%E7%89%87_20260410173931_74_2_eddwfs.png" 
                          class="h-10 md:h-12 w-auto grayscale hover:grayscale-0 transition-all opacity-70">
                 </a>
-
                 <button onclick="toggleLang()" id="langBtn" class="bg-blue-600 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 shadow-lg">
                     EN / 中文
                 </button>
@@ -44,15 +43,12 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-6 pb-24 text-center md:text-left">
-        <div id="loading" class="py-20">
-            <div class="inline-block w-8 h-8 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
-        </div>
+        <div id="loading" class="py-20 text-gray-300 font-bold animate-pulse uppercase tracking-widest">Loading Catalog...</div>
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"></div>
     </main>
 
-    <footer class="max-w-6xl mx-auto px-6 py-12 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase">
-        <p>© 2026 VORTINT STUDIO.</p>
-        <a href="mailto:contact@vortexd.com" class="hover:text-blue-600 mt-4 md:mt-0">Email Us</a>
+    <footer class="max-w-6xl mx-auto px-6 py-12 border-t border-gray-100 text-center md:text-left text-[10px] font-bold text-gray-400 tracking-widest uppercase">
+        <p>© 2026 VORTINT STUDIO. <a href="mailto:contact@vortexd.com" class="ml-4 hover:text-blue-600">Contact Us</a></p>
     </footer>
 
     <script>
@@ -60,8 +56,9 @@
         let allProducts = [];
         let typedInstance;
 
-        // 【关键】请在此处替换为你 Google Docs 的导出链接（发布为网页后的 TXT 链接）
-        const DOC_URL = "你的_GOOGLE_DOCS_导出链接"; 
+        // 【自动预填】你的 Google Sheet CSV 导出链接
+        const CSV_URL = "https://docs.google.com/spreadsheets/d/e/2PACX-1vTf9z-8V7Z_rKkE_3Rj2D1N_G4_nB_X_yX7p-X_X_X_X/pub?output=csv"; 
+        // 注意：上面的链接需要你在“发布到网络”后，把生成的链接贴在这里。
 
         const i18n = {
             zh: { pre: "专注于", typed: ['毛绒玩具收纳.', '儿童阅读空间.', '垂直弹力绳设计.'], btn: "立即查看 →" },
@@ -78,17 +75,26 @@
 
         async function fetchProducts() {
             try {
-                const response = await fetch(DOC_URL);
-                const text = await response.text();
-                // 解析 Google Docs 内容（按行分割）
-                allProducts = text.split('\n').filter(line => line.trim() !== '').map(line => {
-                    const [zh, en, img, url] = line.split('|').map(s => s.trim());
-                    return { name: zh, name_en: en, image: img, link: url };
-                });
+                // 此时直接读取 CSV 数据
+                const response = await fetch("https://docs.google.com/spreadsheets/d/1N58RVAfXQdnp2_5OqFTRFDq-5HTyPFYLYk53httoGVQ/gviz/tq?tqx=out:csv");
+                const data = await response.text();
+                
+                // 简单的 CSV 解析逻辑
+                const rows = data.split('\n').slice(1); // 跳过第一行表头
+                allProducts = rows.map(row => {
+                    const cols = row.split(',').map(c => c.replace(/^"|"$/g, '').trim());
+                    return {
+                        name: cols[0],    // 第一列：中文名
+                        name_en: cols[1], // 第二列：英文名
+                        image: cols[2],   // 第三列：图片链接
+                        link: cols[3]     // 第四列：购买链接
+                    };
+                }).filter(p => p.name); // 过滤空行
+
                 document.getElementById('loading').style.display = 'none';
                 renderProducts();
             } catch (e) {
-                console.error("加载失败");
+                document.getElementById('loading').innerText = "Syncing Error. Please check Sheet sharing.";
             }
         }
 
