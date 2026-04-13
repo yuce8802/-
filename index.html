@@ -3,69 +3,129 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortinT | Furniture</title>
+    <title>VortinT | Smart Storage for Kids</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&family=Noto+Sans+SC:wght@900&display=swap');
-        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@500;900&display=swap');
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; color: #111; }
         .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .card-blur { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
     </style>
 </head>
 <body>
 
-    <nav class="p-6 max-w-6xl mx-auto flex justify-between items-center">
-        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-12 w-auto">
-        <a href="mailto:contact@vortexd.com" class="text-xs font-bold tracking-widest text-gray-400 uppercase">Contact Us</a>
+    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 p-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
+                 class="h-14 md:h-20 w-auto rounded-xl shadow-sm">
+            <div class="flex items-center space-x-6">
+                <a href="mailto:contact@vortexd.com" class="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 transition-colors">Contact</a>
+                <button onclick="toggleLang()" id="langBtn" class="bg-black text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-tighter hover:bg-blue-600 transition-all">
+                    EN / 中文
+                </button>
+            </div>
+        </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto px-6 py-16">
-        <h1 class="text-6xl font-black tracking-tighter leading-none">Smart Space <br><span class="hero-gradient italic">For Kids.</span></h1>
+    <header class="max-w-6xl mx-auto px-6 py-20">
+        <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9]">
+            Smart Space <br><span class="hero-gradient italic">For Kids.</span>
+        </h1>
+        <p class="mt-8 text-xl text-gray-400 font-medium">
+            <span id="sub-title-pre">专注于</span> 
+            <span id="typed" class="text-black font-extrabold border-b-4 border-blue-500/20"></span>
+        </p>
     </header>
 
     <main class="max-w-6xl mx-auto px-6 pb-24">
-        <div id="loading" class="text-gray-300 font-bold animate-pulse">LOADING...</div>
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-3 gap-12"></div>
+        <div id="loading" class="text-center py-20 font-black text-gray-200 text-4xl animate-pulse">SYNCING DATA...</div>
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
     </main>
 
+    <footer class="max-w-6xl mx-auto px-6 py-12 border-t border-gray-100 text-[10px] font-bold text-gray-400 tracking-[0.3em] uppercase">
+        © 2026 VORTINT STUDIO.
+    </footer>
+
     <script>
+        let currentLang = 'en';
+        let allProducts = [];
+        let typedInstance;
+
+        const i18n = {
+            zh: { pre: "专注于", typed: ['毛绒玩具收纳.', '儿童阅读空间.', '垂直弹力绳设计.'], btn: "立即购买 →" },
+            en: { pre: "Focusing on", typed: ['Plush Toy Storage.', 'Reading Spaces.', 'Vertical Elastic Cords.'], btn: "Shop Now →" }
+        };
+
+        function initTyped() {
+            if (typedInstance) typedInstance.destroy();
+            typedInstance = new Typed('#typed', {
+                strings: i18n[currentLang].typed,
+                typeSpeed: 50, backSpeed: 30, loop: true
+            });
+        }
+
         async function fetchProducts() {
-            // 这是你的表格 ID
             const SHEET_ID = "1N58RVAfXQdnp2_5OqFTRFDq-5HTyPFYLYk53httoGVQ";
+            // 使用可视化查询接口，这是读取表格数据最稳的方法
             const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
 
             try {
                 const response = await fetch(URL);
                 const text = await response.text();
-                const rows = text.split('\n').slice(1); 
+                
+                // 强大的 CSV 解析逻辑：处理双引号、换行符和逗号
+                const rows = text.split('\n');
+                allProducts = rows.map(row => {
+                    const matches = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
+                    if (!matches || matches.length < 2) return null;
+                    const clean = (v) => v.replace(/^"|"$/g, '').trim();
+                    return {
+                        name: clean(matches[0]),
+                        image: clean(matches[1]),
+                        link: clean(matches[2] || '#')
+                    };
+                }).filter(p => p && p.image.startsWith('http'));
 
-                const grid = document.getElementById('product-grid');
-                grid.innerHTML = rows.map(row => {
-                    // 适配你截图的列：A(0)是名字, B(1)是图片, C(2)是链接
-                    const cols = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                    if (!cols || cols.length < 2) return '';
-
-                    const clean = (val) => val.replace(/^"|"$/g, '').trim();
-                    const name = clean(cols[0]);
-                    const img = clean(cols[1]);
-                    const link = clean(cols[2] || '#');
-
-                    if (!img.startsWith('http')) return '';
-
-                    return `
-                    <a href="${link}" target="_blank" class="group bg-white rounded-[2rem] p-4 shadow-sm hover:shadow-xl transition-all block">
-                        <div class="aspect-square overflow-hidden rounded-[1.5rem] bg-gray-50 mb-6">
-                            <img src="${img}" class="w-full h-full object-cover group-hover:scale-105 transition-transform">
-                        </div>
-                        <h3 class="text-xl font-black text-gray-900 px-2">${name}</h3>
-                        <p class="mt-4 text-blue-600 font-bold text-[10px] uppercase tracking-widest px-2">Shop Now →</p>
-                    </a>`;
-                }).join('');
                 document.getElementById('loading').style.display = 'none';
+                renderProducts();
             } catch (e) {
-                document.getElementById('loading').innerText = "Error loading data.";
+                document.getElementById('loading').innerText = "DATA ERROR: CHECK PERMISSIONS";
             }
         }
-        window.onload = fetchProducts;
+
+        function renderProducts() {
+            const grid = document.getElementById('product-grid');
+            document.getElementById('sub-title-pre').innerText = i18n[currentLang].pre;
+            
+            grid.innerHTML = allProducts.map(p => `
+                <a href="${p.link}" target="_blank" class="group block bg-white border border-gray-100 rounded-[2.5rem] p-4 hover:shadow-2xl transition-all duration-500">
+                    <div class="aspect-square overflow-hidden rounded-[2rem] bg-gray-50 mb-6">
+                        <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <div class="px-2 pb-2">
+                        <h3 class="text-2xl font-black text-gray-900 tracking-tight leading-tight mb-4">${p.name}</h3>
+                        <span class="inline-block text-[10px] font-black uppercase tracking-widest text-blue-600 border-b-2 border-blue-100 group-hover:border-blue-600 transition-all">
+                            ${i18n[currentLang].btn}
+                        </span>
+                    </div>
+                </a>
+            `).join('');
+        }
+
+        function toggleLang() {
+            currentLang = currentLang === 'en' ? 'zh' : 'en';
+            renderProducts();
+            initTyped();
+            localStorage.setItem('vortint_lang', currentLang);
+        }
+
+        window.onload = () => {
+            const savedLang = localStorage.getItem('vortint_lang');
+            if (savedLang) currentLang = savedLang;
+            initTyped();
+            fetchProducts();
+        };
     </script>
 </body>
 </html>
