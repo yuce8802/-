@@ -9,13 +9,9 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@900&display=swap');
         
-        body { 
-            font-family: 'Inter', 'Noto Sans SC', sans-serif; 
-            background-color: #FDFBF7; 
-            -webkit-tap-highlight-color: transparent; 
-            overflow-x: hidden; 
-        }
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FDFBF7; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
         
+        /* 蓝色 3D 字 */
         .glow-3d {
             color: #fff;
             background: linear-gradient(180deg, #93c5fd 0%, #2563eb 100%);
@@ -24,81 +20,69 @@
             text-shadow: 0 1px 0 #1d4ed8, 0 2px 0 #1e40af, 0 3px 0 #1e3a8a, 0 4px 0 #172554, 0 10px 20px rgba(37,99,235,.2);
         }
 
-        /* 💡 统一卡片样式 */
+        /* 💡 核心：修正浮起 Bug 的卡片逻辑 */
         .product-card { 
-            position: relative;
-            background: white;
-            border-radius: 2rem;
-            padding: 1rem;
+            background: white; border-radius: 2rem; padding: 1rem;
             box-shadow: 0 10px 25px rgba(183, 153, 123, 0.1);
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            will-change: transform, opacity, box-shadow;
-            cursor: pointer;
-        }
-
-        /* 💡 修复浮起 Bug：使用 translateZ 确保在 3D 空间置顶 */
-        .product-card:hover {
-            transform: translateY(-20px) translateZ(100px) scale(1.05) !important;
-            box-shadow: 0 40px 70px rgba(183, 153, 123, 0.25);
-            z-index: 100 !important;
-        }
-
-        /* 💡 容器容器状态 */
-        #product-grid { 
-            position: relative; 
-            transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1); 
+            will-change: transform, box-shadow;
             transform-style: preserve-3d;
-            min-height: 500px;
         }
 
-        /* 模式 1: 堆叠 (重构逻辑) */
-        .mode-stack { 
-            display: flex !important; 
-            flex-direction: column; 
-            align-items: center; 
-            perspective: 2000px;
-            padding-top: 100px;
-        }
-        .mode-stack .product-card { 
-            width: 80vw; 
-            max-width: 360px; 
-            margin-top: -140px; /* 紧凑堆叠 */
-            transform: rotateX(30deg) translateZ(calc(var(--idx) * 10px)); 
+        /* 强制置顶浮起：解决在 3D 模式下穿模的 Bug */
+        .product-card:hover {
+            transform: translateY(-20px) translateZ(120px) scale(1.05) !important;
+            box-shadow: 0 40px 80px rgba(183, 153, 123, 0.25);
+            z-index: 999 !important;
         }
 
-        /* 模式 2: 3D 环形 */
-        .mode-ring { 
-            display: block !important; 
-            height: 600px; 
-            perspective: 1500px; 
-            animation: rotateRing 30s linear infinite; 
-        }
+        /* 容器状态 */
+        #product-grid { position: relative; transition: all 0.8s ease; transform-style: preserve-3d; min-height: 500px; }
+
+        /* 模式 1: 堆叠 */
+        .mode-stack { display: flex !important; flex-direction: column; align-items: center; perspective: 2000px; padding-top: 80px; }
+        .mode-stack .product-card { width: 85vw; max-width: 360px; margin-top: -140px; transform: rotateX(25deg) translateZ(calc(var(--idx) * 5px)); }
+
+        /* 模式 2: 环形 */
+        .mode-ring { display: block !important; height: 550px; perspective: 1200px; animation: rotateRing 25s linear infinite; }
         .mode-ring .product-card { 
-            position: absolute; left: 50%; top: 50%; 
-            width: 160px; margin-left: -80px; margin-top: -100px; 
-            transform: rotateY(var(--ry)) translateZ(300px);
+            position: absolute; left: 50%; top: 50%; width: 160px; margin-left: -80px; margin-top: -80px; 
+            transform: rotateY(var(--ry)) translateZ(280px);
             backface-visibility: hidden;
         }
         @keyframes rotateRing { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
-        .mode-ring:active { animation-play-state: paused; }
 
         /* Logo 进度条 */
         .press-ring { position: absolute; inset: -4px; border: 4px solid #2563eb; border-radius: 16px; clip-path: inset(0 100% 0 0); transition: clip-path 0.8s linear; }
         .pressing .press-ring { clip-path: inset(0 0 0 0); }
 
-        #toast { position: fixed; bottom: 10%; left: 50%; transform: translateX(-50%); background: #2563eb; color: white; padding: 12px 24px; border-radius: 99px; font-weight: 900; opacity: 0; transition: 0.3s; z-index: 2000; }
-        #toast.show { opacity: 1; bottom: 15%; }
+        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #2563eb; color: white; padding: 10px 24px; border-radius: 99px; font-weight: 900; opacity: 0; transition: 0.3s; z-index: 2000; }
+        #toast.show { opacity: 1; top: 40px; }
+
+        /* 后台面板 */
+        .admin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
-    <div id="toast">GRID MODE</div>
+    <div id="toast">MODE SWITCHED</div>
 
-    <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-orange-50">
-        <div id="logoWrapper" class="relative group">
+    <div id="adminPanel" class="admin-modal" onclick="this.style.display='none'">
+        <div class="bg-white p-8 rounded-[2.5rem] w-64 shadow-2xl" onclick="event.stopPropagation()">
+            <h2 class="text-xs font-black uppercase text-blue-600 mb-4">Dashboard</h2>
+            <div class="space-y-3">
+                <div class="flex justify-between border-b pb-1"><span class="text-gray-400 text-[10px]">VISITS</span><span id="vCount" class="font-black">0</span></div>
+                <div class="flex justify-between border-b pb-1"><span class="text-gray-400 text-[10px]">ITEMS</span><span id="pCount" class="font-black">0</span></div>
+            </div>
+            <button onclick="localStorage.clear(); location.reload();" class="mt-4 w-full py-2 bg-red-50 text-[10px] text-red-500 rounded-lg font-bold">Clear Cache</button>
+        </div>
+    </div>
+
+    <nav class="sticky top-0 z-50 bg-white/60 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-orange-50">
+        <div id="logoWrapper" class="relative">
             <div class="press-ring"></div>
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                 class="h-10 w-auto rounded-lg cursor-pointer select-none transition-transform active:scale-95">
+                 onclick="handleLogoClick()" class="h-10 rounded-lg cursor-pointer select-none transition-transform active:scale-90">
         </div>
         <div class="flex space-x-2">
             <button onclick="toggleLang()" class="bg-black/5 px-4 py-2 rounded-full font-black text-[10px] uppercase">EN/中</button>
@@ -106,51 +90,50 @@
         </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto px-6 py-20 text-center md:text-left">
+    <header class="max-w-6xl mx-auto px-6 py-16 text-center md:text-left">
         <h1 class="text-7xl md:text-9xl font-black uppercase glow-3d leading-none">Smart Space</h1>
         <h1 id="tagline" class="text-4xl md:text-7xl font-black italic text-gray-800 mt-2">For Kids.</h1>
         <p class="text-lg text-gray-400 font-bold mt-4">Focusing on <span id="typed" class="text-blue-600"></span></p>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4">
+    <main class="max-w-7xl mx-auto px-4 overflow-visible">
         <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
-            <div id="loading" class="col-span-full text-center py-20 font-black text-gray-300 animate-pulse uppercase tracking-widest">Warming Up...</div>
+            <div id="loading" class="col-span-full text-center py-20 font-black text-gray-300 animate-pulse uppercase tracking-widest">Loading...</div>
         </div>
     </main>
 
     <footer class="py-24 text-center">
-        <button onclick="copyEmail()" class="text-xs font-black text-gray-300 tracking-[0.3em] hover:text-blue-600 transition-colors uppercase">contact@vortexd.com</button>
+        <button onclick="copyEmail()" class="text-xs font-black text-gray-300 tracking-[0.2em] hover:text-blue-600 transition-colors uppercase">contact@vortexd.com</button>
     </footer>
 
     <script>
         const VIKA_TOKEN = "usk6WsQlH4X6ST2hQRk4vAz"; 
         const SHEET_ID = "dstUcVqARey53sJnMh";
-        
-        let viewMode = 0; // 0: Grid, 1: Stack, 2: Ring
-        let currentLang = localStorage.getItem('vortint_lang') || 'en';
-        let allProducts = [];
-        let pressTimer;
+        let viewMode = 0; let currentLang = localStorage.getItem('vortint_lang') || 'en';
+        let allProducts = []; let pressTimer; let logoClicks = 0;
 
-        // 💡 交互：长按切换
+        // 💡 交互逻辑：长按切换模式
         const logo = document.getElementById('logoWrapper');
-        const startPress = (e) => {
-            e.preventDefault();
+        const startPress = () => {
             logo.classList.add('pressing');
             pressTimer = setTimeout(() => {
                 viewMode = (viewMode + 1) % 3;
                 if(navigator.vibrate) navigator.vibrate(50);
                 renderUI();
-                const modes = ["GRID", "STACK", "RING"];
-                showToast(modes[viewMode] + " MODE");
                 logo.classList.remove('pressing');
+                showToast(["GRID", "STACK", "RING"][viewMode] + " MODE");
             }, 800);
         };
         const endPress = () => { clearTimeout(pressTimer); logo.classList.remove('pressing'); };
+        logo.onmousedown = startPress; logo.ontouchstart = startPress;
+        logo.onmouseup = endPress; logo.ontouchend = endPress;
 
-        logo.addEventListener('mousedown', startPress);
-        logo.addEventListener('touchstart', startPress);
-        logo.addEventListener('mouseup', endPress);
-        logo.addEventListener('touchend', endPress);
+        // 💡 连击 5 次进后台
+        function handleLogoClick() {
+            logoClicks++;
+            if(logoClicks === 5) { document.getElementById('adminPanel').style.display = 'flex'; logoClicks = 0; }
+            setTimeout(() => logoClicks = 0, 3000);
+        }
 
         async function fetchProducts() {
             try {
@@ -161,36 +144,30 @@
                 if (res.success) {
                     allProducts = res.data.records;
                     updateContent();
+                    document.getElementById('pCount').innerText = allProducts.length;
+                    document.getElementById('vCount').innerText = (parseInt(localStorage.getItem('v_count') || 0) + 1);
+                    localStorage.setItem('v_count', document.getElementById('vCount').innerText);
                 }
             } catch (e) { console.error(e); }
         }
 
         function renderUI() {
             const grid = document.getElementById('product-grid');
-            if (allProducts.length === 0) return;
-
-            // 切换 class
             grid.className = viewMode === 0 ? "grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10" : 
                              viewMode === 1 ? "mode-stack" : "mode-ring";
 
-            const count = allProducts.length;
             grid.innerHTML = allProducts.map((r, i) => {
                 const f = r.fields;
-                let img = f['图片'];
+                let img = f['图片'] || "";
                 if (Array.isArray(img)) img = img[0].url;
                 img = img.replace("http://", "https://");
+                const angle = (360 / allProducts.length) * i;
                 
-                // 💡 关键变量：--idx 用于堆叠间距，--ry 用于环形旋转
-                const angle = (360 / count) * i;
-                const cardStyle = `style="--idx: ${i}; --ry: ${angle}deg; z-index: ${i};"`;
-
                 return `
-                <div class="product-card group" ${cardStyle}>
-                    <div class="overflow-hidden rounded-[1.5rem] mb-4">
-                        <img src="${img}" class="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://placehold.co/400x400?text=VortinT'">
-                    </div>
+                <div class="product-card" style="--idx: ${i}; --ry: ${angle}deg; z-index: ${i};">
+                    <img src="${img}" class="w-full aspect-square object-cover rounded-[1.5rem] mb-4 pointer-events-none" onerror="this.src='https://placehold.co/400x400?text=VortinT'">
                     <h3 class="text-[11px] font-black line-clamp-2 h-10 mb-2 leading-tight text-gray-800">${f['标题'] || 'Product'}</h3>
-                    <a href="${f['链接'] || '#'}" target="_blank" class="text-[9px] font-black text-blue-600 uppercase tracking-widest">Explore →</a>
+                    <a href="${f['链接'] || '#'}" target="_blank" class="text-[9px] font-black text-blue-600 uppercase">Explore →</a>
                 </div>`;
             }).join('');
         }
@@ -199,7 +176,7 @@
             const isEn = currentLang === 'en';
             document.getElementById('tagline').innerText = isEn ? "For Kids." : "为了孩子.";
             new Typed('#typed', { 
-                strings: isEn ? ['Toy Storage.', 'Reading Spaces.', 'Tidy Habits.'] : ['玩具收纳.', '儿童阅读空间.', '好习惯养成.'], 
+                strings: isEn ? ['Toy Storage.', 'Reading Spaces.', 'Tidy Habits.'] : ['玩具收纳.', '阅读空间打造.', '习惯养成.'], 
                 typeSpeed: 50, loop: true, destroy: true
             });
             renderUI();
@@ -211,16 +188,14 @@
             location.reload(); 
         }
 
+        function copyEmail() {
+            navigator.clipboard.writeText("contact@vortexd.com").then(() => showToast("EMAIL COPIED"));
+        }
+
         function showToast(msg) {
             const t = document.getElementById('toast');
             t.innerText = msg; t.classList.add('show');
             setTimeout(() => t.classList.remove('show'), 1500);
-        }
-
-        function copyEmail() {
-            navigator.clipboard.writeText("contact@vortexd.com").then(() => {
-                showToast("EMAIL COPIED");
-            });
         }
 
         window.onload = fetchProducts;
