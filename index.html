@@ -10,7 +10,7 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@500;900&display=swap');
         body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; }
         .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .logo-shadow { filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05)); }
+        .logo-shadow { filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.08)); }
     </style>
 </head>
 <body>
@@ -18,18 +18,22 @@
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 p-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                 class="h-16 md:h-24 w-auto logo-shadow rounded-lg transition-all duration-300">
+                 class="h-16 md:h-24 w-auto logo-shadow rounded-xl transition-all">
             
-            <div class="flex items-center space-x-6">
-                <button onclick="toggleLang()" id="langBtn" class="bg-blue-600 text-white px-4 py-2 rounded-full text-xs font-black uppercase tracking-widest hover:bg-blue-700 transition-all shadow-lg shadow-blue-200">
+            <div class="flex items-center space-x-4 md:space-x-8">
+                <a href="mailto:contact@vortexd.com">
+                    <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775814017/%E5%9B%BE%E7%89%87_20260410173931_74_2_eddwfs.png" 
+                         class="h-10 md:h-12 w-auto grayscale hover:grayscale-0 transition-all opacity-70">
+                </a>
+
+                <button onclick="toggleLang()" id="langBtn" class="bg-blue-600 text-white px-5 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-blue-700 shadow-lg">
                     EN / 中文
                 </button>
-                <a href="https://ncn9cn4hfp6k.feishu.cn/base/RjAGbIVhKaRI0usUsGnc9lwPnBg" target="_blank" class="hidden md:block text-[10px] font-bold text-gray-400 uppercase tracking-[0.2em] hover:text-blue-600">Admin</a>
             </div>
         </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto px-6 py-24 text-center md:text-left">
+    <header class="max-w-6xl mx-auto px-6 py-20 text-center md:text-left">
         <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9]">
             Smart Space <br><span class="hero-gradient italic">For Kids.</span>
         </h1>
@@ -39,104 +43,81 @@
         </p>
     </header>
 
-    <main class="max-w-6xl mx-auto px-6 pb-32">
-        <div id="loading" class="text-center py-24">
-            <div class="inline-block w-10 h-10 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
-            <p class="mt-4 text-gray-400 font-black tracking-widest text-xs uppercase">Connecting Bitable...</p>
+    <main class="max-w-6xl mx-auto px-6 pb-24 text-center md:text-left">
+        <div id="loading" class="py-20">
+            <div class="inline-block w-8 h-8 border-4 border-blue-100 border-t-blue-600 rounded-full animate-spin"></div>
         </div>
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"></div>
     </main>
 
+    <footer class="max-w-6xl mx-auto px-6 py-12 border-t border-gray-100 flex flex-col md:flex-row justify-between items-center text-[10px] font-bold text-gray-400 tracking-[0.2em] uppercase">
+        <p>© 2026 VORTINT STUDIO.</p>
+        <a href="mailto:contact@vortexd.com" class="hover:text-blue-600 mt-4 md:mt-0">Email Us</a>
+    </footer>
+
     <script>
-        let currentLang = 'en'; // 默认英文
+        let currentLang = 'en';
         let allProducts = [];
-        const API_URL = "/api/get-products"; 
         let typedInstance;
 
-        // 多语言文案配置
+        // 【关键】请在此处替换为你 Google Docs 的导出链接（发布为网页后的 TXT 链接）
+        const DOC_URL = "你的_GOOGLE_DOCS_导出链接"; 
+
         const i18n = {
-            zh: {
-                pre: "专注于",
-                typed: ['毛绒玩具收纳.', '儿童阅读空间.', '垂直弹力绳设计.'],
-                btn: "立即查看 →",
-                loading: "同步飞书数据中...",
-                empty: "暂无产品"
-            },
-            en: {
-                pre: "Focusing on",
-                typed: ['Plush Toy Storage.', 'Reading Spaces.', 'Vertical Elastic Cords.'],
-                btn: "Shop Now →",
-                loading: "Syncing Catalog...",
-                empty: "No items found."
-            }
+            zh: { pre: "专注于", typed: ['毛绒玩具收纳.', '儿童阅读空间.', '垂直弹力绳设计.'], btn: "立即查看 →" },
+            en: { pre: "Focusing on", typed: ['Plush Toy Storage.', 'Reading Spaces.', 'Vertical Elastic Cords.'], btn: "Shop Now →" }
         };
 
-        // 初始化打字机效果
         function initTyped() {
             if (typedInstance) typedInstance.destroy();
             typedInstance = new Typed('#typed', {
                 strings: i18n[currentLang].typed,
-                typeSpeed: 50,
-                backSpeed: 30,
-                loop: true
+                typeSpeed: 50, backSpeed: 30, loop: true
             });
         }
 
-        // 获取飞书数据
         async function fetchProducts() {
             try {
-                const response = await fetch(API_URL);
-                allProducts = await response.json();
+                const response = await fetch(DOC_URL);
+                const text = await response.text();
+                // 解析 Google Docs 内容（按行分割）
+                allProducts = text.split('\n').filter(line => line.trim() !== '').map(line => {
+                    const [zh, en, img, url] = line.split('|').map(s => s.trim());
+                    return { name: zh, name_en: en, image: img, link: url };
+                });
                 document.getElementById('loading').style.display = 'none';
                 renderProducts();
             } catch (e) {
-                document.getElementById('loading').innerHTML = `<p class="text-red-400 font-bold uppercase">Connection Failed</p>`;
+                console.error("加载失败");
             }
         }
 
-        // 渲染产品卡片
         function renderProducts() {
             const grid = document.getElementById('product-grid');
             document.getElementById('sub-title-pre').innerText = i18n[currentLang].pre;
             
-            if (allProducts.length === 0) {
-                grid.innerHTML = `<p class="col-span-full text-center text-gray-300 font-bold">${i18n[currentLang].empty}</p>`;
-                return;
-            }
-
-            grid.innerHTML = allProducts.map(item => {
-                const p = item.fields;
-                // 支持飞书附件图片或直接链接
-                const imgUrl = Array.isArray(p.image) ? p.image[0].url : p.image;
-                // 中英文名称逻辑：如果有 name_en 且当前是英文模式，则显示英文
+            grid.innerHTML = allProducts.map(p => {
                 const displayName = (currentLang === 'en' && p.name_en) ? p.name_en : p.name;
-                
                 return `
                 <a href="${p.link || '#'}" target="_blank" class="group bg-white rounded-[3rem] p-5 shadow-sm hover:shadow-2xl transition-all duration-500 block">
                     <div class="aspect-[4/5] overflow-hidden rounded-[2.2rem] bg-gray-50 mb-8">
-                        <img src="${imgUrl}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
+                        <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="px-4 pb-4">
-                        <h3 class="text-2xl font-black text-gray-900 tracking-tight leading-tight">${displayName || 'New Collection'}</h3>
-                        <div class="mt-6 flex items-center text-blue-600 font-black text-xs uppercase tracking-widest">
-                            <span class="border-b-2 border-blue-100 group-hover:border-blue-600 transition-all">${i18n[currentLang].btn}</span>
-                        </div>
+                        <h3 class="text-2xl font-black text-gray-900 tracking-tight leading-tight">${displayName}</h3>
+                        <p class="mt-6 text-blue-600 font-black text-[10px] uppercase tracking-widest border-b-2 border-blue-100 inline-block group-hover:border-blue-600 transition-all">${i18n[currentLang].btn}</p>
                     </div>
-                </a>
-                `;
+                </a>`;
             }).join('');
         }
 
-        // 切换语言
         function toggleLang() {
             currentLang = currentLang === 'en' ? 'zh' : 'en';
             renderProducts();
             initTyped();
-            // 保存用户偏好
             localStorage.setItem('vortint_lang', currentLang);
         }
 
-        // 启动
         window.onload = () => {
             const savedLang = localStorage.getItem('vortint_lang');
             if (savedLang) currentLang = savedLang;
