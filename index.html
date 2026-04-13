@@ -7,44 +7,87 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <script>
-        // 🆘 手机端报错捕获器：如果有错，直接弹窗
+        // 保留报错捕获，直到你确认手机完全正常
         window.onerror = function(msg, url, line) {
-            alert("Error: " + msg + "\nLine: " + line);
+            alert("Detected: " + msg + "\nLine: " + line);
             return false;
         };
     </script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&display=swap');
-        body { font-family: 'Inter', sans-serif; background-color: #FAFAFA; -webkit-tap-highlight-color: transparent; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@900&display=swap');
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; -webkit-tap-highlight-color: transparent; }
         .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .admin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.85); backdrop-blur: 10px; z-index: 999; align-items: center; justify-content: center; }
+        /* 增加平滑入场 */
+        .card-appear { animation: fadeInUp 0.6s ease forwards; opacity: 0; }
+        @keyframes fadeInUp {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
     </style>
 </head>
 <body>
 
-    <nav class="p-4 bg-white shadow-sm flex justify-between items-center sticky top-0 z-50">
-        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-8 w-auto rounded">
-        <button onclick="toggleLang()" class="text-[10px] font-black border-2 border-black px-3 py-1 rounded-full uppercase">EN/ZH</button>
-    </nav>
-
-    <div class="px-6 py-12 text-center">
-        <h1 class="text-4xl font-black tracking-tighter mb-4 uppercase">Smart Space <br><span class="hero-gradient italic">For Kids.</span></h1>
-        <p id="typed-box" class="text-gray-400 font-bold text-sm">Focusing on <span id="typed" class="text-black"></span></p>
+    <div id="adminPanel" class="admin-modal" onclick="this.style.display='none'">
+        <div class="bg-white p-8 rounded-[2.5rem] max-w-xs w-full mx-auto shadow-2xl" onclick="event.stopPropagation()">
+            <h2 class="text-[10px] font-black uppercase tracking-widest text-blue-600 mb-6 italic">Internal Status</h2>
+            <div class="space-y-4">
+                <div class="flex justify-between border-b pb-2"><span class="text-gray-400 text-[10px] font-bold uppercase">Visits</span><span id="visitCount" class="text-2xl font-black">0</span></div>
+                <div class="flex justify-between border-b pb-2"><span class="text-gray-400 text-[10px] font-bold uppercase">Items</span><span id="liveProducts" class="text-2xl font-black">0</span></div>
+            </div>
+            <button onclick="document.getElementById('adminPanel').style.display='none'" class="mt-6 w-full py-3 bg-black text-white rounded-xl text-[10px] font-black uppercase tracking-widest">Close</button>
+        </div>
     </div>
 
-    <main class="px-4 pb-20">
-        <div id="loading" class="text-center py-10 text-gray-300 font-black animate-pulse">CONNECTING...</div>
-        <div id="product-grid" class="grid grid-cols-1 gap-6"></div>
+    <nav class="sticky top-0 z-50 bg-white/70 backdrop-blur-md border-b border-gray-100 p-4">
+        <div class="max-w-6xl mx-auto flex justify-between items-center">
+            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
+                 onclick="handleLogoClick()" class="h-10 w-auto rounded-lg cursor-pointer active:scale-90 transition-transform">
+            <div class="flex space-x-2">
+                <button onclick="toggleLang()" class="border-2 border-black px-4 py-1.5 rounded-full text-[10px] font-black uppercase tracking-tighter">EN / 中文</button>
+            </div>
+        </div>
+    </nav>
+
+    <header class="max-w-6xl mx-auto px-6 py-16 text-center md:text-left">
+        <h1 class="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] mb-6 uppercase">Smart Space <br><span class="hero-gradient italic">For Kids.</span></h1>
+        <p class="text-lg text-gray-400 font-bold">
+            <span id="sub-title-pre">Focusing on</span> <span id="typed" class="text-black border-b-2 border-blue-500/20"></span>
+        </p>
+    </header>
+
+    <main class="max-w-6xl mx-auto px-4 pb-24">
+        <div id="loading" class="text-center py-20 font-black text-gray-200 text-2xl animate-pulse tracking-widest">SYNCING DATA...</div>
+        <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-8">
+            </div>
     </main>
 
     <script>
         const VIKA_TOKEN = "usk6WsQlH4X6ST2hQRk4vAz"; 
         const SHEET_ID = "dstUcVqARey53sJnMh";
         let currentLang = localStorage.getItem('vortint_lang') || 'en';
+        let allProducts = [];
+        let clickCount = 0;
 
         const i18n = {
-            zh: { typed: ['毛绒玩具收纳.', '儿童阅读空间.'], btn: "立即购买" },
-            en: { typed: ['Plush Toy Storage.', 'Reading Spaces.'], btn: "Shop Now" }
+            zh: { pre: "专注于", typed: ['毛绒玩具收纳.', '儿童阅读空间.', '垂直弹力绳设计.'], btn: "立即购买 →" },
+            en: { pre: "Focusing on", typed: ['Plush Toy Storage.', 'Reading Spaces.', 'Vertical Elastic Cords.'], btn: "Shop Now →" }
         };
+
+        function vib(ms) { if(navigator.vibrate) navigator.vibrate(ms); }
+
+        function handleLogoClick() {
+            vib(15);
+            clickCount++;
+            if (clickCount === 5) {
+                vib([50, 100, 50]);
+                document.getElementById('visitCount').innerText = localStorage.getItem('vortint_visits');
+                document.getElementById('liveProducts').innerText = allProducts.length;
+                document.getElementById('adminPanel').style.display = 'flex';
+                clickCount = 0;
+            }
+            setTimeout(() => clickCount = 0, 3000);
+        }
 
         async function fetchProducts() {
             try {
@@ -53,37 +96,45 @@
                 });
                 const result = await response.json();
                 if (result.success) {
-                    renderUI(result.data.records);
-                } else {
-                    alert("API Error: " + result.message);
+                    allProducts = result.data.records;
+                    document.getElementById('loading').style.display = 'none';
+                    renderUI();
                 }
-            } catch (e) {
-                alert("Network Fail: 无法连接维格表 API");
-            }
+            } catch (e) { alert("Network Connection Failed"); }
         }
 
-        function renderUI(records) {
-            document.getElementById('loading').style.display = 'none';
+        function renderUI() {
+            document.getElementById('sub-title-pre').innerText = i18n[currentLang].pre;
             const grid = document.getElementById('product-grid');
-            grid.innerHTML = records.map(r => {
+            grid.innerHTML = allProducts.map((r, i) => {
                 const f = r.fields;
                 const img = Array.isArray(f.图片) ? f.图片[0].url : (f.图片 || "");
+                const safeImg = img.replace("http://", "https://");
                 return `
-                <div class="bg-white rounded-3xl p-4 shadow-sm border border-gray-100">
-                    <img src="${img.replace('http://', 'https://')}" class="w-full aspect-square object-cover rounded-2xl mb-4">
-                    <h3 class="font-black text-lg mb-2">${f.标题 || 'Item'}</h3>
-                    <a href="${f.链接 || '#'}" class="text-blue-600 font-black text-xs uppercase">${i18n[currentLang].btn} →</a>
-                </div>`;
+                <a href="${f.链接 || '#'}" target="_blank" onclick="vib(10)"
+                   class="card-appear block bg-white rounded-[1.5rem] md:rounded-[2.5rem] p-3 md:p-5 shadow-sm border border-gray-50 active:scale-95 transition-all"
+                   style="animation-delay: ${i * 0.1}s">
+                    <div class="aspect-square overflow-hidden rounded-[1rem] md:rounded-[2rem] bg-gray-50 mb-3 md:mb-6">
+                        <img src="${safeImg}" class="w-full h-full object-cover">
+                    </div>
+                    <div class="px-1">
+                        <h3 class="text-sm md:text-xl font-black text-gray-900 mb-2 md:mb-4 line-clamp-2 leading-tight">${f.标题 || 'Item'}</h3>
+                        <span class="text-[8px] md:text-[10px] font-black uppercase text-blue-600 border-b border-blue-100">${i18n[currentLang].btn}</span>
+                    </div>
+                </a>`;
             }).join('');
         }
 
         function toggleLang() {
+            vib(20);
             currentLang = currentLang === 'en' ? 'zh' : 'en';
             localStorage.setItem('vortint_lang', currentLang);
-            location.reload(); // 手机端最稳妥的刷新方式
+            location.reload(); 
         }
 
         window.onload = () => {
+            let v = parseInt(localStorage.getItem('vortint_visits') || '0');
+            localStorage.setItem('vortint_visits', ++v);
             new Typed('#typed', { strings: i18n[currentLang].typed, typeSpeed: 50, loop: true });
             fetchProducts();
         };
