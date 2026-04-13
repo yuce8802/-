@@ -11,28 +11,28 @@
         
         body { margin: 0; padding: 0; background-color: #000; font-family: 'Inter', 'Noto Sans SC', sans-serif; overflow-x: hidden; }
 
-        /* 💡 视频背景容器 */
-        .video-background {
+        /* 💡 品牌视频背景层 */
+        .video-container {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
             z-index: -2; overflow: hidden;
         }
-        .video-background video {
+        .video-container video {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             min-width: 100%; min-height: 100%;
             width: auto; height: auto;
             object-fit: cover;
-            filter: brightness(0.8); /* 稍微调暗，保护视力，突出文字 */
+            filter: brightness(0.85); /* 略微调暗，确保 3D 文字清晰 */
         }
 
-        /* 蒙层：让视频和文字融合更好 */
+        /* 渐变遮罩层：让顶部和底部更好读 */
         .overlay {
             position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.1), rgba(0,0,0,0.5));
+            background: linear-gradient(to bottom, rgba(0,0,0,0.4) 0%, transparent 40%, rgba(0,0,0,0.6) 100%);
             z-index: -1;
         }
 
-        /* 蓝色 3D 立体字 */
+        /* 蓝色 3D 立体发光字 */
         .glow-3d {
             color: #fff;
             background: linear-gradient(180deg, #93c5fd 0%, #2563eb 100%);
@@ -40,76 +40,77 @@
             -webkit-text-fill-color: transparent;
             text-shadow: 
                 0 1px 0 #1d4ed8, 0 2px 0 #1e40af, 0 3px 0 #1e3a8a, 0 4px 0 #172554,
-                0 10px 30px rgba(37,99,235,0.6);
+                0 10px 30px rgba(37,99,235,0.7);
             display: inline-block;
             animation: float 4s ease-in-out infinite;
         }
 
         @keyframes float {
             0%, 100% { transform: translateY(0); }
-            50% { transform: translateY(-10px); }
+            50% { transform: translateY(-12px); }
         }
 
-        /* 毛玻璃产品卡片 */
+        /* 玻璃质感产品卡片 */
         .glass-card {
-            background: rgba(255, 255, 255, 0.15);
-            backdrop-filter: blur(15px);
-            -webkit-backdrop-filter: blur(15px);
+            background: rgba(255, 255, 255, 0.12);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
             border: 1px solid rgba(255, 255, 255, 0.2);
-            border-radius: 2rem;
-            transition: all 0.4s ease;
+            border-radius: 2.5rem;
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1);
         }
         .glass-card:hover {
-            background: rgba(255, 255, 255, 0.25);
-            transform: translateY(-10px);
-            border-color: rgba(37, 99, 235, 0.5);
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-15px) scale(1.02);
+            border-color: rgba(37, 99, 235, 0.6);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.3);
         }
 
         #toast {
-            position: fixed; top: 20px; left: 50%; transform: translateX(-50%);
-            background: #2563eb; color: white; padding: 12px 24px; border-radius: 50px;
-            font-weight: 900; opacity: 0; transition: 0.3s; z-index: 9999;
+            position: fixed; top: 40px; left: 50%; transform: translateX(-50%);
+            background: #2563eb; color: white; padding: 12px 28px; border-radius: 50px;
+            font-weight: 900; opacity: 0; transition: 0.4s; z-index: 9999;
         }
-        #toast.show { opacity: 1; top: 40px; }
+        #toast.show { opacity: 1; transform: translateX(-50%) translateY(20px); }
     </style>
 </head>
 <body>
 
-    <div id="toast">已复制邮箱</div>
+    <div id="toast">EMAIL COPIED</div>
 
-    <div class="video-background">
+    <div class="video-container">
         <video autoplay muted loop playsinline>
-            <source src="https://res.cloudinary.com/dpr2pn5rs/video/upload/v1773384760/samples/sea-turtle.mp4" type="video/mp4">
+            <source src="https://res.cloudinary.com/dpr2pn5rs/video/upload/v1776062846/jimeng-2026-03-11-6328-_22A_logo_reveal_animation__starts_with_a_..._oxdwxx.mp4" type="video/mp4">
         </video>
     </div>
     <div class="overlay"></div>
 
-    <nav class="sticky top-0 z-50 p-6 flex justify-between items-center bg-transparent">
-        <div class="bg-white/20 backdrop-blur-md p-2 rounded-xl border border-white/30">
+    <nav class="sticky top-0 z-50 p-6 flex justify-between items-center">
+        <div class="bg-white/10 backdrop-blur-xl p-2 rounded-2xl border border-white/20">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-10 rounded-lg">
         </div>
         <div class="flex space-x-3">
-            <button onclick="toggleLang()" class="bg-white/10 backdrop-blur-md text-white border border-white/30 px-4 py-2 rounded-full font-black text-[10px] uppercase">EN/中</button>
-            <button onclick="copyEmail()" class="bg-blue-600 text-white px-5 py-2 rounded-full font-black text-[10px] uppercase shadow-lg shadow-blue-500/50">Email</button>
+            <button onclick="toggleLang()" class="bg-white/10 backdrop-blur-xl text-white border border-white/20 px-4 py-2 rounded-full font-black text-[10px] uppercase">EN/中</button>
+            <button onclick="copyEmail()" class="bg-blue-600 text-white px-5 py-2 rounded-full font-black text-[10px] uppercase shadow-xl">Email</button>
         </div>
     </nav>
 
     <header class="max-w-6xl mx-auto px-6 py-20 md:py-32 text-center md:text-left">
-        <h1 class="text-7xl md:text-9xl font-black uppercase glow-3d leading-none mb-4">Smart Space</h1>
-        <h1 class="text-4xl md:text-6xl font-black italic text-white/90 mb-10">For Kids.</h1>
-        <div class="inline-block bg-black/30 backdrop-blur-md border border-white/20 px-6 py-3 rounded-2xl">
-            <p class="text-xl md:text-2xl text-white font-bold">Focusing on <span id="typed" class="text-blue-400"></span></p>
+        <h1 class="text-7xl md:text-9xl font-black uppercase glow-3d leading-none mb-6">Smart Space</h1>
+        <h1 class="text-4xl md:text-6xl font-black italic text-white/90 mb-12 drop-shadow-2xl">For Kids.</h1>
+        <div class="inline-block bg-black/40 backdrop-blur-lg border border-white/10 px-6 py-4 rounded-2xl">
+            <p class="text-xl md:text-2xl text-white font-bold tracking-tight">Focusing on <span id="typed" class="text-blue-400"></span></p>
         </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-6 pb-32">
-        <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
-            <div id="loading" class="col-span-full text-center py-20 text-white/50 font-black animate-pulse">正在连接数据源...</div>
+    <main class="max-w-6xl mx-auto px-6 pb-40">
+        <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-8 md:gap-12">
+            <div id="loading" class="col-span-full text-center py-20 text-white/30 font-black text-xl animate-pulse uppercase tracking-widest">Loading Vika Data...</div>
         </div>
     </main>
 
-    <footer class="py-20 text-center">
-        <button onclick="copyEmail()" class="text-white/40 font-black text-xs hover:text-white transition-colors">CONTACT@VORTEXD.COM</button>
+    <footer class="py-20 text-center bg-black/20 backdrop-blur-sm">
+        <button onclick="copyEmail()" class="text-white/40 font-black text-[10px] tracking-[0.2em] hover:text-white transition-all uppercase">contact@vortexd.com</button>
     </footer>
 
     <script>
@@ -126,11 +127,11 @@
                 const res = await response.json();
                 if (res.success) {
                     allProducts = res.data.records;
-                    document.getElementById('loading').remove();
+                    if(document.getElementById('loading')) document.getElementById('loading').remove();
                     renderUI();
                 }
             } catch (e) {
-                console.error("加载失败", e);
+                console.error("Fetch Failed", e);
             }
         }
 
@@ -138,16 +139,18 @@
             const grid = document.getElementById('product-grid');
             grid.innerHTML = allProducts.map(r => {
                 const f = r.fields;
-                // 自动识别图片，不论是附件还是纯链接
+                // 智能图片抓取
                 let img = f['图片'] || "";
                 if (Array.isArray(img)) img = img[0].url;
                 img = img.replace("http://", "https://");
 
                 return `
-                <a href="${f['链接'] || '#'}" target="_blank" class="glass-card p-4 block group transition-all">
-                    <img src="${img}" class="w-full aspect-square object-cover rounded-[1.5rem] mb-4 shadow-2xl" onerror="this.src='https://placehold.co/400x400?text=VortinT'">
-                    <h3 class="text-white text-sm font-black line-clamp-2 h-10 mb-2">${f['标题'] || '未命名商品'}</h3>
-                    <div class="text-blue-400 text-[10px] font-black uppercase tracking-widest group-hover:pl-2 transition-all">Explore →</div>
+                <a href="${f['链接'] || '#'}" target="_blank" class="glass-card p-5 block group">
+                    <div class="overflow-hidden rounded-[1.8rem] mb-5">
+                        <img src="${img}" class="w-full aspect-square object-cover transition-transform duration-700 group-hover:scale-110" onerror="this.src='https://placehold.co/400x400?text=VortinT'">
+                    </div>
+                    <h3 class="text-white text-[11px] font-black line-clamp-2 h-10 mb-3 leading-tight opacity-90">${f['标题'] || 'Untitled'}</h3>
+                    <div class="text-blue-400 text-[9px] font-black uppercase tracking-[0.2em] group-hover:tracking-normal transition-all">Explore →</div>
                 </a>`;
             }).join('');
         }
@@ -170,7 +173,7 @@
             fetchProducts();
             new Typed('#typed', { 
                 strings: currentLang === 'en' ? ['Plush Toy Storage.', 'Reading Spaces.', 'Tidy Habits.'] : ['毛绒玩具收纳.', '阅读空间打造.', '好习惯养成.'], 
-                typeSpeed: 50, loop: true, backDelay: 2000 
+                typeSpeed: 60, loop: true, backDelay: 3000 
             });
         };
     </script>
