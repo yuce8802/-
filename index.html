@@ -10,7 +10,6 @@
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@500;900&display=swap');
         body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; color: #111; }
         .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .card-blur { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
     </style>
 </head>
 <body>
@@ -21,7 +20,7 @@
                  class="h-14 md:h-20 w-auto rounded-xl shadow-sm">
             <div class="flex items-center space-x-6">
                 <a href="mailto:contact@vortexd.com" class="text-[10px] font-black uppercase tracking-widest text-gray-400 hover:text-blue-600 transition-colors">Contact</a>
-                <button onclick="toggleLang()" id="langBtn" class="bg-black text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase tracking-tighter hover:bg-blue-600 transition-all">
+                <button onclick="toggleLang()" id="langBtn" class="bg-black text-white px-4 py-2 rounded-full text-[10px] font-bold uppercase hover:bg-blue-600 transition-all">
                     EN / 中文
                 </button>
             </div>
@@ -39,11 +38,11 @@
     </header>
 
     <main class="max-w-6xl mx-auto px-6 pb-24">
-        <div id="loading" class="text-center py-20 font-black text-gray-200 text-4xl animate-pulse">SYNCING DATA...</div>
+        <div id="loading" class="text-center py-20 font-black text-gray-200 text-4xl animate-pulse">SYNCING...</div>
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
     </main>
 
-    <footer class="max-w-6xl mx-auto px-6 py-12 border-t border-gray-100 text-[10px] font-bold text-gray-400 tracking-[0.3em] uppercase">
+    <footer class="max-w-6xl mx-auto px-6 py-12 border-t border-gray-100 text-[10px] font-bold text-gray-400 tracking-[0.3em] uppercase text-center md:text-left">
         © 2026 VORTINT STUDIO.
     </footer>
 
@@ -66,31 +65,20 @@
         }
 
         async function fetchProducts() {
-            const SHEET_ID = "1N58RVAfXQdnp2_5OqFTRFDq-5HTyPFYLYk53httoGVQ";
-            // 使用可视化查询接口，这是读取表格数据最稳的方法
-            const URL = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:csv`;
+            // 直接读取你的 Sheety API
+            const API_URL = "https://api.sheety.co/5ee78cd3a33f8c64df38dbf4c7a16338/products/products";
 
             try {
-                const response = await fetch(URL);
-                const text = await response.text();
+                const response = await fetch(API_URL);
+                const data = await response.json();
                 
-                // 强大的 CSV 解析逻辑：处理双引号、换行符和逗号
-                const rows = text.split('\n');
-                allProducts = rows.map(row => {
-                    const matches = row.match(/(".*?"|[^",\s]+)(?=\s*,|\s*$)/g);
-                    if (!matches || matches.length < 2) return null;
-                    const clean = (v) => v.replace(/^"|"$/g, '').trim();
-                    return {
-                        name: clean(matches[0]),
-                        image: clean(matches[1]),
-                        link: clean(matches[2] || '#')
-                    };
-                }).filter(p => p && p.image.startsWith('http'));
+                // Sheety 返回的对象结构是 { products: [...] }
+                allProducts = data.products;
 
                 document.getElementById('loading').style.display = 'none';
                 renderProducts();
             } catch (e) {
-                document.getElementById('loading').innerText = "DATA ERROR: CHECK PERMISSIONS";
+                document.getElementById('loading').innerText = "API ERROR: CHECK SHEETY";
             }
         }
 
@@ -99,7 +87,7 @@
             document.getElementById('sub-title-pre').innerText = i18n[currentLang].pre;
             
             grid.innerHTML = allProducts.map(p => `
-                <a href="${p.link}" target="_blank" class="group block bg-white border border-gray-100 rounded-[2.5rem] p-4 hover:shadow-2xl transition-all duration-500">
+                <a href="${p.link || '#'}" target="_blank" class="group block bg-white border border-gray-100 rounded-[2.5rem] p-4 hover:shadow-2xl transition-all duration-500">
                     <div class="aspect-square overflow-hidden rounded-[2rem] bg-gray-50 mb-6">
                         <img src="${p.image}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
