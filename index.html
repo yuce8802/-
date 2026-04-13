@@ -3,15 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortinT | Smart Space</title>
+    <title>VortinT | Smart Storage for Kids</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@900&family=Noto+Sans+SC:wght@900&display=swap');
-        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@900&display=swap');
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; color: #111; }
         .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        /* 让你的 Logo 更有高级感的微调 */
-        .logo-shadow { filter: drop-shadow(0 4px 6px rgba(0, 0, 0, 0.05)); }
     </style>
 </head>
 <body>
@@ -19,26 +17,36 @@
     <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 p-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                 alt="VortinT Logo" 
-                 class="h-12 md:h-16 w-auto rounded-xl logo-shadow hover:scale-105 transition-transform duration-300">
+                 class="h-12 md:h-16 w-auto rounded-xl shadow-sm">
             
             <div class="flex items-center space-x-6">
-                <span class="text-[10px] font-black uppercase tracking-[0.2em] text-gray-400">Official Brand Store</span>
+                <a href="mailto:contact@vortexd.com" class="bg-blue-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all">
+                    Contact Us
+                </a>
             </div>
         </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto px-6 py-20">
+    <header class="max-w-6xl mx-auto px-6 py-20 text-center md:text-left">
         <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9]">
             Smart Space <br><span class="hero-gradient italic">For Kids.</span>
         </h1>
-        <div class="mt-8 text-xl text-gray-400 font-bold">Focusing on <span id="typed" class="text-black border-b-4 border-blue-500/20"></span></div>
+        <div class="mt-8 text-xl text-gray-400 font-bold">
+            Focusing on <span id="typed" class="text-black border-b-4 border-blue-500/20"></span>
+        </div>
     </header>
 
     <main class="max-w-6xl mx-auto px-6 pb-24">
-        <div id="loading" class="text-center py-20 font-black text-gray-200 text-4xl animate-pulse">SYNCING...</div>
+        <div id="loading" class="text-center py-20 font-black text-gray-200 text-4xl animate-pulse">SYNCING DATA...</div>
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
     </main>
+
+    <footer class="max-w-6xl mx-auto px-6 py-12 border-t border-gray-100 text-center">
+        <div class="text-[10px] font-black text-gray-400 tracking-[0.3em] uppercase mb-4">© 2026 VORTINT STUDIO</div>
+        <a href="mailto:contact@vortexd.com" class="text-sm font-bold text-blue-600 hover:text-black transition-colors">
+            contact@vortexd.com
+        </a>
+    </footer>
 
     <script>
         const VIKA_TOKEN = "usk6WsQlH4X6ST2hQRk4vAz"; 
@@ -54,14 +62,17 @@
                     const grid = document.getElementById('product-grid');
                     grid.innerHTML = result.data.records.map(r => {
                         const f = r.fields;
+                        // 适配文本链接
                         const img = String(f.图片 || "").trim();
                         return `
-                        <a href="${f.链接 || '#'}" target="_blank" class="group bg-white rounded-[2.5rem] p-5 shadow-sm hover:shadow-2xl transition-all duration-500 border border-gray-100 block">
+                        <a href="${f.链接 || '#'}" target="_blank" class="group block bg-white border border-gray-100 rounded-[2.5rem] p-4 hover:shadow-2xl transition-all duration-500">
                             <div class="aspect-square overflow-hidden rounded-[2rem] bg-gray-50 mb-6">
-                                <img src="${img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/400?text=Image+Error'">
+                                <img src="${img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700" onerror="this.src='https://via.placeholder.com/400?text=VortinT+Furniture'">
                             </div>
-                            <h3 class="text-2xl font-black text-gray-900 px-2 leading-tight mb-4">${f.标题 || 'New Arrival'}</h3>
-                            <div class="px-2 text-blue-600 font-black text-[10px] uppercase tracking-widest">Shop Now →</div>
+                            <div class="px-2 pb-2 text-left">
+                                <h3 class="text-2xl font-black text-gray-900 mb-4">${f.标题 || 'New Arrival'}</h3>
+                                <span class="text-[10px] font-black uppercase text-blue-600 border-b-2 border-blue-100">Shop Now →</span>
+                            </div>
                         </a>`;
                     }).join('');
                     document.getElementById('loading').style.display = 'none';
