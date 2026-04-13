@@ -8,82 +8,103 @@
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@900&display=swap');
-        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; }
+        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FAFAFA; overflow-x: hidden; }
         .hero-gradient { background: linear-gradient(to r, #2563eb, #6366f1); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
-        .admin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-blur: lg; z-index: 100; align-items: center; justify-content: center; }
+        .fade-v { transition: opacity 0.5s ease, transform 0.8s cubic-bezier(0.16, 1, 0.3, 1); opacity: 0; transform: translateY(30px); }
+        .fade-v.show { opacity: 1; transform: translateY(0); }
+        .admin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-blur: 15px; z-index: 100; align-items: center; justify-content: center; }
+        .btn-hover { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
+        .btn-hover:hover { transform: scale(1.05); }
     </style>
 </head>
 <body>
 
     <div id="adminPanel" class="admin-modal" onclick="this.style.display='none'">
         <div class="bg-white p-10 rounded-[3rem] max-w-sm w-full mx-4 shadow-2xl" onclick="event.stopPropagation()">
-            <h2 class="text-xs font-black uppercase tracking-[0.3em] text-blue-600 mb-6 italic">Admin Dashboard</h2>
+            <h2 class="text-[10px] font-black uppercase tracking-[0.3em] text-blue-600 mb-8 italic">Internal Dashboard</h2>
             <div class="space-y-6">
                 <div class="flex justify-between items-end border-b pb-4">
-                    <span class="text-gray-400 text-[10px] font-bold uppercase">Total Visits</span>
-                    <span id="visitCount" class="text-4xl font-black text-black">0</span>
+                    <span class="text-gray-400 text-[10px] font-bold uppercase">Visits</span>
+                    <span id="visitCount" class="text-4xl font-black">0</span>
                 </div>
                 <div class="flex justify-between items-end border-b pb-4">
-                    <span class="text-gray-400 text-[10px] font-bold uppercase">Live Products</span>
-                    <span id="liveProducts" class="text-4xl font-black text-black">0</span>
+                    <span class="text-gray-400 text-[10px] font-bold uppercase">SKU</span>
+                    <span id="liveProducts" class="text-4xl font-black">0</span>
                 </div>
             </div>
-            <button onclick="document.getElementById('adminPanel').style.display='none'" class="mt-8 w-full bg-black text-white py-4 rounded-2xl font-bold text-xs uppercase tracking-widest">Close Panel</button>
         </div>
     </div>
 
-    <nav class="sticky top-0 z-50 bg-white/80 backdrop-blur-xl border-b border-gray-100 p-4">
+    <nav class="sticky top-0 z-50 bg-white/60 backdrop-blur-xl border-b border-gray-100 p-4">
         <div class="max-w-6xl mx-auto flex justify-between items-center">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
                  onclick="handleLogoClick()"
-                 class="h-12 md:h-16 w-auto rounded-xl shadow-sm cursor-pointer active:scale-95 transition-transform">
+                 class="h-12 md:h-14 w-auto rounded-xl cursor-pointer active:scale-90 transition-transform duration-200">
             
-            <div class="flex items-center space-x-4">
-                <button onclick="toggleLang()" id="langBtn" class="border-2 border-black px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-black hover:text-white transition-all">EN / 中文</button>
-                <a href="mailto:contact@vortexd.com" id="navContact" class="bg-blue-600 text-white px-4 py-2 rounded-full text-[10px] font-black uppercase tracking-widest hover:bg-black transition-all">Contact</a>
+            <div class="flex items-center space-x-3">
+                <button onclick="toggleLang()" class="btn-hover border-2 border-black px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">EN / 中文</button>
+                <a href="mailto:contact@vortexd.com" id="navContact" onclick="vibrateDevice(15)" class="btn-hover bg-blue-600 text-white px-5 py-2 rounded-full text-[10px] font-bold uppercase tracking-widest">Contact</a>
             </div>
         </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto px-6 py-20">
-        <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-[0.9]">Smart Space <br><span class="hero-gradient italic">For Kids.</span></h1>
-        <div class="mt-8 text-xl text-gray-400 font-bold">Focusing on <span id="typed" class="text-black border-b-4 border-blue-500/20"></span></div>
+    <header class="max-w-6xl mx-auto px-6 py-24 fade-v" id="hero-section">
+        <h1 class="text-6xl md:text-8xl font-black tracking-tighter leading-[0.85] mb-8">
+            Smart Space <br><span class="hero-gradient italic">For Kids.</span>
+        </h1>
+        <div class="text-xl md:text-2xl text-gray-400 font-bold">
+            <span id="sub-title-pre">Focusing on</span> <span id="typed" class="text-black border-b-4 border-blue-500/20"></span>
+        </div>
     </header>
 
-    <main class="max-w-6xl mx-auto px-6 pb-24 text-center">
-        <div id="loading" class="py-20 font-black text-gray-200 text-4xl animate-pulse">SYNCING...</div>
-        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10"></div>
+    <main class="max-w-6xl mx-auto px-6 pb-32">
+        <div id="loading" class="text-center py-20 font-black text-gray-200 text-4xl animate-pulse">LOADING...</div>
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-12"></div>
     </main>
 
     <script>
         let currentLang = localStorage.getItem('vortint_lang') || 'en';
         let allProducts = [];
         let clickCount = 0;
-        let lastClickTime = 0;
+        let typedInstance;
 
         const i18n = {
-            zh: { pre: "专注于", typed: ['毛绒玩具收纳.', '儿童阅读空间.', '弹力绳垂直收纳.'], btn: "立即购买 →", contact: "联系我们" },
+            zh: { pre: "专注于", typed: ['毛绒玩具收纳.', '儿童阅读空间.', '垂直弹力绳设计.'], btn: "立即购买 →", contact: "联系我们" },
             en: { pre: "Focusing on", typed: ['Plush Toy Storage.', 'Reading Spaces.', 'Vertical Elastic Cords.'], btn: "Shop Now →", contact: "Contact" }
         };
 
-        // 💡 统计访问次数
-        let visits = parseInt(localStorage.getItem('vortint_visits') || '0');
-        visits++;
-        localStorage.setItem('vortint_visits', visits);
+        // 💡 震动函数封装
+        function vibrateDevice(ms) {
+            if (navigator.vibrate) {
+                navigator.vibrate(ms);
+            }
+        }
 
-        // 💡 隐藏后台逻辑
         function handleLogoClick() {
-            const now = Date.now();
-            if (now - lastClickTime > 2000) clickCount = 0; // 超过2秒没点就重置
+            vibrateDevice(10); // 每次点击轻微震动
             clickCount++;
-            lastClickTime = now;
-            
             if (clickCount === 5) {
+                vibrateDevice([50, 100, 50]); // 成功进入的长短震动
                 document.getElementById('visitCount').innerText = localStorage.getItem('vortint_visits');
                 document.getElementById('liveProducts').innerText = allProducts.length;
                 document.getElementById('adminPanel').style.display = 'flex';
                 clickCount = 0;
             }
+            setTimeout(() => clickCount = 0, 3000);
+        }
+
+        function toggleLang() {
+            vibrateDevice(15);
+            document.getElementById('hero-section').style.opacity = 0;
+            document.getElementById('product-grid').style.opacity = 0;
+            setTimeout(() => {
+                currentLang = currentLang === 'en' ? 'zh' : 'en';
+                localStorage.setItem('vortint_lang', currentLang);
+                renderUI();
+                initTyped();
+                document.getElementById('hero-section').style.opacity = 1;
+                document.getElementById('product-grid').style.opacity = 1;
+            }, 300);
         }
 
         async function fetchProducts() {
@@ -103,31 +124,46 @@
         }
 
         function renderUI() {
+            document.getElementById('sub-title-pre').innerText = i18n[currentLang].pre;
+            document.getElementById('navContact').innerText = i18n[currentLang].contact;
             const grid = document.getElementById('product-grid');
             grid.innerHTML = allProducts.map(r => {
                 const f = r.fields;
                 const img = Array.isArray(f.图片) ? f.图片[0].url : (f.图片 || "");
                 return `
-                <a href="${f.链接 || '#'}" target="_blank" class="group block bg-white border border-gray-100 rounded-[2.5rem] p-4 hover:shadow-2xl transition-all duration-500 text-left">
-                    <div class="aspect-square overflow-hidden rounded-[2rem] bg-gray-50 mb-6">
+                <a href="${f.链接 || '#'}" target="_blank" onclick="vibrateDevice(10)"
+                   class="fade-v group block bg-white border border-gray-100 rounded-[3rem] p-5 hover:shadow-2xl transition-all duration-500 shadow-sm">
+                    <div class="aspect-square overflow-hidden rounded-[2.2rem] bg-gray-50 mb-8">
                         <img src="${img}" class="w-full h-full object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
-                    <div class="px-2 pb-2">
-                        <h3 class="text-2xl font-black text-gray-900 mb-4">${f.标题 || 'Item'}</h3>
+                    <div class="px-2 pb-2 text-left">
+                        <h3 class="text-2xl font-black text-gray-900 mb-5 leading-tight">${f.标题 || 'Item'}</h3>
                         <span class="text-[10px] font-black uppercase text-blue-600 border-b-2 border-blue-100">${i18n[currentLang].btn}</span>
                     </div>
                 </a>`;
             }).join('');
+            setTimeout(observeScroll, 100);
         }
 
-        function toggleLang() {
-            currentLang = currentLang === 'en' ? 'zh' : 'en';
-            localStorage.setItem('vortint_lang', currentLang);
-            renderUI();
+        function observeScroll() {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) entry.target.classList.add('show');
+                });
+            }, { threshold: 0.1 });
+            document.querySelectorAll('.fade-v').forEach(el => observer.observe(el));
+        }
+
+        function initTyped() {
+            if (typedInstance) typedInstance.destroy();
+            typedInstance = new Typed('#typed', { strings: i18n[currentLang].typed, typeSpeed: 50, backSpeed: 30, loop: true });
         }
 
         window.onload = () => {
-            new Typed('#typed', { strings: i18n[currentLang].typed, typeSpeed: 60, loop: true });
+            document.getElementById('hero-section').classList.add('show');
+            let v = parseInt(localStorage.getItem('vortint_visits') || '0');
+            localStorage.setItem('vortint_visits', ++v);
+            initTyped();
             fetchProducts();
         };
     </script>
