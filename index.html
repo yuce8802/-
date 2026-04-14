@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VortinT | Precision Design</title>
+    <title>VortinT | Precision Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
@@ -11,89 +11,97 @@
         
         body { font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif; background: #FFFFFF; overflow-x: hidden; color: #0f172a; }
 
-        /* 💡 核心改动：开场闪屏弹窗 */
+        /* 💡 闪屏弹窗 */
         #splash-screen {
             position: fixed; inset: 0; background: #fff;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 10000; transition: all 1s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 10000; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        /* Logo 动画 */
         .splash-logo {
-            width: 180px; height: 180px; border-radius: 50%;
-            animation: splashPulse 1.8s ease-in-out forwards;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.05);
+            width: 160px; height: 160px; border-radius: 50%;
+            animation: splashPulse 1.5s ease-in-out forwards;
         }
         @keyframes splashPulse {
-            0% { transform: scale(0.8); opacity: 0; filter: blur(10px); }
-            50% { transform: scale(1.05); opacity: 1; filter: blur(0px); }
-            100% { transform: scale(1); opacity: 1; }
+            0% { transform: scale(0.8); opacity: 0; filter: blur(5px); }
+            100% { transform: scale(1); opacity: 1; filter: blur(0px); }
         }
-        /* 消失时的状态 */
-        .hide-splash { transform: translateY(-100%); opacity: 0; pointer-events: none; }
+        .hide-splash { transform: translateY(-100%); pointer-events: none; }
 
-        /* 导航条（初始隐藏，闪屏后再出现） */
+        /* 导航条 */
         .floating-nav {
             position: fixed; top: 1.5rem; left: 50%; transform: translateX(-50%);
-            z-index: 100; width: 90vw; max-width: 1200px;
-            background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px);
-            border-radius: 99px; padding: 1rem 1.5rem;
-            display: flex; justify-content: space-between; items-center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.04);
-            opacity: 0; transition: 1s 0.8s; /* 稍微延迟一点点出现 */
+            z-index: 100; width: 95vw; max-width: 1200px;
+            background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
+            border-radius: 99px; padding: 0.8rem 1.2rem;
+            display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
+            opacity: 0; transition: 1s;
         }
         .nav-show { opacity: 1; }
 
-        .detail-section { border-bottom: 1px solid #f8fafc; padding: 8rem 0; }
-        .buy-btn {
-            background: #2563eb; color: white; padding: 1rem 2.5rem; border-radius: 99px;
-            font-weight: 800; font-size: 0.85rem; transition: 0.3s;
+        /* 💡 核心：卡片式商品网格 */
+        .product-grid {
+            display: grid;
+            gap: 1.5rem;
+            /* 手机端 2 列，电脑端 3 列 */
+            grid-template-columns: repeat(2, minmax(0, 1fr));
         }
-        .buy-btn:hover { transform: translateY(-3px); box-shadow: 0 15px 30px rgba(37,99,235,0.2); }
+        @media (min-width: 1024px) {
+            .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+        }
+
+        .product-card {
+            background: #fff; border: 1px solid #f1f5f9; border-radius: 1.5rem;
+            overflow: hidden; transition: all 0.4s ease;
+            display: flex; flex-direction: column;
+        }
+        .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); border-color: #e2e8f0; }
+
+        .buy-btn {
+            background: #2563eb; color: white; width: 100%; padding: 0.8rem;
+            border-radius: 0.8rem; font-weight: 800; font-size: 0.75rem;
+            text-align: center; transition: 0.3s; margin-top: auto;
+        }
+        .buy-btn:hover { background: #1e40af; }
     </style>
 </head>
 <body>
 
     <div id="splash-screen">
-        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-             class="splash-logo">
-        <p class="mt-8 text-[10px] font-black tracking-[0.5em] text-slate-300 uppercase animate-pulse">Initializing Identity</p>
+        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="splash-logo">
     </div>
 
     <nav id="mainNav" class="floating-nav">
         <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-             onclick="handleLogoClick()" class="h-10 w-10 rounded-full cursor-pointer hover:rotate-12 transition-transform">
-        <div class="flex items-center space-x-3">
-            <button onclick="toggleLang()" class="text-[10px] font-bold text-slate-300 hover:text-blue-600 transition-colors mr-2">EN/中</button>
-            <a href="mailto:gd@vortexd.com" class="bg-slate-50 text-slate-500 px-5 py-2.5 rounded-full font-bold text-[10px] uppercase">GD Support</a>
-            <a href="mailto:cs@vortexd.com" class="bg-blue-600 text-white px-5 py-2.5 rounded-full font-bold text-[10px] uppercase shadow-lg shadow-blue-500/20">CS Support</a>
+             onclick="handleLogoClick()" class="h-10 w-10 rounded-full cursor-pointer shadow-sm">
+        <div class="flex items-center space-x-2">
+            <a href="mailto:gd@vortexd.com" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-full font-bold text-[9px] uppercase hover:bg-slate-100">GD</a>
+            <a href="mailto:cs@vortexd.com" class="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-[9px] uppercase shadow-md hover:bg-blue-700">CS Support</a>
         </div>
     </nav>
 
-    <main class="max-w-7xl mx-auto px-6 pt-32">
-        <header class="py-12">
-            <p class="text-sm text-slate-400 font-bold tracking-widest uppercase">Empowering <span id="typed" class="text-blue-600"></span></p>
+    <main class="max-w-7xl mx-auto px-4 pt-32 pb-20">
+        <header class="py-10 text-center">
+            <p class="text-xs text-slate-400 font-bold tracking-[0.3em] uppercase">VortinT Architecture / <span id="typed" class="text-blue-600"></span></p>
         </header>
 
-        <section class="mb-16 rounded-[2.5rem] overflow-hidden bg-slate-100 shadow-2xl">
+        <section class="mb-12 rounded-[2rem] overflow-hidden bg-slate-100 shadow-xl">
             <div class="aspect-video w-full">
                 <video id="brandVideo" class="w-full h-full object-cover" autoplay muted loop playsinline controls></video>
             </div>
         </section>
 
-        <div id="product-list" class="divide-y divide-slate-50"></div>
+        <div id="product-list" class="product-grid">
+            </div>
     </main>
 
-    <footer class="py-24 text-center">
-        <p class="text-slate-200 text-[9px] font-black tracking-[0.5em] uppercase">VortinT Labs © 2026</p>
-    </footer>
-
-    <div id="adminPanel" class="fixed inset-0 bg-white z-[9999] hidden items-center justify-center" onclick="this.style.display='none'">
+    <div id="adminPanel" class="fixed inset-0 bg-white/95 z-[9999] hidden items-center justify-center" onclick="this.style.display='none'">
         <div class="text-center" onclick="event.stopPropagation()">
-            <div class="flex space-x-12 mb-8">
-                <div><p class="text-[10px] text-slate-400">VISITS</p><p id="vCount" class="text-5xl font-black">0</p></div>
-                <div><p class="text-[10px] text-slate-400">UNITS</p><p id="pCount" class="text-5xl font-black">0</p></div>
+            <div class="flex space-x-10 mb-8">
+                <div><p class="text-[9px] text-slate-400">TRAFFIC</p><p id="vCount" class="text-4xl font-black">0</p></div>
+                <div><p class="text-[9px] text-slate-400">UNITS</p><p id="pCount" class="text-4xl font-black">0</p></div>
             </div>
-            <button onclick="localStorage.clear(); location.reload();" class="text-[9px] font-bold text-red-400 border border-red-50 px-6 py-2 rounded-full">RESET</button>
+            <button onclick="localStorage.clear(); location.reload();" class="text-[9px] font-bold text-red-400 border border-red-50 px-5 py-2 rounded-full uppercase">Reset Cache</button>
         </div>
     </div>
 
@@ -107,11 +115,10 @@
         async function init() {
             document.getElementById('brandVideo').src = RAW_VIDEO;
             
-            // 💡 闪屏消失逻辑
             setTimeout(() => {
                 document.getElementById('splash-screen').classList.add('hide-splash');
                 document.getElementById('mainNav').classList.add('nav-show');
-            }, 2200); // 2.2秒后消失，给足面子
+            }, 1800);
 
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${SHEET_ID}/records`, {
@@ -137,26 +144,24 @@
 
         function renderUI() {
             const list = document.getElementById('product-list');
-            list.innerHTML = allProducts.map((r, i) => {
+            list.innerHTML = allProducts.map((r) => {
                 const f = r.fields;
                 let img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || "");
                 return `
-                <section class="detail-section flex flex-col md:flex-row gap-16 items-center">
-                    <div class="w-full md:w-1/2">
-                        <img src="${img.replace("http://", "https://")}" class="w-full rounded-[2rem] shadow-xl">
+                <div class="product-card p-3 md:p-4">
+                    <img src="${img.replace("http://", "https://")}" class="w-full aspect-square object-cover rounded-xl mb-4">
+                    <div class="flex-grow flex flex-col">
+                        <h3 class="text-sm md:text-base font-black text-slate-800 line-clamp-1 mb-1">${f['标题'] || 'VortinT Unit'}</h3>
+                        <p class="text-[10px] md:text-xs text-slate-400 font-medium mb-4 line-clamp-2">Premium design with technical storage solutions.</p>
+                        <a href="${f['链接'] || '#'}" target="_blank" class="buy-btn uppercase tracking-tighter">Initialize</a>
                     </div>
-                    <div class="w-full md:w-1/2 space-y-6">
-                        <h2 class="text-2xl md:text-3xl font-black text-slate-800 tracking-tight">${f['标题'] || 'VortinT Unit'}</h2>
-                        <p class="text-slate-400 text-lg leading-relaxed">Engineered for modern space optimization with our proprietary storage system.</p>
-                        <div class="pt-4"><a href="${f['链接'] || '#'}" target="_blank" class="buy-btn">DISCOVER →</a></div>
-                    </div>
-                </section>`;
+                </div>`;
             }).join('');
         }
 
         function updateContent() {
             new Typed('#typed', { 
-                strings: ['Living Space.', 'Design.', 'Future.'], 
+                strings: ['Future Space.', 'Precision.', 'Unity.'], 
                 typeSpeed: 60, loop: true
             });
             renderUI();
