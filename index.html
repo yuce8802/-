@@ -3,126 +3,151 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VortinT | Smart Space</title>
+    <title>VortinT | Intelligent Furniture</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@700;900&family=Noto+Sans+SC:wght@900&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Noto+Sans+SC:wght@900&display=swap');
         
-        body { font-family: 'Inter', 'Noto Sans SC', sans-serif; background-color: #FDFBF7; -webkit-tap-highlight-color: transparent; overflow-x: hidden; }
+        body { font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif; background: #F8FAFF; -webkit-tap-highlight-color: transparent; overflow-x: hidden; color: #1e293b; }
         
-        /* 品牌字效 */
-        .glow-3d {
-            color: #fff;
-            background: linear-gradient(180deg, #93c5fd 0%, #2563eb 100%);
+        /* 品牌 3D 标题 */
+        .brand-gradient {
+            background: linear-gradient(180deg, #3b82f6 0%, #1e40af 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            text-shadow: 0 1px 0 #1d4ed8, 0 2px 0 #1e40af, 0 8px 15px rgba(37,99,235,0.2);
+            filter: drop-shadow(0 4px 6px rgba(37, 99, 235, 0.1));
         }
 
-        /* 3D 卡片逻辑 */
+        /* 核心卡片重构 */
         .product-card { 
-            background: white; border-radius: 2rem; padding: 1rem;
-            box-shadow: 0 10px 25px rgba(183, 153, 123, 0.1);
+            background: white; border-radius: 2.5rem; padding: 1.5rem;
+            box-shadow: 0 10px 30px rgba(148, 163, 184, 0.12);
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
             will-change: transform; transform-style: preserve-3d;
+            border: 1px solid rgba(255, 255, 255, 0.8);
         }
         .product-card:hover {
-            transform: translateY(-20px) translateZ(150px) scale(1.05) !important;
-            box-shadow: 0 40px 80px rgba(183, 153, 123, 0.25);
-            z-index: 999 !important;
+            transform: translateY(-15px) scale(1.02);
+            box-shadow: 0 40px 80px rgba(37, 99, 235, 0.15);
+            z-index: 50;
         }
 
-        #product-grid { position: relative; transition: all 0.8s ease; transform-style: preserve-3d; min-height: 500px; }
-        .mode-stack { display: flex !important; flex-direction: column; align-items: center; perspective: 2000px; padding-top: 60px; }
-        .mode-stack .product-card { width: 85vw; max-width: 360px; margin-top: -140px; transform: rotateX(25deg) translateZ(calc(var(--idx) * 8px)); }
-        .mode-ring { display: block !important; height: 500px; perspective: 1200px; animation: rotateRing 25s linear infinite; }
-        .mode-ring .product-card { position: absolute; left: 50%; top: 50%; width: 160px; margin-left: -80px; margin-top: -80px; transform: rotateY(var(--ry)) translateZ(280px); backface-visibility: hidden; }
+        /* 科技感按钮 */
+        .tech-btn {
+            background: #2563eb;
+            color: white;
+            text-align: center;
+            padding: 1rem;
+            border-radius: 1.25rem;
+            font-weight: 800;
+            font-size: 0.85rem;
+            letter-spacing: 0.1em;
+            transition: all 0.3s;
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+            display: block;
+            position: relative;
+            overflow: hidden;
+        }
+        .tech-btn:active { transform: scale(0.95); background: #1d4ed8; }
+        .tech-btn::after {
+            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
+            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
+            transform: rotate(45deg); transition: 0.5s; left: -100%;
+        }
+        .tech-btn:hover::after { left: 100%; }
+
+        /* 3D 模式 */
+        #product-grid { perspective: 2000px; min-height: 600px; transition: 0.8s; }
+        .mode-stack { display: flex !important; flex-direction: column; align-items: center; padding-top: 100px; }
+        .mode-stack .product-card { width: 90vw; max-width: 400px; margin-top: -180px; transform: rotateX(25deg); }
+        .mode-ring { display: block !important; height: 600px; animation: rotateRing 30s linear infinite; }
+        .mode-ring .product-card { position: absolute; left: 50%; top: 50%; width: 200px; margin: -100px; transform: rotateY(var(--ry)) translateZ(320px); }
         @keyframes rotateRing { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
 
-        /* 交互元素 */
-        .press-ring { position: absolute; inset: -4px; border: 4px solid #2563eb; border-radius: 16px; clip-path: inset(0 100% 0 0); transition: clip-path 0.8s linear; }
+        /* 进度反馈 */
+        .press-ring { position: absolute; inset: -4px; border: 4px solid #2563eb; border-radius: 18px; clip-path: inset(0 100% 0 0); transition: clip-path 0.8s linear; }
         .pressing .press-ring { clip-path: inset(0 0 0 0); }
-        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #2563eb; color: white; padding: 10px 24px; border-radius: 99px; font-weight: 900; opacity: 0; transition: 0.3s; z-index: 2000; pointer-events: none; }
+
+        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 99px; font-weight: bold; opacity: 0; transition: 0.3s; z-index: 9999; pointer-events: none; border: 1px solid rgba(255,255,255,0.1); }
         #toast.show { opacity: 1; top: 40px; }
-        .skeleton { background: #eee; animation: shimmer 1.5s infinite; border-radius: 2rem; }
-        @keyframes shimmer { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
-        .admin-modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,0.8); backdrop-filter: blur(10px); z-index: 2000; align-items: center; justify-content: center; }
+        
+        .skeleton { background: #e2e8f0; animation: pulse 1.5s infinite; border-radius: 2.5rem; }
+        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
     </style>
 </head>
 <body>
 
     <div id="toast">MODE SWITCHED</div>
 
-    <div id="adminPanel" class="admin-modal" onclick="this.style.display='none'">
-        <div class="bg-white p-8 rounded-[2.5rem] w-64 shadow-2xl text-left" onclick="event.stopPropagation()">
-            <h2 class="text-[10px] font-black uppercase text-blue-600 mb-4 italic">Dashboard</h2>
-            <div class="space-y-3">
-                <div class="flex justify-between border-b pb-1"><span class="text-gray-400 text-[10px]">VISITS</span><span id="vCount" class="font-black">0</span></div>
-                <div class="flex justify-between border-b pb-1"><span class="text-gray-400 text-[10px]">ITEMS</span><span id="pCount" class="font-black">0</span></div>
+    <div id="adminPanel" class="fixed inset-0 bg-slate-900/90 backdrop-blur-xl z-[9999] hidden items-center justify-center" onclick="this.style.display='none'">
+        <div class="bg-white p-10 rounded-[3rem] w-80 shadow-2xl" onclick="event.stopPropagation()">
+            <h2 class="text-xs font-black text-blue-600 mb-6 uppercase tracking-widest">System Monitor</h2>
+            <div class="space-y-4 mb-8">
+                <div class="flex justify-between border-b pb-2"><span class="text-slate-400 text-[10px]">TRAFFIC</span><span id="vCount" class="font-bold">0</span></div>
+                <div class="flex justify-between border-b pb-2"><span class="text-slate-400 text-[10px]">ASSETS</span><span id="pCount" class="font-bold">0</span></div>
             </div>
-            <button onclick="localStorage.clear(); location.reload();" class="mt-4 w-full py-2 bg-red-50 text-red-500 rounded-xl text-[10px] font-bold">RESET</button>
+            <button onclick="localStorage.clear(); location.reload();" class="w-full py-3 bg-red-50 text-red-500 rounded-2xl text-[10px] font-bold uppercase">Wipe Cache</button>
         </div>
     </div>
 
-    <nav class="sticky top-0 z-50 bg-white/60 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-orange-50">
+    <nav class="sticky top-0 z-[100] bg-white/70 backdrop-blur-md px-6 py-4 flex justify-between items-center border-b border-blue-50">
         <div id="logoWrapper" class="relative">
             <div class="press-ring"></div>
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                 onclick="handleLogoClick()" class="h-10 rounded-lg cursor-pointer active:scale-90 transition-transform select-none">
+                 onclick="handleLogoClick()" class="h-10 rounded-xl cursor-pointer active:scale-95 transition-all select-none">
         </div>
-        <div class="flex items-center space-x-2">
-            <button onclick="toggleLang()" class="bg-black/5 px-4 py-2 rounded-full font-black text-[10px] uppercase">EN/中</button>
-            <a href="mailto:cs@vortexd.com" class="bg-blue-600 text-white px-5 py-2 rounded-full font-black text-[10px] uppercase shadow-lg shadow-blue-500/30 active:scale-95 transition-transform">CS Support</a>
+        <div class="flex items-center space-x-3">
+            <button onclick="toggleLang()" class="bg-slate-100 px-4 py-2 rounded-full font-bold text-[10px] uppercase">EN/中</button>
+            <a href="mailto:cs@vortexd.com" class="bg-blue-600 text-white px-6 py-2 rounded-full font-black text-[10px] uppercase shadow-lg shadow-blue-500/30">CS Support</a>
         </div>
     </nav>
 
-    <header class="max-w-6xl mx-auto px-6 py-12 text-center md:text-left">
-        <h1 class="text-7xl md:text-9xl font-black uppercase glow-3d leading-none">VortinT</h1>
-        <p class="text-lg text-gray-400 font-bold mt-4">Focusing on <span id="typed" class="text-blue-600"></span></p>
+    <header class="max-w-6xl mx-auto px-6 py-16 text-center md:text-left">
+        <h1 class="text-7xl md:text-9xl font-black uppercase brand-gradient leading-none">VortinT</h1>
+        <p class="text-xl text-slate-400 font-bold mt-6">Intelligent <span id="typed" class="text-blue-600"></span></p>
     </header>
 
-    <main class="max-w-7xl mx-auto px-4">
-        <section class="max-w-4xl mx-auto mb-16 bg-white rounded-[2.5rem] border border-orange-50 shadow-xl p-2 overflow-hidden">
-            <div class="aspect-video w-full rounded-[1.8rem] overflow-hidden bg-gray-50 relative">
+    <main class="max-w-7xl mx-auto px-4 pb-40">
+        <section class="max-w-5xl mx-auto mb-20 bg-white rounded-[3rem] shadow-xl p-2 border border-blue-50 overflow-hidden">
+            <div class="aspect-video w-full rounded-[2.2rem] overflow-hidden bg-slate-100 relative shadow-inner">
                 <video id="brandVideo" class="w-full h-full object-cover" autoplay muted loop playsinline controls></video>
             </div>
         </section>
 
-        <div id="product-grid" class="grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10">
-            <div class="skeleton h-64"></div><div class="skeleton h-64"></div><div class="skeleton h-64"></div>
+        <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
+            <div class="skeleton h-96"></div><div class="skeleton h-96"></div><div class="skeleton h-96"></div>
         </div>
     </main>
 
-    <footer class="py-24 text-center">
-        <a href="mailto:cs@vortexd.com" class="text-[10px] font-black text-gray-300 tracking-[0.3em] hover:text-blue-600 transition-colors uppercase">cs@vortexd.com</a>
+    <footer class="py-24 text-center border-t border-blue-50">
+        <a href="mailto:cs@vortexd.com" class="text-[11px] font-bold text-slate-300 tracking-[0.4em] hover:text-blue-600 transition-colors uppercase">cs@vortexd.com</a>
     </footer>
 
     <script>
         const VIKA_TOKEN = "usk6WsQlH4X6ST2hQRk4vAz"; 
         const SHEET_ID = "dstUcVqARey53sJnMh";
-        const HIGH_RES_URL = "https://res.cloudinary.com/dpr2pn5rs/video/upload/v1776075209/4%E6%9C%8813%E6%97%A5_1_iiorev.mp4";
-        const LOW_RES_URL = HIGH_RES_URL.replace("/upload/", "/upload/c_scale,w_480,q_auto:low,br_500k/");
+        const RAW_VIDEO = "https://res.cloudinary.com/dpr2pn5rs/video/upload/v1776075209/4%E6%9C%8813%E6%97%A5_1_iiorev.mp4";
+        const LOW_VIDEO = RAW_VIDEO.replace("/upload/", "/upload/c_scale,w_480,q_auto:low,br_400k/");
 
-        let allProducts = []; let viewMode = 0; let currentLang = localStorage.getItem('vortint_lang') || 'en';
+        let allProducts = []; let viewMode = 0; let currentLang = localStorage.getItem('v_lang') || 'en';
         let logoClicks = 0; let pressTimer;
 
-        // 视频优化加载
-        function loadVideo() {
+        function initVideo() {
             const v = document.getElementById('brandVideo');
-            v.src = LOW_RES_URL;
+            v.src = LOW_VIDEO;
             v.onplaying = () => {
                 const preload = document.createElement('video');
-                preload.src = HIGH_RES_URL;
+                preload.src = RAW_VIDEO;
                 preload.oncanplaythrough = () => {
-                    const now = v.currentTime;
-                    v.src = HIGH_RES_URL; v.currentTime = now;
+                    const time = v.currentTime;
+                    v.src = RAW_VIDEO; v.currentTime = time;
                     v.play(); v.onplaying = null;
                 };
             };
         }
 
         async function init() {
-            loadVideo();
+            initVideo();
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${SHEET_ID}/records`, {
                     headers: { 'Authorization': `Bearer ${VIKA_TOKEN}` }
@@ -132,14 +157,13 @@
                     allProducts = data.data.records;
                     updateContent();
                     document.getElementById('pCount').innerText = allProducts.length;
-                    let v = (parseInt(localStorage.getItem('v_count') || 0) + 1);
+                    let v = (parseInt(localStorage.getItem('v_total') || 0) + 1);
                     document.getElementById('vCount').innerText = v;
-                    localStorage.setItem('v_count', v);
+                    localStorage.setItem('v_total', v);
                 }
             } catch (e) { console.error(e); }
         }
 
-        // 3D 模式与后台触发
         const logo = document.getElementById('logoWrapper');
         logo.onmousedown = logo.ontouchstart = () => {
             logo.classList.add('pressing');
@@ -147,7 +171,7 @@
                 viewMode = (viewMode + 1) % 3;
                 renderUI();
                 logo.classList.remove('pressing');
-                showToast(["GRID", "STACK", "RING"][viewMode] + " MODE");
+                showToast(["GRID", "STACK", "RING"][viewMode]);
             }, 800);
         };
         logo.onmouseup = logo.ontouchend = () => { clearTimeout(pressTimer); logo.classList.remove('pressing'); };
@@ -158,17 +182,22 @@
             setTimeout(() => logoClicks = 0, 3000);
         }
 
+        // 核心渲染：优化字体大小和按钮交互
         function renderUI() {
             const grid = document.getElementById('product-grid');
-            grid.className = viewMode === 0 ? "grid grid-cols-2 md:grid-cols-3 gap-6 md:gap-10" : 
+            grid.className = viewMode === 0 ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12" : 
                              viewMode === 1 ? "mode-stack" : "mode-ring";
+            
             grid.innerHTML = allProducts.map((r, i) => {
                 const f = r.fields;
                 let img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || "");
-                return `<div class="product-card" style="--idx: ${i}; --ry: ${(360/allProducts.length)*i}deg; z-index: ${i};">
-                    <img src="${img.replace("http://", "https://")}" class="w-full aspect-square object-cover rounded-[1.5rem] mb-4 pointer-events-none">
-                    <h3 class="text-[11px] font-black line-clamp-2 h-10 mb-2">${f['标题'] || 'Item'}</h3>
-                    <a href="${f['链接'] || '#'}" target="_blank" class="text-[9px] font-black text-blue-600 uppercase">Explore →</a>
+                return `
+                <div class="product-card" style="--idx: ${i}; --ry: ${(360/allProducts.length)*i}deg; z-index: ${i};">
+                    <img src="${img.replace("http://", "https://")}" class="w-full aspect-square object-cover rounded-[2rem] mb-6 pointer-events-none shadow-sm">
+                    <h3 class="text-lg md:text-xl font-black text-slate-800 leading-tight mb-6 h-14 line-clamp-2">${f['标题'] || 'VortinT Unit'}</h3>
+                    <a href="${f['链接'] || '#'}" target="_blank" class="tech-btn uppercase">
+                        Initialize Discovery →
+                    </a>
                 </div>`;
             }).join('');
         }
@@ -176,7 +205,7 @@
         function updateContent() {
             const isEn = currentLang === 'en';
             new Typed('#typed', { 
-                strings: isEn ? ['Toy Storage.', 'Better Habits.', 'Space Magic.'] : ['玩具收纳.', '好习惯养成.', '空间美学.'], 
+                strings: isEn ? ['Space Design.', 'Childhood Growth.', 'Smart Storage.'] : ['空间设计.', '成长空间.', '智慧收纳.'], 
                 typeSpeed: 50, loop: true, destroy: true
             });
             renderUI();
@@ -184,7 +213,7 @@
 
         function toggleLang() {
             currentLang = currentLang === 'en' ? 'zh' : 'en';
-            localStorage.setItem('vortint_lang', currentLang);
+            localStorage.setItem('v_lang', currentLang);
             location.reload(); 
         }
 
