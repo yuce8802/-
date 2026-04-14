@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VortinT | Instant Conversion</title>
+    <title>VortinT | Pro Speed</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
@@ -16,8 +16,7 @@
             display: flex; align-items: center; justify-content: center;
             z-index: 10000; transition: 0.8s;
         }
-        .splash-logo { width: 120px; height: 120px; border-radius: 50%; animation: splashPulse 1.2s forwards; }
-        @keyframes splashPulse { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
+        .splash-logo { width: 120px; height: 120px; border-radius: 50%; }
         .hide-splash { transform: translateY(-100%); pointer-events: none; }
 
         /* 导航 */
@@ -31,8 +30,8 @@
         }
         .nav-show { opacity: 1; }
 
-        /* 网格 */
-        .product-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        /* 网格卡片 */
+        .product-grid { display: grid; gap: 0.8rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
         @media (min-width: 1024px) { .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; } }
 
         .product-card {
@@ -40,28 +39,28 @@
             overflow: hidden; transition: 0.4s; cursor: pointer;
         }
 
-        /* 💡 自动跳转详情弹窗 */
+        /* 详情弹窗 */
         #detail-modal {
             position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4);
             backdrop-filter: blur(12px); z-index: 2000;
             display: none; align-items: center; justify-content: center; padding: 1.5rem;
         }
         .modal-content {
-            background: white; width: 100%; max-width: 450px; border-radius: 2rem;
+            background: white; width: 100%; max-width: 420px; border-radius: 2rem;
             box-shadow: 0 40px 100px rgba(0,0,0,0.2); overflow: hidden;
             transform: scale(0.9); opacity: 0; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1);
             position: relative;
         }
         .modal-show .modal-content { transform: scale(1); opacity: 1; }
 
-        /* 进度条动画 */
+        /* 💡 进度条动画 */
         .progress-bar {
-            position: absolute; top: 0; left: 0; height: 4px; background: #2563eb;
-            width: 0%; transition: width 1.5s linear;
+            position: absolute; top: 0; left: 0; height: 5px; background: #2563eb;
+            width: 0%;
         }
-        .modal-show .progress-bar { width: 100%; }
+        .modal-show .progress-bar { width: 100%; transition: width 1.5s linear; }
 
-        .close-btn { position: absolute; top: 1rem; right: 1.2rem; font-size: 1.5rem; color: #94a3b8; cursor: pointer; z-index: 10; }
+        .close-btn { position: absolute; top: 1rem; right: 1.2rem; font-size: 1.5rem; color: #94a3b8; cursor: pointer; z-index: 10; padding: 5px; }
     </style>
 </head>
 <body>
@@ -77,27 +76,29 @@
             
             <div class="p-8 text-center">
                 <h2 id="modal-title" class="text-xl font-black text-slate-800 mb-2"></h2>
-                <p class="text-blue-600 text-[10px] font-bold tracking-widest uppercase mb-6 animate-pulse">Auto-initializing Link in 1.5s...</p>
-                
-                <a id="modal-link" href="#" target="_blank" class="block w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase tracking-widest text-sm shadow-xl shadow-blue-100">Initialize Now</a>
+                <div class="flex justify-center space-x-1 mb-6">
+                    <div class="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce"></div>
+                    <div class="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.15s]"></div>
+                    <div class="w-1.5 h-1.5 bg-blue-600 rounded-full animate-bounce [animation-delay:-0.3s]"></div>
+                </div>
+                <a id="modal-link" href="#" class="block w-full bg-blue-600 text-white py-4 rounded-xl font-black uppercase tracking-widest text-sm shadow-xl shadow-blue-100">Direct Connect</a>
             </div>
         </div>
     </div>
 
     <nav id="mainNav" class="floating-nav">
-        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-9 w-9 rounded-full cursor-pointer">
+        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-9 w-9 rounded-full">
         <div class="flex items-center space-x-2">
-            <a href="mailto:gd@vortexd.com" class="text-slate-400 font-bold text-[9px] uppercase px-2">GD</a>
-            <a href="mailto:cs@vortexd.com" class="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-[9px] uppercase">Support</a>
+            <a href="mailto:gd@vortexd.com" class="bg-slate-50 text-slate-400 font-bold text-[9px] px-4 py-2 rounded-full uppercase">Support</a>
         </div>
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 pt-28 pb-20">
         <header class="py-6 text-center">
-            <p class="text-[10px] text-slate-300 font-bold tracking-[0.4em] uppercase">Architecture / <span id="typed" class="text-blue-600"></span></p>
+            <p class="text-[10px] text-slate-300 font-bold tracking-[0.4em] uppercase">VortinT / <span id="typed" class="text-blue-600"></span></p>
         </header>
 
-        <section class="mb-10 rounded-[1.5rem] overflow-hidden bg-slate-100 shadow-xl border-4 border-slate-50">
+        <section class="mb-10 rounded-[1.5rem] overflow-hidden bg-slate-100 shadow-xl">
             <div class="aspect-video w-full"><video id="brandVideo" class="w-full h-full object-cover" autoplay muted loop playsinline controls></video></div>
         </section>
 
@@ -131,7 +132,6 @@
             } catch (e) { console.error(e); }
         }
 
-        // 💡 自动跳转详情逻辑
         function openDetail(index) {
             const f = allProducts[index].fields;
             const targetLink = f['链接'] || '#';
@@ -144,17 +144,20 @@
             const modal = document.getElementById('detail-modal');
             const pBar = document.getElementById('p-bar');
             
-            // 重置进度条
+            pBar.style.transition = 'none';
             pBar.style.width = '0%';
             modal.style.display = 'flex';
             
-            setTimeout(() => modal.classList.add('modal-show'), 10);
+            setTimeout(() => {
+                modal.classList.add('modal-show');
+                pBar.style.transition = 'width 1.5s linear';
+                pBar.style.width = '100%';
+            }, 10);
 
-            // 💡 1.5秒自动跳转核心代码
+            // 💡 针对苹果拦截的改动：使用 location.href 在当前页跳转
             autoJumpTimer = setTimeout(() => {
                 if (modal.classList.contains('modal-show')) {
-                    window.open(targetLink, '_blank');
-                    closeDetail();
+                    window.location.href = targetLink; 
                 }
             }, 1500);
         }
@@ -163,10 +166,7 @@
             if(autoJumpTimer) clearTimeout(autoJumpTimer);
             const modal = document.getElementById('detail-modal');
             modal.classList.remove('modal-show');
-            setTimeout(() => {
-                modal.style.display = 'none';
-                document.getElementById('p-bar').style.width = '0%';
-            }, 300);
+            setTimeout(() => modal.style.display = 'none', 300);
         }
 
         function renderUI() {
@@ -175,15 +175,15 @@
                 const f = r.fields;
                 let img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || "");
                 return `
-                <div class="product-card p-2 md:p-3" onclick="openDetail(${i})">
+                <div class="product-card p-2" onclick="openDetail(${i})">
                     <img src="${img.replace("http://", "https://")}" class="w-full aspect-square object-cover rounded-lg mb-2">
-                    <h3 class="text-[11px] md:text-xs font-black text-slate-800 line-clamp-1">${f['标题'] || 'VortinT'}</h3>
+                    <h3 class="text-[11px] font-black text-slate-800 line-clamp-1">${f['标题'] || 'VortinT'}</h3>
                 </div>`;
             }).join('');
         }
 
         function updateContent() {
-            new Typed('#typed', { strings: ['DESIGN.', 'FUTURE.', 'UNITY.'], typeSpeed: 60, loop: true });
+            new Typed('#typed', { strings: ['DESIGN.', 'FUTURE.', 'IDENTITY.'], typeSpeed: 60, loop: true });
             renderUI();
         }
 
