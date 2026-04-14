@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VortinT | Intelligent Furniture</title>
+    <title>VortinT | Smart Space</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
@@ -11,68 +11,44 @@
         
         body { font-family: 'Space Grotesk', 'Noto Sans SC', sans-serif; background: #F8FAFF; -webkit-tap-highlight-color: transparent; overflow-x: hidden; color: #1e293b; }
         
-        /* 品牌 3D 标题 */
         .brand-gradient {
             background: linear-gradient(180deg, #3b82f6 0%, #1e40af 100%);
             -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-            filter: drop-shadow(0 4px 6px rgba(37, 99, 235, 0.1));
         }
 
-        /* 核心卡片重构 */
+        /* 产品卡片：改为 Flex 布局以支持动态高度 */
         .product-card { 
             background: white; border-radius: 2.5rem; padding: 1.5rem;
             box-shadow: 0 10px 30px rgba(148, 163, 184, 0.12);
             transition: all 0.6s cubic-bezier(0.23, 1, 0.32, 1);
-            will-change: transform; transform-style: preserve-3d;
+            display: flex; flex-direction: column;
             border: 1px solid rgba(255, 255, 255, 0.8);
+            height: 100%;
         }
         .product-card:hover {
-            transform: translateY(-15px) scale(1.02);
-            box-shadow: 0 40px 80px rgba(37, 99, 235, 0.15);
-            z-index: 50;
+            transform: translateY(-12px);
+            box-shadow: 0 40px 80px rgba(37, 99, 235, 0.12);
         }
 
-        /* 科技感按钮 */
         .tech-btn {
-            background: #2563eb;
-            color: white;
-            text-align: center;
-            padding: 1rem;
-            border-radius: 1.25rem;
-            font-weight: 800;
-            font-size: 0.85rem;
-            letter-spacing: 0.1em;
-            transition: all 0.3s;
+            background: #2563eb; color: white; text-align: center;
+            padding: 1rem; border-radius: 1.25rem; font-weight: 800; font-size: 0.85rem;
+            letter-spacing: 0.05em; transition: all 0.3s;
             box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
-            display: block;
-            position: relative;
-            overflow: hidden;
+            margin-top: auto; /* 关键：将按钮推至底部 */
         }
-        .tech-btn:active { transform: scale(0.95); background: #1d4ed8; }
-        .tech-btn::after {
-            content: ''; position: absolute; top: -50%; left: -50%; width: 200%; height: 200%;
-            background: linear-gradient(45deg, transparent, rgba(255,255,255,0.2), transparent);
-            transform: rotate(45deg); transition: 0.5s; left: -100%;
-        }
-        .tech-btn:hover::after { left: 100%; }
+        .tech-btn:active { transform: scale(0.96); }
 
-        /* 3D 模式 */
-        #product-grid { perspective: 2000px; min-height: 600px; transition: 0.8s; }
-        .mode-stack { display: flex !important; flex-direction: column; align-items: center; padding-top: 100px; }
-        .mode-stack .product-card { width: 90vw; max-width: 400px; margin-top: -180px; transform: rotateX(25deg); }
-        .mode-ring { display: block !important; height: 600px; animation: rotateRing 30s linear infinite; }
+        /* 3D 逻辑保留 */
+        #product-grid { perspective: 2000px; transition: 0.8s; }
+        .mode-stack .product-card { width: 90vw; max-width: 400px; margin-top: -160px; transform: rotateX(25deg); }
         .mode-ring .product-card { position: absolute; left: 50%; top: 50%; width: 200px; margin: -100px; transform: rotateY(var(--ry)) translateZ(320px); }
         @keyframes rotateRing { from { transform: rotateY(0deg); } to { transform: rotateY(360deg); } }
 
-        /* 进度反馈 */
         .press-ring { position: absolute; inset: -4px; border: 4px solid #2563eb; border-radius: 18px; clip-path: inset(0 100% 0 0); transition: clip-path 0.8s linear; }
         .pressing .press-ring { clip-path: inset(0 0 0 0); }
-
-        #toast { position: fixed; top: 20px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 99px; font-weight: bold; opacity: 0; transition: 0.3s; z-index: 9999; pointer-events: none; border: 1px solid rgba(255,255,255,0.1); }
-        #toast.show { opacity: 1; top: 40px; }
-        
-        .skeleton { background: #e2e8f0; animation: pulse 1.5s infinite; border-radius: 2.5rem; }
-        @keyframes pulse { 0%, 100% { opacity: 0.5; } 50% { opacity: 1; } }
+        #toast { position: fixed; top: 40px; left: 50%; transform: translateX(-50%); background: #1e293b; color: white; padding: 12px 24px; border-radius: 99px; font-weight: bold; opacity: 0; transition: 0.3s; z-index: 9999; }
+        #toast.show { opacity: 1; }
     </style>
 </head>
 <body>
@@ -81,12 +57,12 @@
 
     <div id="adminPanel" class="fixed inset-0 bg-slate-900/90 backdrop-blur-xl z-[9999] hidden items-center justify-center" onclick="this.style.display='none'">
         <div class="bg-white p-10 rounded-[3rem] w-80 shadow-2xl" onclick="event.stopPropagation()">
-            <h2 class="text-xs font-black text-blue-600 mb-6 uppercase tracking-widest">System Monitor</h2>
+            <h2 class="text-xs font-black text-blue-600 mb-6 uppercase tracking-widest">Analytics</h2>
             <div class="space-y-4 mb-8">
-                <div class="flex justify-between border-b pb-2"><span class="text-slate-400 text-[10px]">TRAFFIC</span><span id="vCount" class="font-bold">0</span></div>
-                <div class="flex justify-between border-b pb-2"><span class="text-slate-400 text-[10px]">ASSETS</span><span id="pCount" class="font-bold">0</span></div>
+                <div class="flex justify-between border-b pb-2"><span class="text-slate-400 text-[10px]">VISITS</span><span id="vCount" class="font-bold">0</span></div>
+                <div class="flex justify-between border-b pb-2"><span class="text-slate-400 text-[10px]">UNITS</span><span id="pCount" class="font-bold">0</span></div>
             </div>
-            <button onclick="localStorage.clear(); location.reload();" class="w-full py-3 bg-red-50 text-red-500 rounded-2xl text-[10px] font-bold uppercase">Wipe Cache</button>
+            <button onclick="localStorage.clear(); location.reload();" class="w-full py-3 bg-red-50 text-red-500 rounded-2xl text-[10px] font-bold uppercase">Reset</button>
         </div>
     </div>
 
@@ -104,19 +80,18 @@
 
     <header class="max-w-6xl mx-auto px-6 py-16 text-center md:text-left">
         <h1 class="text-7xl md:text-9xl font-black uppercase brand-gradient leading-none">VortinT</h1>
-        <p class="text-xl text-slate-400 font-bold mt-6">Intelligent <span id="typed" class="text-blue-600"></span></p>
+        <p class="text-xl text-slate-400 font-bold mt-6 italic">Empowering <span id="typed" class="text-blue-600"></span></p>
     </header>
 
     <main class="max-w-7xl mx-auto px-4 pb-40">
         <section class="max-w-5xl mx-auto mb-20 bg-white rounded-[3rem] shadow-xl p-2 border border-blue-50 overflow-hidden">
-            <div class="aspect-video w-full rounded-[2.2rem] overflow-hidden bg-slate-100 relative shadow-inner">
+            <div class="aspect-video w-full rounded-[2.2rem] overflow-hidden bg-slate-100 relative">
                 <video id="brandVideo" class="w-full h-full object-cover" autoplay muted loop playsinline controls></video>
             </div>
         </section>
 
         <div id="product-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12">
-            <div class="skeleton h-96"></div><div class="skeleton h-96"></div><div class="skeleton h-96"></div>
-        </div>
+            </div>
     </main>
 
     <footer class="py-24 text-center border-t border-blue-50">
@@ -182,7 +157,7 @@
             setTimeout(() => logoClicks = 0, 3000);
         }
 
-        // 核心渲染：优化字体大小和按钮交互
+        // 修改重点：移除文字截断和固定高度
         function renderUI() {
             const grid = document.getElementById('product-grid');
             grid.className = viewMode === 0 ? "grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 md:gap-12" : 
@@ -194,7 +169,9 @@
                 return `
                 <div class="product-card" style="--idx: ${i}; --ry: ${(360/allProducts.length)*i}deg; z-index: ${i};">
                     <img src="${img.replace("http://", "https://")}" class="w-full aspect-square object-cover rounded-[2rem] mb-6 pointer-events-none shadow-sm">
-                    <h3 class="text-lg md:text-xl font-black text-slate-800 leading-tight mb-6 h-14 line-clamp-2">${f['标题'] || 'VortinT Unit'}</h3>
+                    <h3 class="text-lg md:text-xl font-black text-slate-800 leading-snug mb-8 min-h-[3.5rem]">
+                        ${f['标题'] || 'VortinT Unit'}
+                    </h3>
                     <a href="${f['链接'] || '#'}" target="_blank" class="tech-btn uppercase">
                         Initialize Discovery →
                     </a>
@@ -205,7 +182,7 @@
         function updateContent() {
             const isEn = currentLang === 'en';
             new Typed('#typed', { 
-                strings: isEn ? ['Space Design.', 'Childhood Growth.', 'Smart Storage.'] : ['空间设计.', '成长空间.', '智慧收纳.'], 
+                strings: isEn ? ['Future Living.', 'Infinite Organization.', 'Genius Design.'] : ['未来生活.', '无限收纳.', '天才设计.'], 
                 typeSpeed: 50, loop: true, destroy: true
             });
             renderUI();
