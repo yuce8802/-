@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VortinT | Precision Store</title>
+    <title>VortinT | Interactive Store</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
@@ -15,16 +15,10 @@
         #splash-screen {
             position: fixed; inset: 0; background: #fff;
             display: flex; flex-direction: column; align-items: center; justify-content: center;
-            z-index: 10000; transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+            z-index: 10000; transition: 0.8s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .splash-logo {
-            width: 160px; height: 160px; border-radius: 50%;
-            animation: splashPulse 1.5s ease-in-out forwards;
-        }
-        @keyframes splashPulse {
-            0% { transform: scale(0.8); opacity: 0; filter: blur(5px); }
-            100% { transform: scale(1); opacity: 1; filter: blur(0px); }
-        }
+        .splash-logo { width: 160px; height: 160px; border-radius: 50%; animation: splashPulse 1.5s ease-in-out forwards; }
+        @keyframes splashPulse { 0% { transform: scale(0.8); opacity: 0; } 100% { transform: scale(1); opacity: 1; } }
         .hide-splash { transform: translateY(-100%); pointer-events: none; }
 
         /* 导航条 */
@@ -34,76 +28,72 @@
             background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(20px);
             border-radius: 99px; padding: 0.8rem 1.2rem;
             display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 10px 40px rgba(0,0,0,0.05);
-            opacity: 0; transition: 1s;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.05); opacity: 0; transition: 1s;
         }
         .nav-show { opacity: 1; }
 
-        /* 💡 核心：卡片式商品网格 */
-        .product-grid {
-            display: grid;
-            gap: 1.5rem;
-            /* 手机端 2 列，电脑端 3 列 */
-            grid-template-columns: repeat(2, minmax(0, 1fr));
-        }
-        @media (min-width: 1024px) {
-            .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
-        }
+        /* 商品网格 */
+        .product-grid { display: grid; gap: 1rem; grid-template-columns: repeat(2, minmax(0, 1fr)); }
+        @media (min-width: 1024px) { .product-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 1.5rem; } }
 
         .product-card {
             background: #fff; border: 1px solid #f1f5f9; border-radius: 1.5rem;
-            overflow: hidden; transition: all 0.4s ease;
-            display: flex; flex-direction: column;
+            overflow: hidden; transition: all 0.4s ease; cursor: pointer;
         }
-        .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(0,0,0,0.06); border-color: #e2e8f0; }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 40px rgba(0,0,0,0.05); }
 
-        .buy-btn {
-            background: #2563eb; color: white; width: 100%; padding: 0.8rem;
-            border-radius: 0.8rem; font-weight: 800; font-size: 0.75rem;
-            text-align: center; transition: 0.3s; margin-top: auto;
+        /* 💡 商品详情弹窗样式 */
+        #detail-modal {
+            position: fixed; inset: 0; background: rgba(255,255,255,0.7);
+            backdrop-filter: blur(15px); z-index: 2000;
+            display: none; align-items: center; justify-content: center; padding: 1.5rem;
         }
-        .buy-btn:hover { background: #1e40af; }
+        .modal-content {
+            background: white; width: 100%; max-width: 500px; border-radius: 2.5rem;
+            box-shadow: 0 40px 100px rgba(0,0,0,0.1); overflow: hidden;
+            transform: scale(0.9); opacity: 0; transition: 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .modal-show .modal-content { transform: scale(1); opacity: 1; }
+
+        .close-btn { position: absolute; top: 1.5rem; right: 1.5rem; font-size: 1.5rem; color: #94a3b8; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div id="splash-screen">
-        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="splash-logo">
+    <div id="splash-screen"><img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="splash-logo"></div>
+
+    <div id="detail-modal" onclick="closeDetail()">
+        <div class="close-btn">✕</div>
+        <div class="modal-content" onclick="event.stopPropagation()">
+            <img id="modal-img" src="" class="w-full aspect-square object-cover">
+            <div class="p-8 space-y-4">
+                <h2 id="modal-title" class="text-2xl font-black text-slate-800"></h2>
+                <div class="h-1 w-12 bg-blue-600"></div>
+                <p class="text-slate-400 leading-relaxed font-medium">这款 VortinT 专属设计采用了高精度的弹力绳储物系统，结合北欧实木工艺，为您提供极致的收纳体验与空间美感。</p>
+                <a id="modal-link" href="#" target="_blank" class="block w-full bg-blue-600 text-white text-center py-4 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-colors">立即获取</a>
+            </div>
+        </div>
     </div>
 
     <nav id="mainNav" class="floating-nav">
-        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-             onclick="handleLogoClick()" class="h-10 w-10 rounded-full cursor-pointer shadow-sm">
+        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" onclick="handleLogoClick()" class="h-10 w-10 rounded-full cursor-pointer">
         <div class="flex items-center space-x-2">
-            <a href="mailto:gd@vortexd.com" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-full font-bold text-[9px] uppercase hover:bg-slate-100">GD</a>
-            <a href="mailto:cs@vortexd.com" class="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-[9px] uppercase shadow-md hover:bg-blue-700">CS Support</a>
+            <a href="mailto:gd@vortexd.com" class="bg-slate-50 text-slate-500 px-4 py-2 rounded-full font-bold text-[9px] uppercase">GD</a>
+            <a href="mailto:cs@vortexd.com" class="bg-blue-600 text-white px-4 py-2 rounded-full font-bold text-[9px] uppercase shadow-md">CS Support</a>
         </div>
     </nav>
 
     <main class="max-w-7xl mx-auto px-4 pt-32 pb-20">
         <header class="py-10 text-center">
-            <p class="text-xs text-slate-400 font-bold tracking-[0.3em] uppercase">VortinT Architecture / <span id="typed" class="text-blue-600"></span></p>
+            <p class="text-xs text-slate-400 font-bold tracking-[0.3em] uppercase">VortinT / <span id="typed" class="text-blue-600"></span></p>
         </header>
 
         <section class="mb-12 rounded-[2rem] overflow-hidden bg-slate-100 shadow-xl">
-            <div class="aspect-video w-full">
-                <video id="brandVideo" class="w-full h-full object-cover" autoplay muted loop playsinline controls></video>
-            </div>
+            <div class="aspect-video w-full"><video id="brandVideo" class="w-full h-full object-cover" autoplay muted loop playsinline controls></video></div>
         </section>
 
-        <div id="product-list" class="product-grid">
-            </div>
+        <div id="product-list" class="product-grid"></div>
     </main>
-
-    <div id="adminPanel" class="fixed inset-0 bg-white/95 z-[9999] hidden items-center justify-center" onclick="this.style.display='none'">
-        <div class="text-center" onclick="event.stopPropagation()">
-            <div class="flex space-x-10 mb-8">
-                <div><p class="text-[9px] text-slate-400">TRAFFIC</p><p id="vCount" class="text-4xl font-black">0</p></div>
-                <div><p class="text-[9px] text-slate-400">UNITS</p><p id="pCount" class="text-4xl font-black">0</p></div>
-            </div>
-            <button onclick="localStorage.clear(); location.reload();" class="text-[9px] font-bold text-red-400 border border-red-50 px-5 py-2 rounded-full uppercase">Reset Cache</button>
-        </div>
-    </div>
 
     <script>
         const VIKA_TOKEN = "usk6WsQlH4X6ST2hQRk4vAz"; 
@@ -114,7 +104,6 @@
 
         async function init() {
             document.getElementById('brandVideo').src = RAW_VIDEO;
-            
             setTimeout(() => {
                 document.getElementById('splash-screen').classList.add('hide-splash');
                 document.getElementById('mainNav').classList.add('nav-show');
@@ -128,42 +117,50 @@
                 if (data.success) {
                     allProducts = data.data.records;
                     updateContent();
-                    document.getElementById('pCount').innerText = allProducts.length;
-                    let v = (parseInt(localStorage.getItem('v_total') || 0) + 1);
-                    document.getElementById('vCount').innerText = v;
-                    localStorage.setItem('v_total', v);
                 }
             } catch (e) { console.error(e); }
         }
 
+        // 💡 详情弹窗逻辑
+        function openDetail(index) {
+            const f = allProducts[index].fields;
+            let img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || "");
+            document.getElementById('modal-img').src = img.replace("http://", "https://");
+            document.getElementById('modal-title').innerText = f['标题'] || 'VortinT Special Edition';
+            document.getElementById('modal-link').href = f['链接'] || '#';
+            
+            const modal = document.getElementById('detail-modal');
+            modal.style.display = 'flex';
+            setTimeout(() => modal.classList.add('modal-show'), 10);
+        }
+
+        function closeDetail() {
+            const modal = document.getElementById('detail-modal');
+            modal.classList.remove('modal-show');
+            setTimeout(() => modal.style.display = 'none', 400);
+        }
+
         function handleLogoClick() {
             logoClicks++;
-            if(logoClicks === 5) { document.getElementById('adminPanel').style.display = 'flex'; logoClicks = 0; }
-            setTimeout(() => logoClicks = 0, 3000);
+            if(logoClicks === 5) { alert('Admin Mode Active'); logoClicks = 0; }
         }
 
         function renderUI() {
             const list = document.getElementById('product-list');
-            list.innerHTML = allProducts.map((r) => {
+            list.innerHTML = allProducts.map((r, i) => {
                 const f = r.fields;
                 let img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || "");
                 return `
-                <div class="product-card p-3 md:p-4">
+                <div class="product-card p-3 md:p-4" onclick="openDetail(${i})">
                     <img src="${img.replace("http://", "https://")}" class="w-full aspect-square object-cover rounded-xl mb-4">
-                    <div class="flex-grow flex flex-col">
-                        <h3 class="text-sm md:text-base font-black text-slate-800 line-clamp-1 mb-1">${f['标题'] || 'VortinT Unit'}</h3>
-                        <p class="text-[10px] md:text-xs text-slate-400 font-medium mb-4 line-clamp-2">Premium design with technical storage solutions.</p>
-                        <a href="${f['链接'] || '#'}" target="_blank" class="buy-btn uppercase tracking-tighter">Initialize</a>
-                    </div>
+                    <h3 class="text-sm md:text-base font-black text-slate-800 line-clamp-1">${f['标题'] || 'VortinT Unit'}</h3>
+                    <p class="text-[10px] md:text-xs text-slate-400 mt-1 uppercase font-bold tracking-tighter">View Details</p>
                 </div>`;
             }).join('');
         }
 
         function updateContent() {
-            new Typed('#typed', { 
-                strings: ['Future Space.', 'Precision.', 'Unity.'], 
-                typeSpeed: 60, loop: true
-            });
+            new Typed('#typed', { strings: ['Intelligence.', 'Design.', 'Space.'], typeSpeed: 60, loop: true });
             renderUI();
         }
 
