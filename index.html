@@ -3,23 +3,30 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VortinT | Official</title>
+    <title>VortinT | Smart Space</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap');
-        body { font-family: 'Space Grotesk', sans-serif; background: #fff; }
+        body { font-family: 'Space Grotesk', sans-serif; background: #fff; color: #0f172a; }
+        
+        /* 1.5s 进度条 */
         .progress-bar { position: absolute; top: 0; left: 0; height: 4px; background: #2563eb; width: 0%; }
         .modal-show .progress-bar { width: 100%; transition: width 1.5s linear; }
+
         #detail-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(12px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 1.5rem; }
         .modal-content { background: white; width: 100%; max-width: 420px; border-radius: 2rem; transform: scale(0.9); opacity: 0; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; }
         .modal-show .modal-content { transform: scale(1); opacity: 1; }
+        
+        /* 客服按钮动画 */
+        .float-btn { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
     </style>
 </head>
 <body class="bg-slate-50/30">
 
     <div id="splash" class="fixed inset-0 bg-white z-[9999] flex items-center justify-center transition-opacity duration-700">
-        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-16 h-16 rounded-full animate-pulse">
+        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-16 h-16 rounded-full animate-bounce">
     </div>
 
     <div id="detail-modal" onclick="closeDetail()">
@@ -27,10 +34,8 @@
             <div class="progress-bar" id="p-bar"></div>
             <img id="m-img" src="" class="w-full aspect-square object-cover">
             <div class="p-8 text-center">
-                <h2 id="m-title" class="text-lg font-bold mb-6 text-slate-800"></h2>
-                <div class="inline-flex items-center space-x-2 bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-xs font-bold animate-pulse">
-                    <span>CONNECTING TO STORE</span>
-                </div>
+                <h2 id="m-title" class="text-xl font-bold mb-4 text-slate-800"></h2>
+                <div class="bg-blue-50 text-blue-600 px-4 py-2 rounded-full text-[10px] font-black tracking-widest uppercase animate-pulse inline-block">Connecting Store...</div>
             </div>
         </div>
     </div>
@@ -38,22 +43,26 @@
     <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[92vw] max-w-5xl bg-white/80 backdrop-blur-xl rounded-full px-6 py-3 flex justify-between items-center shadow-sm">
         <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
              onclick="adminGate()" class="h-8 w-8 rounded-full cursor-pointer active:scale-90 transition-transform">
-        <span class="text-[9px] font-bold tracking-[0.3em] text-slate-400 uppercase">VortinT Smart Space</span>
+        <span class="text-[9px] font-bold tracking-[0.3em] text-slate-400 uppercase">VortinT Pro Speed</span>
     </nav>
 
     <main class="max-w-5xl mx-auto px-4 pt-24 pb-20">
-        <section class="mb-8 rounded-[2rem] overflow-hidden shadow-2xl bg-black aspect-video relative">
+        <section class="mb-10 rounded-[2.5rem] overflow-hidden shadow-2xl bg-black aspect-video relative">
             <video id="v-player" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
             <div class="absolute bottom-6 left-8">
-                <h1 id="typed" class="text-white text-xl font-bold"></h1>
+                <p class="text-white/60 text-[9px] font-bold tracking-widest uppercase mb-1">Global Showcase</p>
+                <h1 id="typed" class="text-white text-xl md:text-2xl font-bold"></h1>
             </div>
         </section>
 
-        <div id="p-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4">
-            <div class="aspect-square bg-slate-200 animate-pulse rounded-2xl"></div>
-            <div class="aspect-square bg-slate-200 animate-pulse rounded-2xl"></div>
-        </div>
+        <div id="p-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4"></div>
     </main>
+
+    <div class="fixed bottom-8 right-8 z-[1500]">
+        <a id="service-link" href="mailto:gd@vortexd.com" class="float-btn bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"></path></svg>
+        </a>
+    </div>
 
     <script>
         const CFG = { TOKEN: "usk6WsQlH4X6ST2hQRk4vAz", SHEET: "dstUcVqARey53sJnMh" };
@@ -67,27 +76,25 @@
                 const { data } = await res.json();
                 products = data.records;
 
-                // 💡 适配你的表格：取第一行的“视频链接”作为主视频
-                const mainVideo = products[0].fields['视频链接'];
-                if(mainVideo) document.getElementById('v-player').src = mainVideo;
-
+                // 视频 & 客服 动态配置 (取第一行)
+                if(products[0].fields['视频链接']) document.getElementById('v-player').src = products[0].fields['视频链接'];
+                
                 render();
-                new Typed('#typed', { strings: ['Creative Storage.', 'Elastic Innovation.', 'VortinT Space.'], typeSpeed: 60, loop: true });
+                new Typed('#typed', { strings: ['Elastic Cord Innovation.', 'VortinT Toy Storage.', 'Professional Quality.'], typeSpeed: 50, loop: true });
                 document.getElementById('splash').style.opacity = '0';
                 setTimeout(() => document.getElementById('splash').remove(), 700);
-            } catch (e) { console.error("Load failed"); }
+            } catch (e) { alert("Data Sync Error"); }
         }
 
         function render() {
             const grid = document.getElementById('p-grid');
             grid.innerHTML = products.map((p, i) => {
                 const f = p.fields;
-                // 适配你的图片列：支持附件格式或纯文本URL
                 const img = Array.isArray(f['图片']) ? f['图片'][0].url : f['图片'];
                 return `
-                <div class="bg-white p-2 rounded-[1.5rem] shadow-sm active:scale-95 transition-all cursor-pointer" onclick="openP(${i})">
-                    <img src="${img}" class="w-full aspect-square object-cover rounded-[1.2rem] mb-2">
-                    <h3 class="text-[10px] font-bold px-2 truncate text-slate-700 uppercase">${f['标题'] || 'Unit'}</h3>
+                <div class="bg-white p-2 rounded-[2rem] shadow-sm border border-slate-100 active:scale-95 transition-all cursor-pointer" onclick="openP(${i})">
+                    <img src="${img}" class="w-full aspect-square object-cover rounded-[1.5rem] mb-3">
+                    <h3 class="text-[10px] font-bold px-3 truncate text-slate-700 uppercase">${f['标题'] || 'Unit'}</h3>
                 </div>`;
             }).join('');
         }
@@ -100,7 +107,6 @@
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('modal-show'), 10);
 
-            // 1.5s 苹果友好跳转
             timer = setTimeout(() => {
                 if (modal.classList.contains('modal-show')) window.location.href = f['链接'];
             }, 1500);
