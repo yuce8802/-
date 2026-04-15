@@ -81,7 +81,10 @@
         </section>
 
         <div id="p-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6">
-            </div>
+            <div class="aspect-square bg-blue-50 animate-pulse rounded-[2rem]"></div>
+            <div class="aspect-square bg-blue-50 animate-pulse rounded-[2rem]"></div>
+            <div class="aspect-square bg-blue-50 animate-pulse rounded-[2rem]"></div>
+        </div>
     </main>
 
     <div class="fixed bottom-8 right-8 z-[1500]">
@@ -101,12 +104,10 @@
             TOKEN: "usk6WsQlH4X6ST2hQRk4vAz", 
             SHEET: "dstUcVqARey53sJnMh",
             DEFAULT_V: "https://res.cloudinary.com/dpr2pn5rs/video/upload/v1776075209/4%E6%9C%8813%E6%97%A5_1_iiorev.mp4",
-            WA_PHONE: "85269517551",
-            FALLBACK_IMG: "https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg"
+            WA_PHONE: "85269517551"
         };
         
         let products = [], timer = null, clicks = 0;
-        let fetchedImages = {}; // 缓存已抓取的图片
 
         async function init() {
             document.getElementById('visitor-count').innerText = `Live: ${Math.floor(Math.random() * (1600 - 900) + 900)}`;
@@ -116,21 +117,14 @@
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
                 });
                 const { data } = await res.json();
-                products = data.records.filter(r => r.fields['标题'] !== 'SERVICE_LINK');
+                products = data.records;
 
                 // 视频初始化
                 const videoUrl = products[0]?.fields['视频链接'];
                 document.getElementById('v-player').src = videoUrl || CFG.DEFAULT_V;
 
-                // 1. 先渲染占位符骨架屏
-                renderSkeletons();
-
-                // 移除闪屏
-                document.getElementById('splash').style.opacity = '0';
-                setTimeout(() => document.getElementById('splash').remove(), 700);
-
-                // 2. 异步开始根据商品链接抓取图片
-                loadImagesFromLinks();
+                // 直接渲染来自数据库的图片，速度最快
+                render();
 
                 new Typed('#typed', { 
                     strings: [
@@ -142,78 +136,52 @@
                     typeSpeed: 50, backSpeed: 30, loop: true 
                 });
 
+                document.getElementById('splash').style.opacity = '0';
+                setTimeout(() => document.getElementById('splash').remove(), 700);
+
             } catch (e) { 
                 console.error("Data Load Error");
                 document.getElementById('v-player').src = CFG.DEFAULT_V;
             }
         }
 
-        // 渲染带有强烈交互反馈的骨架屏
-        function renderSkeletons() {
+        function render() {
             const grid = document.getElementById('p-grid');
-            grid.innerHTML = products.map((p, i) => `
-                <div id="product-card-${i}" class="bg-white p-2.5 rounded-[2rem] shadow-sm border-2 border-transparent hover:border-blue-400 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20 active:scale-95 transition-all duration-300 cursor-pointer group relative" onclick="openP(${i})">
-                    <div class="overflow-hidden rounded-[1.5rem] mb-3 bg-blue-50 relative">
-                        <img id="img-target-${i}" src="" class="w-full aspect-square object-cover opacity-0 transition-opacity duration-700">
-                        <div id="loader-${i}" class="absolute inset-0 flex items-center justify-center">
-                            <span class="animate-pulse flex h-6 w-6 relative">
-                                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                                <span class="relative inline-flex rounded-full h-6 w-6 bg-blue-500"></span>
-                            </span>
-                        </div>
-                    </div>
-                    <h3 class="text-[10px] font-black px-3 truncate text-slate-800 uppercase tracking-tighter group-hover:text-blue-600 transition-colors">${p.fields['标题'] || 'VortinT Unit'}</h3>
-                </div>`).join('');
-        }
-
-        // 核心逻辑：利用第三方 API 从目标链接解析图片
-        async function loadImagesFromLinks() {
-            for (let i = 0; i < products.length; i++) {
-                const targetLink = products[i].fields['链接'];
-                let finalImageUrl = CFG.FALLBACK_IMG;
-
-                if (targetLink) {
-                    try {
-                        // 使用 Microlink API 绕过跨域限制解析链接信息
-                        const response = await fetch(`https://api.microlink.io/?url=${encodeURIComponent(targetLink)}`);
-                        const data = await response.json();
-                        
-                        if (data.status === 'success' && data.data.image) {
-                            finalImageUrl = data.data.image.url;
-                        }
-                    } catch (error) {
-                        console.warn('Failed to extract image from link, using fallback.', targetLink);
-                    }
-                }
-
-                // 缓存图片并更新 UI
-                fetchedImages[i] = finalImageUrl;
-                const imgElement = document.getElementById(`img-target-${i}`);
-                const loaderElement = document.getElementById(`loader-${i}`);
+            const displayList = products.filter(r => r.fields['标题'] !== 'SERVICE_LINK');
+            
+            grid.innerHTML = displayList.map((p, i) => {
+                const f = p.fields;
+                // 直接读取表格中的图片 URL，保证秒开
+                const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || 'https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg');
                 
-                if (imgElement && loaderElement) {
-                    imgElement.src = finalImageUrl;
-                    imgElement.onload = () => {
-                        loaderElement.style.display = 'none';
-                        imgElement.classList.remove('opacity-0');
-                    };
-                }
-            }
+                // 蓝白主题 + 明显的选中悬浮效果
+                return `
+                <div class="bg-white p-2.5 rounded-[2rem] shadow-sm border-2 border-transparent hover:border-blue-400 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20 active:scale-95 transition-all duration-300 cursor-pointer group" onclick="openP(${i})">
+                    <div class="overflow-hidden rounded-[1.5rem] mb-3 bg-blue-50">
+                        <img src="${img}" class="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700">
+                    </div>
+                    <h3 class="text-[10px] font-black px-3 truncate text-slate-800 uppercase tracking-tighter group-hover:text-blue-600 transition-colors">${f['标题'] || 'VortinT Unit'}</h3>
+                </div>`;
+            }).join('');
         }
 
         function openP(i) {
-            const f = products[i].fields;
-            // 使用抓取到的图片，如果还没抓完则用默认图
-            document.getElementById('m-img').src = fetchedImages[i] || CFG.FALLBACK_IMG;
+            // 获取商品数据，跳过可能存在的非商品记录（比如你说的 SERVICE_LINK）
+            const displayList = products.filter(r => r.fields['标题'] !== 'SERVICE_LINK');
+            const f = displayList[i].fields;
+            
+            document.getElementById('m-img').src = Array.isArray(f['图片']) ? f['图片'][0].url : f['图片'];
             document.getElementById('m-title').innerText = f['标题'];
             
             const modal = document.getElementById('detail-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('modal-show'), 10);
 
+            // 更新 WhatsApp 链接：自动包含当前商品名称
             const waMsg = encodeURIComponent(`Hi! I'm interested in the "${f['标题']}". Could you provide more details?`);
             document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}?text=${waMsg}`;
 
+            // 1.5秒自动跳转到商品链接
             timer = setTimeout(() => {
                 if (modal.classList.contains('modal-show') && f['链接']) {
                     window.location.href = f['链接'];
@@ -226,6 +194,7 @@
             document.getElementById('detail-modal').classList.remove('modal-show');
             setTimeout(() => document.getElementById('detail-modal').style.display = 'none', 300);
             
+            // 重置 WhatsApp 链接为默认通用文案
             const defaultMsg = encodeURIComponent("Hi! I'm interested in VortinT Smart Space solutions.");
             document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}?text=${defaultMsg}`;
         }
