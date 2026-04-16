@@ -54,12 +54,11 @@
             <span class="text-[10px] font-black text-blue-900 uppercase tracking-tighter">VortinT™</span>
         </div>
         
-        <div class="flex items-center space-x-2 bg-blue-50 px-3 py-1.5 rounded-full border border-blue-100">
-            <span class="flex h-2 w-2 relative">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
-            </span>
-            <span id="visitor-count" class="text-[9px] font-bold text-blue-800 uppercase tracking-widest">Live: 1,028</span>
+        <div class="flex items-center space-x-2 bg-white px-4 py-1.5 rounded-full border border-blue-200 shadow-sm cursor-default hover:bg-blue-50 transition-colors">
+            <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path>
+            </svg>
+            <span id="click-count" class="text-[10px] font-black text-blue-800 uppercase tracking-widest">CLICKS: 0</span>
         </div>
     </nav>
 
@@ -109,8 +108,23 @@
         
         let products = [], timer = null, clicks = 0;
 
+        // 点击计数器全局逻辑
+        let siteClicks = parseInt(localStorage.getItem('vortint_clicks') || '0');
+        
+        function updateClickCounter() {
+            siteClicks++;
+            localStorage.setItem('vortint_clicks', siteClicks);
+            const countEl = document.getElementById('click-count');
+            if(countEl) countEl.innerText = `CLICKS: ${siteClicks}`;
+        }
+
+        // 监听全站任意位置的点击
+        document.addEventListener('click', updateClickCounter);
+
         async function init() {
-            document.getElementById('visitor-count').innerText = `Live: ${Math.floor(Math.random() * (1600 - 900) + 900)}`;
+            // 初始化显示点击量
+            const countEl = document.getElementById('click-count');
+            if(countEl) countEl.innerText = `CLICKS: ${siteClicks}`;
 
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
@@ -166,7 +180,7 @@
         }
 
         function openP(i) {
-            // 获取商品数据，跳过可能存在的非商品记录（比如你说的 SERVICE_LINK）
+            // 获取商品数据，跳过可能存在的非商品记录
             const displayList = products.filter(r => r.fields['标题'] !== 'SERVICE_LINK');
             const f = displayList[i].fields;
             
