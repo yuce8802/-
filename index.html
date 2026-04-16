@@ -54,11 +54,12 @@
             <span class="text-[10px] font-black text-blue-900 uppercase tracking-tighter">VortinT™</span>
         </div>
         
-        <div class="flex items-center space-x-2 bg-white px-4 py-1.5 rounded-full border border-blue-200 shadow-sm cursor-default hover:bg-blue-50 transition-colors">
-            <svg class="w-3.5 h-3.5 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122"></path>
+        <div class="flex items-center space-x-2 bg-white px-3 py-1.5 rounded-full border border-blue-200 shadow-sm">
+            <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
             </svg>
-            <span id="click-count" class="text-[10px] font-black text-blue-800 uppercase tracking-widest">CLICKS: 0</span>
+            <span id="visitor-count" class="text-[10px] font-black text-blue-800 uppercase tracking-widest">VIEWS: ...</span>
         </div>
     </nav>
 
@@ -108,23 +109,22 @@
         
         let products = [], timer = null, clicks = 0;
 
-        // 点击计数器全局逻辑
-        let siteClicks = parseInt(localStorage.getItem('vortint_clicks') || '0');
-        
-        function updateClickCounter() {
-            siteClicks++;
-            localStorage.setItem('vortint_clicks', siteClicks);
-            const countEl = document.getElementById('click-count');
-            if(countEl) countEl.innerText = `CLICKS: ${siteClicks}`;
+        // 获取并增加真实访问量 (PV)
+        async function recordVisit() {
+            try {
+                // 使用免费的 Counter API，"vortint_brand" 是你的专属命名空间
+                const res = await fetch('https://api.counterapi.dev/v1/vortint_brand/homepage/up');
+                const data = await res.json();
+                document.getElementById('visitor-count').innerText = `VIEWS: ${data.count}`;
+            } catch (error) {
+                // 如果接口偶尔不稳定，显示基础数据兜底
+                document.getElementById('visitor-count').innerText = `VIEWS: 800+`;
+            }
         }
 
-        // 监听全站任意位置的点击
-        document.addEventListener('click', updateClickCounter);
-
         async function init() {
-            // 初始化显示点击量
-            const countEl = document.getElementById('click-count');
-            if(countEl) countEl.innerText = `CLICKS: ${siteClicks}`;
+            // 触发访问量统计
+            recordVisit();
 
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
@@ -137,7 +137,7 @@
                 const videoUrl = products[0]?.fields['视频链接'];
                 document.getElementById('v-player').src = videoUrl || CFG.DEFAULT_V;
 
-                // 直接渲染来自数据库的图片，速度最快
+                // 直接渲染来自数据库的图片
                 render();
 
                 new Typed('#typed', { 
@@ -165,10 +165,8 @@
             
             grid.innerHTML = displayList.map((p, i) => {
                 const f = p.fields;
-                // 直接读取表格中的图片 URL，保证秒开
                 const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || 'https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg');
                 
-                // 蓝白主题 + 明显的选中悬浮效果
                 return `
                 <div class="bg-white p-2.5 rounded-[2rem] shadow-sm border-2 border-transparent hover:border-blue-400 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20 active:scale-95 transition-all duration-300 cursor-pointer group" onclick="openP(${i})">
                     <div class="overflow-hidden rounded-[1.5rem] mb-3 bg-blue-50">
@@ -180,7 +178,6 @@
         }
 
         function openP(i) {
-            // 获取商品数据，跳过可能存在的非商品记录
             const displayList = products.filter(r => r.fields['标题'] !== 'SERVICE_LINK');
             const f = displayList[i].fields;
             
@@ -191,11 +188,9 @@
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('modal-show'), 10);
 
-            // 更新 WhatsApp 链接：自动包含当前商品名称
             const waMsg = encodeURIComponent(`Hi! I'm interested in the "${f['标题']}". Could you provide more details?`);
             document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}?text=${waMsg}`;
 
-            // 1.5秒自动跳转到商品链接
             timer = setTimeout(() => {
                 if (modal.classList.contains('modal-show') && f['链接']) {
                     window.location.href = f['链接'];
@@ -208,7 +203,6 @@
             document.getElementById('detail-modal').classList.remove('modal-show');
             setTimeout(() => document.getElementById('detail-modal').style.display = 'none', 300);
             
-            // 重置 WhatsApp 链接为默认通用文案
             const defaultMsg = encodeURIComponent("Hi! I'm interested in VortinT Smart Space solutions.");
             document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}?text=${defaultMsg}`;
         }
