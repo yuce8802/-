@@ -23,6 +23,9 @@
         .float-btn { animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
+        /* 导航栏平滑位移动画 */
+        .nav-hidden { transform: translateY(-100%); }
+
         /* 隐藏滚动条 */
         ::-webkit-scrollbar { width: 0; background: transparent; }
     </style>
@@ -31,8 +34,8 @@
 
     <div id="splash" class="fixed inset-0 bg-white z-[9999] flex items-center justify-center transition-opacity duration-700">
         <div class="flex flex-col items-center">
-            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-16 h-16 rounded-full animate-bounce mb-4 border-2 border-blue-500">
-            <span class="text-blue-600 font-bold text-sm tracking-widest uppercase animate-pulse">Loading VortinT...</span>
+            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-24 h-24 rounded-full animate-bounce mb-5 border-[3px] border-blue-500 shadow-xl object-cover">
+            <span class="text-blue-600 font-bold text-base tracking-widest uppercase animate-pulse">Loading VortinT...</span>
         </div>
     </div>
 
@@ -47,36 +50,24 @@
         </div>
     </div>
 
-    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[92vw] max-w-5xl bg-white/90 backdrop-blur-xl rounded-full px-6 py-3 flex justify-between items-center shadow-sm border border-blue-100">
+    <nav id="main-nav" class="fixed top-0 left-0 w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-blue-100 px-6 py-3 flex justify-between items-center shadow-sm transition-transform duration-300 ease-in-out">
         <div class="flex items-center space-x-3">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                 onclick="adminGate()" class="h-8 w-8 rounded-full cursor-pointer active:scale-90 transition-transform shadow-sm">
-            <span class="text-[10px] font-black text-blue-900 uppercase tracking-tighter">VortinT™</span>
-        </div>
-        
-        <div class="flex items-center space-x-2 bg-blue-50 px-3 py-1.5 rounded-full border border-blue-100">
-            <span class="flex h-2 w-2 relative">
-                <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-600"></span>
-            </span>
-            <span id="visitor-count" class="text-[9px] font-bold text-blue-800 uppercase tracking-widest">Live: 1,028</span>
+                 onclick="adminGate()" class="h-12 w-12 rounded-full cursor-pointer active:scale-90 transition-transform shadow-md border-2 border-white object-cover">
+            <span class="text-[10px] md:text-sm font-black text-blue-900 uppercase tracking-tighter leading-tight">瑞航（深圳）国际家居用品有限公司</span>
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto px-4 pt-24 pb-20">
-        
+    <main class="max-w-5xl mx-auto px-4 pt-28 pb-12">
         <section class="mb-10 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/10 bg-black aspect-video relative group">
             <video id="v-player" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
-            
             <div class="absolute top-6 left-8 z-10 flex items-center space-x-2">
                 <span class="bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded-md animate-pulse shadow-lg shadow-blue-500/30">HOT</span>
                 <p class="text-white/90 text-[9px] font-bold tracking-widest uppercase shadow-black">Bestsellers Showcase</p>
             </div>
-
             <div class="absolute bottom-6 left-8 z-10">
                 <h1 id="typed" class="text-white text-xl md:text-2xl font-bold drop-shadow-lg"></h1>
             </div>
-
             <div class="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-transparent to-transparent pointer-events-none"></div>
         </section>
 
@@ -86,6 +77,18 @@
             <div class="aspect-square bg-blue-50 animate-pulse rounded-[2rem]"></div>
         </div>
     </main>
+
+    <footer class="w-full pb-16 px-4 text-center z-10 relative">
+        <div class="max-w-5xl mx-auto flex flex-col items-center space-y-2 text-[11px] font-bold tracking-wider">
+            <p class="text-blue-900/70 text-[12px] uppercase">瑞航（深圳）国际家居用品有限公司</p>
+            <p class="text-blue-900/40">深圳市龙岗区平湖街道上木古社区新木路328号1303</p>
+            <p class="text-blue-900/30">邮箱：<a href="mailto:cs@vortexd.com" class="hover:text-blue-600 transition-colors">cs@vortexd.com</a></p>
+            
+            <div class="mt-8 opacity-20 text-[10px]">
+                VIEWS: <span id="visitor-count">...</span>
+            </div>
+        </div>
+    </footer>
 
     <div class="fixed bottom-8 right-8 z-[1500]">
         <a id="service-link" 
@@ -108,10 +111,31 @@
         };
         
         let products = [], timer = null, clicks = 0;
+        let lastScrollTop = 0;
+        const nav = document.getElementById('main-nav');
+
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                nav.classList.add('nav-hidden');
+            } else {
+                nav.classList.remove('nav-hidden');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
+        }, false);
+
+        async function recordVisit() {
+            try {
+                const res = await fetch('https://api.counterapi.dev/v1/vortint_brand/homepage/up');
+                const data = await res.json();
+                document.getElementById('visitor-count').innerText = `${data.count}`;
+            } catch (error) {
+                document.getElementById('visitor-count').innerText = `800+`;
+            }
+        }
 
         async function init() {
-            document.getElementById('visitor-count').innerText = `Live: ${Math.floor(Math.random() * (1600 - 900) + 900)}`;
-
+            recordVisit();
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
@@ -119,11 +143,9 @@
                 const { data } = await res.json();
                 products = data.records;
 
-                // 视频初始化
                 const videoUrl = products[0]?.fields['视频链接'];
                 document.getElementById('v-player').src = videoUrl || CFG.DEFAULT_V;
 
-                // 直接渲染来自数据库的图片，速度最快
                 render();
 
                 new Typed('#typed', { 
@@ -151,10 +173,8 @@
             
             grid.innerHTML = displayList.map((p, i) => {
                 const f = p.fields;
-                // 直接读取表格中的图片 URL，保证秒开
                 const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || 'https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg');
                 
-                // 蓝白主题 + 明显的选中悬浮效果
                 return `
                 <div class="bg-white p-2.5 rounded-[2rem] shadow-sm border-2 border-transparent hover:border-blue-400 hover:-translate-y-2 hover:shadow-2xl hover:shadow-blue-500/20 active:scale-95 transition-all duration-300 cursor-pointer group" onclick="openP(${i})">
                     <div class="overflow-hidden rounded-[1.5rem] mb-3 bg-blue-50">
@@ -166,22 +186,15 @@
         }
 
         function openP(i) {
-            // 获取商品数据，跳过可能存在的非商品记录（比如你说的 SERVICE_LINK）
             const displayList = products.filter(r => r.fields['标题'] !== 'SERVICE_LINK');
             const f = displayList[i].fields;
-            
             document.getElementById('m-img').src = Array.isArray(f['图片']) ? f['图片'][0].url : f['图片'];
             document.getElementById('m-title').innerText = f['标题'];
-            
             const modal = document.getElementById('detail-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('modal-show'), 10);
-
-            // 更新 WhatsApp 链接：自动包含当前商品名称
             const waMsg = encodeURIComponent(`Hi! I'm interested in the "${f['标题']}". Could you provide more details?`);
             document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}?text=${waMsg}`;
-
-            // 1.5秒自动跳转到商品链接
             timer = setTimeout(() => {
                 if (modal.classList.contains('modal-show') && f['链接']) {
                     window.location.href = f['链接'];
@@ -193,8 +206,6 @@
             clearTimeout(timer);
             document.getElementById('detail-modal').classList.remove('modal-show');
             setTimeout(() => document.getElementById('detail-modal').style.display = 'none', 300);
-            
-            // 重置 WhatsApp 链接为默认通用文案
             const defaultMsg = encodeURIComponent("Hi! I'm interested in VortinT Smart Space solutions.");
             document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}?text=${defaultMsg}`;
         }
