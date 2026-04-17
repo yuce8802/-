@@ -31,8 +31,8 @@
 
     <div id="splash" class="fixed inset-0 bg-white z-[9999] flex items-center justify-center transition-opacity duration-700">
         <div class="flex flex-col items-center">
-            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-16 h-16 rounded-full animate-bounce mb-4 border-2 border-blue-500">
-            <span class="text-blue-600 font-bold text-sm tracking-widest uppercase animate-pulse">Loading VortinT...</span>
+            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-24 h-24 rounded-full animate-bounce mb-5 border-[3px] border-blue-500 shadow-xl object-cover">
+            <span class="text-blue-600 font-bold text-base tracking-widest uppercase animate-pulse">Loading VortinT...</span>
         </div>
     </div>
 
@@ -47,23 +47,23 @@
         </div>
     </div>
 
-    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[92vw] max-w-5xl bg-white/90 backdrop-blur-xl rounded-full px-6 py-3 flex justify-between items-center shadow-sm border border-blue-100">
-        <div class="flex items-center space-x-3">
+    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[92vw] max-w-5xl bg-white/90 backdrop-blur-xl rounded-full px-5 py-3 flex justify-between items-center shadow-sm border border-blue-100">
+        <div class="flex items-center space-x-4">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                 onclick="adminGate()" class="h-8 w-8 rounded-full cursor-pointer active:scale-90 transition-transform shadow-sm">
-            <span class="text-[10px] font-black text-blue-900 uppercase tracking-tighter">VortinT™</span>
+                 onclick="adminGate()" class="h-16 w-16 rounded-full cursor-pointer active:scale-90 transition-transform shadow-md border-2 border-white object-cover">
+            <span class="text-sm font-black text-blue-900 uppercase tracking-tighter">VortinT™</span>
         </div>
         
-        <div class="flex items-center space-x-2 bg-white px-3 py-1.5 rounded-full border border-blue-200 shadow-sm">
+        <div class="flex items-center space-x-2 bg-white px-4 py-2 rounded-full border border-blue-200 shadow-sm">
             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
             </svg>
-            <span id="visitor-count" class="text-[10px] font-black text-blue-800 uppercase tracking-widest">VIEWS: ...</span>
+            <span id="visitor-count" class="text-[11px] font-black text-blue-800 uppercase tracking-widest">VIEWS: ...</span>
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto px-4 pt-24 pb-20">
+    <main class="max-w-5xl mx-auto px-4 pt-32 pb-12">
         
         <section class="mb-10 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/10 bg-black aspect-video relative group">
             <video id="v-player" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
@@ -87,6 +87,13 @@
         </div>
     </main>
 
+    <footer class="w-full pb-16 px-4 text-center z-10 relative">
+        <div class="max-w-5xl mx-auto flex flex-col items-center space-y-2 text-[11px] font-bold text-blue-900/50 tracking-wider">
+            <p>地址：深圳市龙岗区平湖街道上木古社区新木路328号1303  瑞航（深圳）国际家居用品有限公司</p>
+            <p>邮箱：<a href="mailto:cs@vortexd.com" class="hover:text-blue-600 transition-colors">cs@vortexd.com</a></p>
+        </div>
+    </footer>
+
     <div class="fixed bottom-8 right-8 z-[1500]">
         <a id="service-link" 
            href="https://wa.me/85269517551?text=Hi! I'm interested in VortinT Smart Space." 
@@ -109,23 +116,18 @@
         
         let products = [], timer = null, clicks = 0;
 
-        // 获取并增加真实访问量 (PV)
         async function recordVisit() {
             try {
-                // 使用免费的 Counter API，"vortint_brand" 是你的专属命名空间
                 const res = await fetch('https://api.counterapi.dev/v1/vortint_brand/homepage/up');
                 const data = await res.json();
                 document.getElementById('visitor-count').innerText = `VIEWS: ${data.count}`;
             } catch (error) {
-                // 如果接口偶尔不稳定，显示基础数据兜底
                 document.getElementById('visitor-count').innerText = `VIEWS: 800+`;
             }
         }
 
         async function init() {
-            // 触发访问量统计
             recordVisit();
-
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
@@ -133,11 +135,9 @@
                 const { data } = await res.json();
                 products = data.records;
 
-                // 视频初始化
                 const videoUrl = products[0]?.fields['视频链接'];
                 document.getElementById('v-player').src = videoUrl || CFG.DEFAULT_V;
 
-                // 直接渲染来自数据库的图片
                 render();
 
                 new Typed('#typed', { 
