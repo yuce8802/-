@@ -3,45 +3,54 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VortinT | 品牌控制中心 v5.1</title>
+    <title>VortinT | 网页端全能控制台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap');
-        body { font-family: 'Space Grotesk', 'PingFang SC', sans-serif; background: #f8fafc; }
-        .drag-handle { cursor: grab; }
-        .drag-handle:active { cursor: grabbing; }
-        ::-webkit-scrollbar { width: 0; }
+        body { font-family: 'Space Grotesk', 'PingFang SC', sans-serif; background: #f4f7fa; color: #1e293b; }
+        .drag-handle { cursor: grab; transition: all 0.2s; }
+        .drag-handle:active { cursor: grabbing; color: #3b82f6; }
+        .sortable-ghost { opacity: 0.3; background: #dbeafe; border: 2px dashed #3b82f6; }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
         #lock-screen { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; }
     </style>
 </head>
 <body>
 
     <div id="lock-screen">
-        <div class="text-center p-10 max-w-sm w-full">
-            <h2 class="text-2xl font-black mb-6 uppercase tracking-widest text-slate-800">VortinT CMS</h2>
-            <input type="password" id="passcode" placeholder="输入代码" class="w-full bg-slate-100 border-none p-5 rounded-2xl text-center font-bold text-2xl mb-6 outline-none focus:ring-4 ring-blue-500/10 transition-all">
-            <button onclick="checkPass()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black shadow-lg hover:bg-blue-700 active:scale-95 transition-all">解锁进入</button>
+        <div class="text-center p-8 max-w-sm w-full">
+            <h2 class="text-2xl font-black mb-8 tracking-tighter">VortinT 工作台</h2>
+            <input type="password" id="passcode" placeholder="输入访问代码" class="w-full bg-slate-100 border-none p-5 rounded-3xl text-center font-bold text-2xl mb-6 outline-none focus:ring-4 ring-blue-100">
+            <button onclick="checkPass()" class="w-full bg-slate-900 text-white py-5 rounded-3xl font-black shadow-xl active:scale-95 transition-all">解锁后台</button>
         </div>
     </div>
 
-    <div class="max-w-5xl mx-auto px-6 py-12">
-        <header class="flex justify-between items-end mb-10">
+    <div class="max-w-6xl mx-auto px-6 py-12">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
             <div>
-                <h1 class="text-3xl font-black text-slate-900 tracking-tighter">自由排版控制台</h1>
-                <p class="text-blue-500 text-[10px] font-black uppercase tracking-[0.2em]">RUIHANG INT. · 2026 Stable</p>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tighter">网页端直接排版</h1>
+                <p class="text-blue-600 text-xs font-bold uppercase tracking-[0.3em] mt-2">无需打开维格表 · 即改即生效</p>
             </div>
             <div class="flex space-x-3">
-                <button onclick="saveOrder()" id="save-order-btn" class="hidden bg-green-500 text-white px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-green-100 animate-bounce">保存新顺序</button>
-                <button onclick="location.reload()" class="bg-white border border-slate-200 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest">刷新数据</button>
+                <button onclick="saveOrder()" id="save-order-btn" class="hidden bg-blue-600 text-white px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-blue-200">保存当前拖动布局</button>
+                <button onclick="location.reload()" class="bg-white border border-slate-200 px-6 py-4 rounded-2xl text-xs font-bold uppercase">同步最新数据</button>
             </div>
         </header>
 
-        <div id="product-list" class="space-y-4">
-            <div class="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-100 text-slate-300 font-bold">
-                正在同步维格表...
+        <div class="flex overflow-x-auto space-x-2 mb-8 pb-4 no-scrollbar" id="category-filter">
+            </div>
+
+        <div id="product-list" class="grid grid-cols-1 gap-4">
+            <div class="text-center py-32 bg-white rounded-[3rem] border-2 border-dashed border-slate-200 text-slate-400 font-bold uppercase tracking-widest animate-pulse">
+                正在加载您的布局方案...
             </div>
         </div>
+
+        <footer class="mt-20 text-center py-10">
+            <p class="text-[10px] text-slate-300 font-mono uppercase tracking-[0.5em]">Independent Management System v6.0</p>
+        </footer>
     </div>
 
     <script>
@@ -52,113 +61,133 @@
         };
 
         let db = [];
-        let sortableInstance;
+        let currentFilter = '全部';
 
         function checkPass() {
             if(document.getElementById('passcode').value === CFG.PASS) {
                 document.getElementById('lock-screen').style.display = 'none';
                 fetchData();
-            } else { alert("验证码不正确"); }
+            } else { alert("验证码错误"); }
         }
 
         async function fetchData() {
-            const listContainer = document.getElementById('product-list');
             try {
-                // 注意：这里去掉了 sort 参数，防止字段未同步导致的 API 报错
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
                 });
                 const json = await res.json();
-                
-                if(!json.success) {
-                    listContainer.innerHTML = `<div class="p-10 text-red-500 bg-white rounded-3xl font-bold">连接受阻: ${json.message}</div>`;
-                    return;
+                if(json.success) {
+                    // 本地进行物理排序
+                    db = json.data.records.sort((a, b) => (parseFloat(a.fields['排序']) || 999) - (parseFloat(b.fields['排序']) || 999));
+                    renderUI();
                 }
+            } catch (e) { alert("网络连接失败，请检查设置"); }
+        }
 
-                // 在本地根据“排序”列进行排序，处理 undefined 的情况
-                db = json.data.records.sort((a, b) => {
-                    const sortA = parseFloat(a.fields['排序']) || 9999;
-                    const sortB = parseFloat(b.fields['排序']) || 9999;
-                    return sortA - sortB;
-                });
+        function renderUI() {
+            renderCategories();
+            renderList();
+        }
 
-                renderList();
-            } catch (e) {
-                listContainer.innerHTML = `<div class="p-10 text-red-500 bg-white rounded-3xl font-bold">网络连接异常</div>`;
-            }
+        function renderCategories() {
+            const categories = ['全部', ...new Set(db.map(item => item.fields['分类']).filter(Boolean))];
+            const container = document.getElementById('category-filter');
+            container.innerHTML = categories.map(cat => `
+                <button onclick="filterCategory('${cat}')" 
+                        class="px-8 py-3 rounded-2xl text-[11px] font-black uppercase tracking-tighter transition-all ${currentFilter === cat ? 'bg-slate-900 text-white shadow-xl' : 'bg-white text-slate-400 border border-slate-100 hover:bg-slate-50'}">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function filterCategory(cat) {
+            currentFilter = cat;
+            renderCategories();
+            renderList();
         }
 
         function renderList() {
             const list = document.getElementById('product-list');
-            list.innerHTML = db.map((item, index) => {
+            const filteredData = currentFilter === '全部' ? db : db.filter(item => item.fields['分类'] === currentFilter);
+
+            list.innerHTML = filteredData.map((item, index) => {
                 const f = item.fields;
-                // 兼容你的截图：图片是链接，如果没有则显示默认图
-                const img = f['图片'] || 'https://via.placeholder.com/100/f1f5f9/cbd5e1?text=No+Img';
-                
-                // 第一行显示视频链接，其余显示链接
-                const isVideo = (index === 0);
+                const img = f['图片'] || 'https://via.placeholder.com/150/f1f5f9/cbd5e1?text=IMG';
+                const isVideo = (index === 0 && currentFilter === '全部');
                 const fieldName = isVideo ? "视频链接" : "链接";
-                const labelText = isVideo ? "首屏视频 (MP4 URL)" : "Amazon Product Link";
 
                 return `
-                <div class="product-card bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center gap-5 transition-all" data-id="${item.recordId}">
+                <div class="product-item bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col md:flex-row items-center gap-6 transition-all" data-id="${item.recordId}">
                     <div class="drag-handle p-2 text-slate-200 hover:text-blue-500">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 8h16M4 16h16"></path></svg>
+                        <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 8h16M4 16h16"></path></svg>
                     </div>
 
-                    <div class="w-16 h-16 flex-shrink-0 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100">
-                        <img src="${img}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/150/f1f5f9/cbd5e1?text=Err'">
+                    <div class="w-20 h-20 rounded-[1.5rem] overflow-hidden bg-slate-50 border border-slate-50 flex-shrink-0">
+                        <img src="${img}" class="w-full h-full object-cover">
                     </div>
                     
-                    <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
+                    <div class="flex-grow grid grid-cols-1 md:grid-cols-3 gap-4 w-full">
                         <div>
-                            <p class="text-[8px] font-black text-slate-300 uppercase mb-1 ml-1">标题</p>
-                            <input id="t-${item.recordId}" type="text" value="${f['标题'] || ''}" class="w-full bg-slate-50 border-none p-3 rounded-xl text-sm font-bold text-slate-700 outline-none">
+                            <p class="text-[8px] font-black text-slate-300 uppercase mb-1 ml-1">分类 (直接修改)</p>
+                            <input id="cat-${item.recordId}" type="text" value="${f['分类'] || ''}" class="w-full bg-slate-50 border-none p-3 rounded-xl text-xs font-bold text-slate-500 outline-none">
                         </div>
                         <div>
-                            <p class="text-[8px] font-black text-blue-400 uppercase mb-1 ml-1">${labelText}</p>
+                            <p class="text-[8px] font-black text-slate-300 uppercase mb-1 ml-1">商品标题</p>
+                            <input id="t-${item.recordId}" type="text" value="${f['标题'] || ''}" class="w-full bg-slate-50 border-none p-3 rounded-xl text-xs font-bold text-slate-700 outline-none">
+                        </div>
+                        <div>
+                            <p class="text-[8px] font-black text-blue-500 uppercase mb-1 ml-1">${isVideo ? '首屏视频链接' : 'AMAZON 链接'}</p>
                             <input id="l-${item.recordId}" type="text" value="${f[fieldName] || ''}" class="w-full bg-slate-50 border-none p-3 rounded-xl text-[10px] font-mono text-blue-600 outline-none">
                         </div>
                     </div>
 
-                    <button onclick="updateSingle('${item.recordId}', ${isVideo})" class="bg-slate-900 text-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase active:scale-90 transition-all">更新</button>
+                    <button onclick="updateData('${item.recordId}', ${isVideo})" class="bg-slate-900 text-white px-8 py-4 rounded-2xl text-[10px] font-black uppercase active:scale-95 transition-all">更新</button>
                 </div>
                 `;
             }).join('');
 
-            if(sortableInstance) sortableInstance.destroy();
-            sortableInstance = new Sortable(list, {
-                handle: '.drag-handle',
-                animation: 250,
-                onEnd: () => {
-                    document.getElementById('save-order-btn').classList.remove('hidden');
-                }
-            });
+            // 启用拖拽（仅在“全部”视图下允许排序，防止逻辑混乱）
+            if(currentFilter === '全部') {
+                new Sortable(list, {
+                    handle: '.drag-handle',
+                    animation: 250,
+                    ghostClass: 'sortable-ghost',
+                    onEnd: () => { document.getElementById('save-order-btn').classList.remove('hidden'); }
+                });
+            }
         }
 
-        async function updateSingle(rid, isVideo) {
+        // 网页端直接更新数据（标题、链接、分类）
+        async function updateData(rid, isVideo) {
             const fieldName = isVideo ? "视频链接" : "链接";
-            const updateFields = { "标题": document.getElementById(`t-${rid}`).value };
+            const updateFields = {
+                "标题": document.getElementById(`t-${rid}`).value,
+                "分类": document.getElementById(`cat-${rid}`).value
+            };
             updateFields[fieldName] = document.getElementById(`l-${rid}`).value;
 
-            const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
-                method: 'PATCH',
-                headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
-                body: JSON.stringify({ records: [{ recordId: rid, fields: updateFields }] })
-            });
-            const data = await res.json();
-            alert(data.success ? "✅ 已更新" : "❌ 失败: " + data.message);
+            try {
+                const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ records: [{ recordId: rid, fields: updateFields }] })
+                });
+                const data = await res.json();
+                if(data.success) {
+                    alert("✅ 网页修改已同步到云端");
+                    fetchData(); // 重新加载分类按钮
+                }
+            } catch (e) { alert("更新失败"); }
         }
 
+        // 保存拖拽后的排序
         async function saveOrder() {
             const btn = document.getElementById('save-order-btn');
-            btn.innerText = "正在云端排版...";
-            btn.disabled = true;
-
-            const items = document.querySelectorAll('.product-card');
+            btn.innerText = "同步布局中...";
+            const items = document.querySelectorAll('.product-item');
             const records = Array.from(items).map((el, index) => ({
                 recordId: el.getAttribute('data-id'),
-                fields: { "排序": index + 1 } // 这里尝试写入你的截图中的“排序”列
+                fields: { "排序": index + 1 }
             }));
 
             try {
@@ -167,17 +196,13 @@
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ records })
                 });
-                const data = await res.json();
-                if(data.success) {
-                    alert("✅ 排序已永久保存至云端");
+                if((await res.json()).success) {
+                    alert("✅ 网页拖拽排序成功！");
                     btn.classList.add('hidden');
                     fetchData();
-                } else {
-                    alert("❌ 保存失败：请确保维格表列名确实叫'排序'且是数字类型");
                 }
-            } catch (e) { alert("同步失败"); }
-            btn.innerText = "保存新顺序";
-            btn.disabled = false;
+            } catch (e) { alert("保存失败"); }
+            btn.innerText = "保存当前拖动布局";
         }
     </script>
 </body>
