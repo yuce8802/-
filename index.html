@@ -67,19 +67,15 @@
     </nav>
 
     <main class="max-w-5xl mx-auto px-4 pt-28 pb-12">
-        
         <section class="mb-10 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/10 bg-black aspect-video relative group">
             <video id="v-player" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
-            
             <div class="absolute top-6 left-8 z-10 flex items-center space-x-2">
                 <span class="bg-blue-600 text-white text-[9px] font-black px-2 py-0.5 rounded-md animate-pulse shadow-lg shadow-blue-500/30">HOT</span>
                 <p class="text-white/90 text-[9px] font-bold tracking-widest uppercase shadow-black">Bestsellers Showcase</p>
             </div>
-
             <div class="absolute bottom-6 left-8 z-10">
                 <h1 id="typed" class="text-white text-xl md:text-2xl font-bold drop-shadow-lg"></h1>
             </div>
-
             <div class="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-transparent to-transparent pointer-events-none"></div>
         </section>
 
@@ -91,9 +87,18 @@
     </main>
 
     <footer class="w-full pb-16 px-4 text-center z-10 relative">
-        <div class="max-w-5xl mx-auto flex flex-col items-center space-y-2 text-[11px] font-bold text-blue-900/50 tracking-wider">
-            <p>地址：深圳市龙岗区平湖街道上木古社区新木路328号1303  瑞航（深圳）国际家居用品有限公司</p>
-            <p>邮箱：<a href="mailto:cs@vortexd.com" class="hover:text-blue-600 transition-colors">cs@vortexd.com</a></p>
+        <div class="max-w-5xl mx-auto flex flex-col items-center space-y-2 text-[11px] font-bold tracking-wider">
+            <p class="text-blue-900/70 text-[12px] uppercase">瑞航（深圳）国际家居用品有限公司</p>
+            
+            <p class="text-blue-900/40">
+                <a href="https://www.google.com/maps/search/?api=1&query=深圳市龙岗区平湖街道上木古社区新木路328号1303" 
+                   target="_blank" 
+                   class="hover:text-blue-600 transition-colors underline decoration-blue-200">
+                   深圳市龙岗区平湖街道上木古社区新木路328号1303
+                </a>
+            </p>
+            
+            <p class="text-blue-900/30">邮箱：<a href="mailto:cs@vortexd.com" class="hover:text-blue-600 transition-colors">cs@vortexd.com</a></p>
         </div>
     </footer>
 
@@ -121,14 +126,12 @@
         let lastScrollTop = 0;
         const nav = document.getElementById('main-nav');
 
-        // 核心交互：下滑隐藏，上滑显示
+        // 导航栏滚动逻辑：下滑隐藏，上滑显示
         window.addEventListener('scroll', () => {
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             if (scrollTop > lastScrollTop && scrollTop > 100) {
-                // 向下滑动，隐藏导航
                 nav.classList.add('nav-hidden');
             } else {
-                // 向上滑动，显示导航
                 nav.classList.remove('nav-hidden');
             }
             lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
@@ -198,17 +201,13 @@
         function openP(i) {
             const displayList = products.filter(r => r.fields['标题'] !== 'SERVICE_LINK');
             const f = displayList[i].fields;
-            
             document.getElementById('m-img').src = Array.isArray(f['图片']) ? f['图片'][0].url : f['图片'];
             document.getElementById('m-title').innerText = f['标题'];
-            
             const modal = document.getElementById('detail-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('modal-show'), 10);
-
             const waMsg = encodeURIComponent(`Hi! I'm interested in the "${f['标题']}". Could you provide more details?`);
             document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}?text=${waMsg}`;
-
             timer = setTimeout(() => {
                 if (modal.classList.contains('modal-show') && f['链接']) {
                     window.location.href = f['链接'];
@@ -220,7 +219,6 @@
             clearTimeout(timer);
             document.getElementById('detail-modal').classList.remove('modal-show');
             setTimeout(() => document.getElementById('detail-modal').style.display = 'none', 300);
-            
             const defaultMsg = encodeURIComponent("Hi! I'm interested in VortinT Smart Space solutions.");
             document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}?text=${defaultMsg}`;
         }
