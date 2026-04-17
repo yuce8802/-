@@ -3,126 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VortinT | 品牌控制中心</title>
+    <title>VortinT | 智能排版控制中心</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap');
         body { font-family: 'Space Grotesk', 'PingFang SC', sans-serif; background: #f1f5f9; color: #0f172a; }
         
-        /* 登录锁屏 */
-        #lock-screen { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        #lock-screen { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); z-index: 9999; display: flex; align-items: center; justify-content: center; }
         .glass-card { background: white; padding: 3rem; border-radius: 3.5rem; width: 100%; max-width: 400px; border: 1px solid #e2e8f0; }
 
-        /* 教程弹窗样式 */
-        #guide-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.5); backdrop-filter: blur(10px); z-index: 10000; display: none; align-items: center; justify-content: center; padding: 1.5rem; }
-        .guide-content { background: white; width: 100%; max-width: 450px; border-radius: 2.5rem; overflow: hidden; transform: scale(0.9); opacity: 0; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); }
-        .guide-show .guide-content { transform: scale(1); opacity: 1; }
-
-        input:focus { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1); }
-        ::-webkit-scrollbar { width: 0; background: transparent; }
+        /* 拖拽时的样式 */
+        .sortable-ghost { opacity: 0.3; background: #dbeafe !important; border: 2px dashed #2563eb !important; }
+        .sortable-drag { cursor: grabbing; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .drag-handle { cursor: grab; }
+        
+        input:focus { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1); }
+        ::-webkit-scrollbar { width: 0; }
     </style>
 </head>
 <body>
 
     <div id="lock-screen">
-        <div class="glass-card text-center shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)]">
+        <div class="glass-card text-center shadow-2xl">
             <div class="mb-8 flex justify-center">
                 <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-20 h-20 rounded-full shadow-xl border-4 border-white object-cover">
             </div>
-            <h2 class="text-xl font-black mb-2 tracking-tighter text-slate-800 uppercase">控制中心</h2>
-            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-8">身份验证 · 瑞航国际</p>
-            
-            <input type="password" id="passcode" placeholder="输入访问代码" 
-                   class="w-full bg-slate-100 border-none p-5 rounded-2xl text-center font-bold text-2xl mb-5 focus:ring-4 ring-blue-500/20 outline-none transition-all">
-            
-            <button onclick="checkPass()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all">
-                解锁工作台
-            </button>
-        </div>
-    </div>
-
-    <div id="guide-modal">
-        <div class="guide-content shadow-2xl">
-            <div class="bg-blue-600 p-8 text-white">
-                <h3 class="text-2xl font-black mb-2">管理指引</h3>
-                <p class="text-blue-100 text-xs tracking-widest uppercase">VortinT Dashboard Tutorial</p>
-            </div>
-            <div class="p-8 space-y-6">
-                <div class="flex items-start space-x-4">
-                    <div class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold">1</div>
-                    <p class="text-sm text-slate-600 leading-relaxed"><strong class="text-slate-900">首项配置：</strong> 列表第一项固定对应主页的视频区域，请在此上传视频地址。</p>
-                </div>
-                <div class="flex items-start space-x-4">
-                    <div class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold">2</div>
-                    <p class="text-sm text-slate-600 leading-relaxed"><strong class="text-slate-900">余项链接：</strong> 其它商品将自动切换为商品链接模式，点击后跳转至外部商铺。</p>
-                </div>
-                <div class="flex items-start space-x-4">
-                    <div class="bg-blue-100 text-blue-600 w-8 h-8 rounded-full flex-shrink-0 flex items-center justify-center font-bold">3</div>
-                    <p class="text-sm text-slate-600 leading-relaxed"><strong class="text-slate-900">即时同步：</strong> 点击更新后，由于使用了云端数据库，官网将实时展示最新内容。</p>
-                </div>
-                
-                <hr class="border-slate-100">
-                
-                <div class="flex items-center justify-between pt-2">
-                    <label class="flex items-center space-x-2 cursor-pointer group">
-                        <input type="checkbox" id="no-more-guide" class="w-4 h-4 rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-                        <span class="text-xs text-slate-400 font-bold group-hover:text-slate-600 transition-colors">不再提示</span>
-                    </label>
-                    <button onclick="closeGuide()" class="bg-slate-900 text-white px-8 py-3 rounded-xl font-black text-[10px] uppercase tracking-widest hover:bg-blue-600 transition-colors">进入管理</button>
-                </div>
-            </div>
+            <h2 class="text-xl font-black mb-6 text-slate-800 uppercase">控制中心</h2>
+            <input type="password" id="passcode" placeholder="输入访问代码" class="w-full bg-slate-100 border-none p-5 rounded-2xl text-center font-bold text-2xl mb-5 outline-none">
+            <button onclick="checkPass()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-blue-700 transition-all">解锁</button>
         </div>
     </div>
 
     <div class="max-w-6xl mx-auto px-6 py-12">
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6">
             <div>
-                <div class="flex items-center space-x-3 mb-2">
-                    <div class="w-2 h-8 bg-blue-600 rounded-full"></div>
-                    <h1 class="text-3xl font-black text-slate-900 tracking-tighter">控制台</h1>
-                </div>
-                <p class="text-blue-500 text-[10px] font-black tracking-[0.2em] uppercase">瑞航（深圳）国际家居用品有限公司 · 企业管理系统</p>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tighter">排版工作台</h1>
+                <p class="text-blue-500 text-[10px] font-black tracking-[0.2em] uppercase">瑞航国际 · 拖拽排版系统 v4.0</p>
             </div>
             <div class="flex space-x-3">
+                <button onclick="saveOrder()" id="save-order-btn" class="hidden bg-green-600 text-white px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg hover:bg-green-700 transition-all">
+                    保存当前排序
+                </button>
                 <button onclick="goBackHome()" class="bg-white border border-slate-200 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-slate-50 transition-all">
                     返回官网
-                </button>
-                <button onclick="location.reload()" class="bg-blue-600 text-white px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
-                    同步云端数据
                 </button>
             </div>
         </header>
 
-        <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200/60">
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">商品总数</p>
-                <p id="stat-total" class="text-4xl font-black text-slate-800">0</p>
+        <div class="flex overflow-x-auto space-x-2 mb-8 pb-2" id="category-filter">
+            <button onclick="filterCategory('全部')" class="cat-btn active px-6 py-2 bg-blue-600 text-white rounded-full text-xs font-bold whitespace-nowrap">全部商品</button>
             </div>
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200/60">
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">同步状态</p>
-                <div class="flex items-center space-x-2">
-                    <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
-                    <p class="text-xl font-black text-slate-800 uppercase">在线</p>
-                </div>
-            </div>
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200/60">
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">系统链路</p>
-                <p class="text-xl font-black text-blue-600">VIKA_API</p>
-            </div>
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200/60">
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">系统版本</p>
-                <p class="text-xl font-black text-slate-800">v3.8 Stable</p>
-            </div>
-        </div>
 
-        <div id="product-list" class="space-y-6">
+        <div id="product-list" class="space-y-4">
             <div class="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-200">
-                <p class="text-slate-400 font-bold uppercase tracking-widest text-xs">等待身份验证...</p>
+                <p class="text-slate-400 font-bold uppercase tracking-widest text-xs">正在连接云端...</p>
             </div>
         </div>
 
-        <footer class="mt-20 text-center">
-            <p id="visitor-id" class="text-[9px] text-slate-300 font-mono opacity-40 uppercase tracking-widest">Sys_Trace_ID: --</p>
+        <footer class="mt-20 text-center opacity-20 text-[9px]">
+            VORTINT ENTERPRISE ERP SYSTEM
         </footer>
     </div>
 
@@ -134,149 +74,129 @@
         };
 
         let db = [];
+        let currentFilter = '全部';
+        let sortableInstance;
 
-        // 1. 登录与初始化
+        // 1. 验证
         function checkPass() {
             if(document.getElementById('passcode').value === CFG.PASS) {
-                const lock = document.getElementById('lock-screen');
-                lock.style.opacity = '0';
-                lock.style.pointerEvents = 'none';
+                document.getElementById('lock-screen').style.display = 'none';
                 fetchData();
-                recordVisit();
-                handleGuide(); // 教程逻辑
-            } else { alert("验证失败：访问代码错误"); }
+            } else { alert("代码错误"); }
         }
 
-        // 2. 教程显示逻辑
-        function handleGuide() {
-            const isSkipped = localStorage.getItem('skipVortintGuide_v3');
-            if (!isSkipped) {
-                const modal = document.getElementById('guide-modal');
-                modal.style.display = 'flex';
-                setTimeout(() => modal.classList.add('guide-show'), 50);
-            }
-        }
+        function goBackHome() { alert("您辛苦了！"); location.href = 'index.html'; }
 
-        function closeGuide() {
-            if (document.getElementById('no-more-guide').checked) {
-                localStorage.setItem('skipVortintGuide_v3', 'true');
-            }
-            const modal = document.getElementById('guide-modal');
-            modal.classList.remove('guide-show');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-
-        // 3. 返回官网逻辑
-        function goBackHome() {
-            alert("您辛苦了！");
-            setTimeout(() => { location.href = 'index.html'; }, 100);
-        }
-
-        // 4. 云端数据获取
+        // 2. 获取数据 (包含排序字段)
         async function fetchData() {
             try {
-                const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
+                // 请求时按“排序”字段升序排列
+                const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records?sort=[{"field":"排序","order":"asc"}]`, {
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
                 });
                 const json = await res.json();
                 db = json.data.records;
-                document.getElementById('stat-total').innerText = db.length;
-                render();
-            } catch (e) { alert("云端连接失败，请检查 API 配置"); }
+                renderCategories();
+                renderList();
+            } catch (e) { alert("获取数据失败"); }
         }
 
-        // 5. 页面渲染
-        function render() {
+        // 3. 渲染分类按钮
+        function renderCategories() {
+            const categories = ['全部', ...new Set(db.map(item => item.fields['分类'] || '未分类'))];
+            const container = document.getElementById('category-filter');
+            container.innerHTML = categories.map(cat => `
+                <button onclick="filterCategory('${cat}')" 
+                        class="cat-btn px-6 py-2 ${currentFilter === cat ? 'bg-blue-600 text-white' : 'bg-white text-slate-500'} border border-slate-100 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm">
+                    ${cat}
+                </button>
+            `).join('');
+        }
+
+        function filterCategory(cat) {
+            currentFilter = cat;
+            renderCategories();
+            renderList();
+        }
+
+        // 4. 渲染列表并初始化拖拽
+        function renderList() {
             const list = document.getElementById('product-list');
-            list.innerHTML = db.map((item, index) => {
+            const filteredData = currentFilter === '全部' ? db : db.filter(item => item.fields['分类'] === currentFilter);
+
+            list.innerHTML = filteredData.map((item, index) => {
                 const f = item.fields;
-                const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || 'https://via.placeholder.com/150');
-                
-                // 核心逻辑切换：第1项读视频，其余读链接
-                const fieldName = (index === 0) ? "视频链接" : "链接";
-                const labelText = (index === 0) ? "首屏海报视频 (MP4链接)" : "详情跳转链接 (Amazon/Shopify)";
-                
+                const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || '');
                 return `
-                <div class="bg-white p-6 md:p-8 rounded-[3rem] shadow-sm border border-slate-200/60 flex flex-col lg:flex-row items-center gap-8 hover:border-blue-200 transition-all group">
-                    <div class="w-24 h-24 flex-shrink-0 bg-slate-50 rounded-[2.2rem] overflow-hidden border border-slate-100 relative">
-                        <img src="${img}" class="w-full h-full object-cover">
-                        ${index === 0 ? '<span class="absolute top-0 left-0 bg-blue-600 text-white text-[8px] px-2 py-0.5 rounded-br-lg font-bold">主视频</span>' : ''}
-                    </div>
-                    
-                    <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
-                        <div>
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">显示标题</label>
-                            <input id="t-${item.recordId}" type="text" value="${f['标题'] || ''}" 
-                                   class="w-full bg-slate-50 border-none p-5 rounded-2xl text-sm font-bold text-slate-700 outline-none focus:ring-4 ring-blue-500/5 transition-all">
-                        </div>
-                        <div>
-                            <label class="text-[9px] font-black text-blue-500 uppercase tracking-widest block mb-2 px-1">${labelText}</label>
-                            <input id="l-${item.recordId}" type="text" value="${f[fieldName] || ''}" 
-                                   class="w-full bg-slate-50 border-none p-5 rounded-2xl text-[11px] font-mono text-blue-600 outline-none focus:ring-4 ring-blue-500/5 transition-all">
-                        </div>
+                <div class="product-item bg-white p-4 md:p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center gap-4 group" data-id="${item.recordId}">
+                    <div class="drag-handle p-2 text-slate-300 hover:text-blue-500 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 8h16M4 16h16"></path></svg>
                     </div>
 
-                    <div class="flex-shrink-0 w-full lg:w-auto">
-                        <button onclick="updateRecord('${item.recordId}', '${fieldName}')" id="btn-${item.recordId}"
-                                class="w-full lg:w-auto bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-xl active:scale-95 transition-all">
-                            更新数据
-                        </button>
+                    <img src="${img}" class="w-16 h-16 rounded-2xl object-cover bg-slate-50">
+                    
+                    <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <input id="t-${item.recordId}" type="text" value="${f['标题'] || ''}" placeholder="标题" class="bg-slate-50 border-none p-3 rounded-xl text-sm font-bold text-slate-700 outline-none focus:ring-2 ring-blue-500/10">
+                        <input id="l-${item.recordId}" type="text" value="${(index === 0 && currentFilter === '全部') ? (f['视频链接'] || '') : (f['链接'] || '')}" placeholder="链接" class="bg-slate-50 border-none p-3 rounded-xl text-[11px] font-mono text-blue-600 outline-none focus:ring-2 ring-blue-500/10">
                     </div>
+
+                    <button onclick="updateSingle('${item.recordId}', ${index})" class="bg-slate-900 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 transition-all">更新</button>
                 </div>
                 `;
             }).join('');
+
+            // 初始化 SortableJS
+            if(sortableInstance) sortableInstance.destroy();
+            sortableInstance = new Sortable(list, {
+                handle: '.drag-handle',
+                animation: 150,
+                ghostClass: 'sortable-ghost',
+                onEnd: () => {
+                    document.getElementById('save-order-btn').classList.remove('hidden');
+                }
+            });
         }
 
-        // 6. 数据更新回传
-        async function updateRecord(rid, fieldName) {
-            const btn = document.getElementById(`btn-${rid}`);
-            const newTitle = document.getElementById(`t-${rid}`).value;
-            const newLink = document.getElementById(`l-${rid}`).value;
-
-            btn.innerText = "正在保存...";
+        // 5. 保存排序 (批量更新云端)
+        async function saveOrder() {
+            const btn = document.getElementById('save-order-btn');
+            btn.innerText = "正在同步位置...";
             btn.disabled = true;
 
-            const updateFields = { "标题": newTitle };
-            updateFields[fieldName] = newLink; // 动态决定更新哪个字段
+            const items = document.querySelectorAll('.product-item');
+            const records = Array.from(items).map((el, index) => ({
+                recordId: el.getAttribute('data-id'),
+                fields: { "排序": index + 1 } // 设置新的排序数字
+            }));
 
             try {
-                const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
+                await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
                     method: 'PATCH',
-                    headers: { 
-                        'Authorization': `Bearer ${CFG.TOKEN}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({ records: [{ recordId: rid, fields: updateFields }] })
+                    headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ records })
                 });
-
-                const result = await res.json();
-                if(result.success) {
-                    btn.innerText = "保存成功";
-                    btn.className = btn.className.replace('bg-slate-900', 'bg-green-500');
-                    setTimeout(() => {
-                        btn.innerText = "更新数据";
-                        btn.className = btn.className.replace('bg-green-500', 'bg-slate-900');
-                        btn.disabled = false;
-                    }, 1500);
-                }
-            } catch (e) {
-                btn.innerText = "连接失败";
-                btn.className = btn.className.replace('bg-slate-900', 'bg-red-500');
-                setTimeout(() => {
-                    btn.innerText = "更新数据";
-                    btn.className = btn.className.replace('bg-red-500', 'bg-slate-900');
-                    btn.disabled = false;
-                }, 1500);
-            }
+                alert("排序已成功保存到云端！");
+                btn.classList.add('hidden');
+                fetchData(); // 刷新本地数据
+            } catch (e) { alert("排序保存失败"); }
+            btn.innerText = "保存当前排序";
+            btn.disabled = false;
         }
 
-        // 7. 隐蔽计数器逻辑
-        async function recordVisit() {
+        // 6. 单个更新按钮逻辑
+        async function updateSingle(rid, index) {
+            const fieldName = (index === 0 && currentFilter === '全部') ? "视频链接" : "链接";
+            const updateFields = { "标题": document.getElementById(`t-${rid}`).value };
+            updateFields[fieldName] = document.getElementById(`l-${rid}`).value;
+
             try {
-                const res = await fetch('https://api.counterapi.dev/v1/vortint_brand/homepage/up');
-                const data = await res.json();
-                document.getElementById('visitor-id').innerText = `Sys_Trace_ID: ${data.count}`;
-            } catch (e) {}
+                await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
+                    method: 'PATCH',
+                    headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ records: [{ recordId: rid, fields: updateFields }] })
+                });
+                alert("数据已更新");
+            } catch (e) { alert("更新失败"); }
         }
     </script>
 </body>
