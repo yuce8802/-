@@ -10,7 +10,9 @@
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap');
         body { font-family: 'Space Grotesk', 'PingFang SC', sans-serif; background: #f8fafc; }
         .drag-handle { cursor: grab; padding: 10px; color: #cbd5e1; }
-        .option-btn { @apply px-3 py-1.5 rounded-lg border border-slate-200 text-[10px] font-bold text-slate-500 transition-all hover:border-blue-500 hover:text-blue-500 bg-white; }
+        /* 默认样式 */
+        .option-btn { @apply px-3 py-1.5 rounded-lg border border-slate-200 text-[10px] font-bold text-slate-500 transition-all bg-white; }
+        /* 选中状态：蓝色背景 */
         .option-btn.active { @apply bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-100; }
         ::-webkit-scrollbar { width: 0; }
     </style>
@@ -29,7 +31,7 @@
         <header class="flex justify-between items-end mb-12">
             <div>
                 <h1 class="text-4xl font-black text-slate-900 tracking-tighter">规格快捷分类</h1>
-                <p class="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">直接点击选项即可快速分类</p>
+                <p class="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">点击选项可多选分类（再次点击取消）</p>
             </div>
             <button onclick="saveOrder()" id="save-order-btn" class="hidden bg-green-500 text-white px-8 py-4 rounded-2xl text-xs font-black uppercase shadow-lg shadow-green-100 animate-bounce">保存布局排序</button>
         </header>
@@ -46,7 +48,6 @@
             PASS: "666888" 
         };
 
-        // 【在这里修改你的预设选项】
         const PRESETS = {
             "毛绒": ["带毛绒收纳区", "不带毛绒收纳区"],
             "书架": ["带书架", "不带书架"],
@@ -76,9 +77,21 @@
             } catch (e) { alert("网络异常"); }
         }
 
-        // 快捷填充函数
-        function setTag(rid, val) {
-            document.getElementById(`c-${rid}`).value = val;
+        // --- 核心改动：支持多选的分类逻辑 ---
+        function toggleTag(rid, val, btn) {
+            const input = document.getElementById(`c-${rid}`);
+            let currentTags = input.value ? input.value.split(',').map(t => t.trim()) : [];
+            
+            if (currentTags.includes(val)) {
+                // 如果已经有了，就删掉（反选）
+                currentTags = currentTags.filter(t => t !== val);
+                btn.classList.remove('active');
+            } else {
+                // 如果没有，就加上
+                currentTags.push(val);
+                btn.classList.add('active');
+            }
+            input.value = currentTags.join(', '); // 用逗号隔开
         }
 
         function render() {
@@ -87,16 +100,17 @@
                 const f = item.fields;
                 const rid = item.recordId;
                 const isFirst = (index === 0);
+                const currentTags = f['分类'] ? f['分类'].split(',').map(t => t.trim()) : [];
 
-                // 生成预设按钮组
                 let presetHtml = "";
                 for(let group in PRESETS) {
                     presetHtml += `
                         <div class="flex flex-wrap gap-1 items-center">
                             <span class="text-[9px] font-bold text-slate-300 uppercase mr-1 w-8">${group}:</span>
-                            ${PRESETS[group].map(opt => `
-                                <button onclick="setTag('${rid}', '${opt}')" class="option-btn">${opt}</button>
-                            `).join('')}
+                            ${PRESETS[group].map(opt => {
+                                const isActive = currentTags.includes(opt) ? 'active' : '';
+                                return `<button onclick="toggleTag('${rid}', '${opt}', this)" class="option-btn ${isActive}">${opt}</button>`;
+                            }).join('')}
                         </div>
                     `;
                 }
@@ -120,14 +134,14 @@
                         </div>
                         <div class="md:col-span-2 space-y-2 pt-2 border-t border-slate-50">
                             <div class="flex items-center gap-3 mb-2">
-                                <span class="text-[8px] font-black text-red-400 uppercase">当前分类:</span>
-                                <input id="c-${rid}" type="text" value="${f['分类'] || ''}" class="bg-red-50 text-red-600 px-3 py-1 rounded-lg text-xs font-black outline-none w-48">
+                                <span class="text-[8px] font-black text-red-400 uppercase">当前分类组合:</span>
+                                <input id="c-${rid}" type="text" value="${f['分类'] || ''}" class="bg-red-50 text-red-600 px-3 py-1 rounded-lg text-xs font-black outline-none flex-grow">
                             </div>
                             ${presetHtml}
                         </div>
                     </div>
 
-                    <button onclick="updateSingle('${rid}', ${isFirst})" class="w-full xl:w-auto bg-slate-900 text-white px-8 py-5 rounded-3xl text-[10px] font-black uppercase active:scale-95 transition-all">同步数据</button>
+                    <button onclick="updateSingle('${rid}', ${isFirst})" class="w-full xl:w-auto bg-slate-900 text-white px-8 py-5 rounded-3xl text-[10px] font-black uppercase active:scale-95 transition-all">保存并同步</button>
                 </div>
                 `;
             }).join('');
@@ -151,7 +165,7 @@
                 headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ records: [{ recordId: rid, fields }] })
             });
-            if((await res.json()).success) { alert("✅ 分类已同步"); }
+            if((await res.json()).success) { alert("✅ 数据已云同步"); }
         }
 
         async function saveOrder() {
