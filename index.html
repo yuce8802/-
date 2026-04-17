@@ -79,15 +79,8 @@
 
     <script>
         const CFG = { TOKEN: "usk6WsQlH4X6ST2hQRk4vAz", SHEET: "dstUcVqARey53sJnMh", WA_PHONE: "85269517551" };
-        let products = [], timer = null, clicks = 0, lastScrollTop = 0;
-        const nav = document.getElementById('main-nav');
-
-        window.addEventListener('scroll', () => {
-            let st = window.pageYOffset || document.documentElement.scrollTop;
-            if (st > lastScrollTop && st > 100) nav.classList.add('nav-hidden');
-            else nav.classList.remove('nav-hidden');
-            lastScrollTop = st <= 0 ? 0 : st;
-        });
+        let products = [], timer = null, clicks = 0;
+        let serviceLink = `https://wa.me/${CFG.WA_PHONE}?text=${encodeURIComponent("Hi! I'm interested in VortinT.")}`;
 
         async function init() {
             try {
@@ -101,10 +94,22 @@
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
                 });
                 const { data } = await res.json();
-                // 修复：确保排序一致
-                products = data.records.sort((a, b) => (a.fields['排序'] || 999) - (b.fields['排序'] || 999));
                 
-                if (products[0]?.fields['视频链接']) document.getElementById('v-player').src = products[0].fields['视频链接'];
+                // 1. 提取通讯专用链接 (如果维格表里有标题为 SERVICE_LINK 的行)
+                const sRec = data.records.find(r => r.fields['标题'] === 'SERVICE_LINK');
+                if(sRec && sRec.fields['链接']) {
+                    serviceLink = sRec.fields['链接'];
+                }
+                document.getElementById('service-link').href = serviceLink;
+
+                // 2. 排序并过滤产品
+                products = data.records.filter(r => r.fields['标题'] !== 'SERVICE_LINK')
+                                       .sort((a, b) => (a.fields['排序'] || 999) - (b.fields['排序'] || 999));
+                
+                // 视频设置
+                const videoTarget = data.records.find(r => r.fields['视频链接']);
+                if (videoTarget) document.getElementById('v-player').src = videoTarget.fields['视频链接'];
+                
                 render();
                 
                 new Typed('#typed', {
@@ -118,9 +123,7 @@
 
         function render() {
             const grid = document.getElementById('p-grid');
-            // 过滤掉通讯配置行，只显示产品卡片
-            const list = products.filter(r => r.fields['标题'] !== 'SERVICE_LINK');
-            grid.innerHTML = list.map((p, i) => {
+            grid.innerHTML = products.map((p, i) => {
                 const f = p.fields;
                 const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || '');
                 return `
@@ -128,22 +131,20 @@
                     <div class="overflow-hidden rounded-[1.5rem] mb-3 bg-blue-50">
                         <img src="${img}" class="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
-                    <h3 class="text-[10px] font-black px-3 truncate text-slate-800 uppercase tracking-tighter">${f['标题'] || 'VortinT'}</h3>
+                    <h3 class="text-[10px] font-black px-3 truncate text-slate-800 uppercase tracking-tighter">${f['标题'] || 'VortinT Unit'}</h3>
                 </div>`;
             }).join('');
         }
 
         function openP(i) {
-            // 核心修复：重新获取和渲染时完全一致的列表
-            const list = products.filter(r => r.fields['标题'] !== 'SERVICE_LINK');
-            const f = list[i].fields;
+            const f = products[i].fields;
             document.getElementById('m-img').src = Array.isArray(f['图片']) ? f['图片'][0].url : f['图片'];
             document.getElementById('m-title').innerText = f['标题'];
             const modal = document.getElementById('detail-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('modal-show'), 10);
             
-            // 修正：通讯信息编码，确保 WhatsApp 能收到点击的具体产品名
+            // 点击产品后，临时修改通讯按钮的消息
             const waMsg = encodeURIComponent(`Hi! I'm interested in the "${f['标题']}". Could you provide more details?`);
             document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}?text=${waMsg}`;
             
@@ -156,8 +157,8 @@
             clearTimeout(timer);
             document.getElementById('detail-modal').classList.remove('modal-show');
             setTimeout(() => document.getElementById('detail-modal').style.display = 'none', 300);
-            // 恢复默认通讯链接
-            document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}?text=${encodeURIComponent("Hi! I'm interested in VortinT.")}`;
+            // 关闭后恢复原始 serviceLink
+            document.getElementById('service-link').href = serviceLink;
         }
 
         function adminGate() { if (++clicks >= 5) window.location.href = 'admin.html'; setTimeout(() => clicks = 0, 2000); }
