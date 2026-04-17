@@ -3,49 +3,39 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VortinT | 导航分类管理中心</title>
+    <title>VortinT | 规格分类管理中心</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap');
-        body { font-family: 'Space Grotesk', 'PingFang SC', sans-serif; background: #f8fafc; color: #0f172a; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .drag-handle { cursor: grab; }
-        .sortable-ghost { opacity: 0.2; background: #3b82f6 !important; }
-        #lock-screen { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        input:focus { border-color: #3b82f6 !important; background: white !important; }
+        body { font-family: 'Space Grotesk', 'PingFang SC', sans-serif; background: #f8fafc; }
+        .drag-handle { cursor: grab; padding: 10px; color: #cbd5e1; }
+        .option-btn { @apply px-3 py-1.5 rounded-lg border border-slate-200 text-[10px] font-bold text-slate-500 transition-all hover:border-blue-500 hover:text-blue-500 bg-white; }
+        .option-btn.active { @apply bg-blue-600 border-blue-600 text-white shadow-md shadow-blue-100; }
+        ::-webkit-scrollbar { width: 0; }
     </style>
 </head>
 <body>
 
-    <div id="lock-screen">
-        <div class="text-center p-10 max-w-sm w-full">
-            <h2 class="text-2xl font-black mb-6 uppercase tracking-widest text-slate-800">VortinT Admin</h2>
-            <input type="password" id="passcode" placeholder="输入访问代码" class="w-full bg-slate-50 border-none p-5 rounded-3xl text-center font-bold text-2xl mb-6 outline-none focus:ring-4 ring-blue-500/10">
-            <button onclick="checkPass()" class="w-full bg-slate-900 text-white py-5 rounded-3xl font-black shadow-lg active:scale-95 transition-all">解锁进入</button>
+    <div id="lock-screen" class="fixed inset-0 bg-white z-[9999] flex items-center justify-center">
+        <div class="text-center w-full max-w-xs p-6">
+            <h2 class="text-2xl font-black mb-6 tracking-tighter">VortinT Admin</h2>
+            <input type="password" id="passcode" placeholder="PIN" class="w-full bg-slate-50 border-none p-5 rounded-2xl text-center font-bold text-2xl mb-4 outline-none focus:ring-4 ring-blue-50">
+            <button onclick="checkPass()" class="w-full bg-slate-900 text-white py-4 rounded-2xl font-black active:scale-95 transition-all">确认解锁</button>
         </div>
     </div>
 
     <div class="max-w-6xl mx-auto px-6 py-12">
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
+        <header class="flex justify-between items-end mb-12">
             <div>
-                <h1 class="text-4xl font-black text-slate-900 tracking-tighter">分类与导航管理</h1>
-                <p class="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">支持：毛绒区 / 书架 / 画板 / 颜色 分类</p>
+                <h1 class="text-4xl font-black text-slate-900 tracking-tighter">规格快捷分类</h1>
+                <p class="text-blue-500 text-[10px] font-black uppercase tracking-[0.3em] mt-2">直接点击选项即可快速分类</p>
             </div>
-            <div class="flex space-x-3">
-                <button onclick="saveOrder()" id="save-order-btn" class="hidden bg-green-500 text-white px-8 py-4 rounded-2xl text-xs font-black uppercase tracking-widest shadow-lg shadow-green-100">保存当前拖拽排序</button>
-                <button onclick="location.reload()" class="bg-white border border-slate-200 px-6 py-4 rounded-2xl text-xs font-bold uppercase hover:bg-slate-50">同步数据</button>
-            </div>
+            <button onclick="saveOrder()" id="save-order-btn" class="hidden bg-green-500 text-white px-8 py-4 rounded-2xl text-xs font-black uppercase shadow-lg shadow-green-100 animate-bounce">保存布局排序</button>
         </header>
 
-        <div class="mb-10">
-            <p class="text-[9px] font-black text-slate-400 uppercase mb-3 ml-1 tracking-widest">当前导航预览：</p>
-            <div id="category-nav" class="flex flex-wrap gap-2 no-scrollbar">
-                </div>
-        </div>
-
         <div id="product-list" class="space-y-4">
-            <div class="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-100 text-slate-300 font-bold uppercase tracking-widest">加载布局中...</div>
+            <div class="text-center py-20 text-slate-300 font-bold animate-pulse">正在同步云端数据...</div>
         </div>
     </div>
 
@@ -56,14 +46,21 @@
             PASS: "666888" 
         };
 
+        // 【在这里修改你的预设选项】
+        const PRESETS = {
+            "毛绒": ["带毛绒收纳区", "不带毛绒收纳区"],
+            "书架": ["带书架", "不带书架"],
+            "画板": ["带画板", "不带画板"],
+            "颜色": ["白色", "粉色", "蓝色", "原木色"]
+        };
+
         let db = [];
-        let currentCat = '全部';
 
         function checkPass() {
             if(document.getElementById('passcode').value === CFG.PASS) {
                 document.getElementById('lock-screen').style.display = 'none';
                 fetchData();
-            } else { alert("代码错误"); }
+            } else { alert("验证码错误"); }
         }
 
         async function fetchData() {
@@ -73,89 +70,88 @@
                 });
                 const json = await res.json();
                 if(json.success) {
-                    db = json.data.records.sort((a, b) => (parseFloat(a.fields['排序']) || 999) - (parseFloat(b.fields['排序']) || 999));
-                    renderUI();
+                    db = json.data.records.sort((a, b) => (a.fields['排序'] || 999) - (b.fields['排序'] || 999));
+                    render();
                 }
-            } catch (e) { alert("同步失败"); }
+            } catch (e) { alert("网络异常"); }
         }
 
-        function renderUI() {
-            // 提取所有不重复的分类
-            const cats = ['全部', ...new Set(db.map(item => item.fields['分类']).filter(Boolean))];
-            
-            // 渲染导航按钮
-            document.getElementById('category-nav').innerHTML = cats.map(c => `
-                <button onclick="filterCat('${c}')" class="px-6 py-3 rounded-2xl text-xs font-black uppercase transition-all ${currentCat === c ? 'bg-blue-600 text-white shadow-lg shadow-blue-200' : 'bg-white text-slate-400 border border-slate-100 hover:border-blue-200'}">
-                    ${c}
-                </button>
-            `).join('');
-
-            renderList();
+        // 快捷填充函数
+        function setTag(rid, val) {
+            document.getElementById(`c-${rid}`).value = val;
         }
 
-        function filterCat(c) {
-            currentCat = c;
-            renderUI();
-        }
-
-        function renderList() {
+        function render() {
             const list = document.getElementById('product-list');
-            const data = currentCat === '全部' ? db : db.filter(item => item.fields['分类'] === currentCat);
-
-            list.innerHTML = data.map((item, index) => {
+            list.innerHTML = db.map((item, index) => {
                 const f = item.fields;
-                const isVideo = (index === 0 && currentCat === '全部');
-                
+                const rid = item.recordId;
+                const isFirst = (index === 0);
+
+                // 生成预设按钮组
+                let presetHtml = "";
+                for(let group in PRESETS) {
+                    presetHtml += `
+                        <div class="flex flex-wrap gap-1 items-center">
+                            <span class="text-[9px] font-bold text-slate-300 uppercase mr-1 w-8">${group}:</span>
+                            ${PRESETS[group].map(opt => `
+                                <button onclick="setTag('${rid}', '${opt}')" class="option-btn">${opt}</button>
+                            `).join('')}
+                        </div>
+                    `;
+                }
+
                 return `
-                <div class="product-item bg-white p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex flex-col lg:flex-row items-center gap-6" data-id="${item.recordId}">
+                <div class="product-item bg-white p-6 rounded-[2.5rem] border border-slate-100 shadow-sm flex flex-col xl:flex-row items-center gap-6" data-id="${rid}">
                     <div class="drag-handle text-slate-200 hover:text-blue-500">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 8h16M4 16h16"></path></svg>
                     </div>
 
-                    <img src="${f['图片'] || ''}" class="w-20 h-20 rounded-2xl object-cover bg-slate-50">
+                    <img src="${f['图片'] || ''}" class="w-16 h-16 rounded-2xl object-cover bg-slate-50">
 
-                    <div class="flex-grow grid grid-cols-1 md:grid-cols-4 gap-4 w-full">
+                    <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 w-full">
                         <div>
-                            <span class="text-[8px] font-black text-blue-500 uppercase ml-1">分类管理</span>
-                            <input id="c-${item.recordId}" type="text" value="${f['分类'] || ''}" placeholder="如：带书架" class="w-full bg-slate-50 border border-transparent p-3 rounded-xl text-xs font-bold outline-none transition-all">
+                            <span class="text-[8px] font-black text-slate-300 uppercase ml-1">商品名称</span>
+                            <input id="t-${rid}" type="text" value="${f['标题'] || ''}" class="w-full bg-slate-50 border-none p-3 rounded-xl text-xs font-bold outline-none">
                         </div>
-                        <div class="md:col-span-1">
-                            <span class="text-[8px] font-black text-slate-300 uppercase ml-1">标题</span>
-                            <input id="t-${item.recordId}" type="text" value="${f['标题'] || ''}" class="w-full bg-slate-50 border border-transparent p-3 rounded-xl text-xs font-bold outline-none transition-all">
+                        <div>
+                            <span class="text-[8px] font-black text-blue-500 uppercase ml-1">${isFirst ? '视频链接' : '亚马逊跳转链接'}</span>
+                            <input id="l-${rid}" type="text" value="${f[isFirst ? '视频链接' : '链接'] || ''}" class="w-full bg-slate-50 border-none p-3 rounded-xl text-[10px] font-mono text-blue-600 outline-none">
                         </div>
-                        <div class="md:col-span-2">
-                            <span class="text-[8px] font-black text-slate-300 uppercase ml-1">${isVideo ? '首屏视频链接' : '亚马逊链接'}</span>
-                            <input id="l-${item.recordId}" type="text" value="${f[isVideo ? '视频链接' : '链接'] || ''}" class="w-full bg-slate-50 border border-transparent p-3 rounded-xl text-[10px] font-mono text-blue-600 outline-none transition-all">
+                        <div class="md:col-span-2 space-y-2 pt-2 border-t border-slate-50">
+                            <div class="flex items-center gap-3 mb-2">
+                                <span class="text-[8px] font-black text-red-400 uppercase">当前分类:</span>
+                                <input id="c-${rid}" type="text" value="${f['分类'] || ''}" class="bg-red-50 text-red-600 px-3 py-1 rounded-lg text-xs font-black outline-none w-48">
+                            </div>
+                            ${presetHtml}
                         </div>
                     </div>
 
-                    <button onclick="updateSingle('${item.recordId}', ${isVideo})" class="w-full lg:w-auto bg-slate-900 text-white px-8 py-4 rounded-2xl text-[10px] font-black uppercase active:scale-90 transition-all">更新</button>
+                    <button onclick="updateSingle('${rid}', ${isFirst})" class="w-full xl:w-auto bg-slate-900 text-white px-8 py-5 rounded-3xl text-[10px] font-black uppercase active:scale-95 transition-all">同步数据</button>
                 </div>
                 `;
             }).join('');
 
-            if(currentCat === '全部') {
-                new Sortable(list, { 
-                    handle: '.drag-handle', 
-                    animation: 250, 
-                    onEnd: () => document.getElementById('save-order-btn').classList.remove('hidden') 
-                });
-            }
+            new Sortable(list, {
+                handle: '.drag-handle',
+                animation: 250,
+                onEnd: () => document.getElementById('save-order-btn').classList.remove('hidden')
+            });
         }
 
-        async function updateSingle(rid, isVideo) {
+        async function updateSingle(rid, isFirst) {
             const fields = {
                 "标题": document.getElementById(`t-${rid}`).value,
                 "分类": document.getElementById(`c-${rid}`).value
             };
-            fields[isVideo ? "视频链接" : "链接"] = document.getElementById(`l-${rid}`).value;
+            fields[isFirst ? "视频链接" : "链接"] = document.getElementById(`l-${rid}`).value;
 
             const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
                 method: 'PATCH',
                 headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ records: [{ recordId: rid, fields }] })
             });
-            if((await res.json()).success) { alert("✅ 分类与内容已同步"); fetchData(); }
+            if((await res.json()).success) { alert("✅ 分类已同步"); }
         }
 
         async function saveOrder() {
@@ -169,7 +165,7 @@
                 headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
                 body: JSON.stringify({ records })
             });
-            if((await res.json()).success) { alert("✅ 排序已保存"); location.reload(); }
+            if((await res.json()).success) { location.reload(); }
         }
     </script>
 </body>
