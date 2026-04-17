@@ -2,92 +2,112 @@
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortinT | Control Center</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>VortinT | 品牌控制中心</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap');
-        body { font-family: 'Space Grotesk', sans-serif; background: #f8fafc; color: #0f172a; }
+        body { font-family: 'Space Grotesk', 'PingFang SC', sans-serif; background: #f1f5f9; color: #0f172a; }
         
-        /* 登录锁屏毛玻璃 */
-        #lock-screen { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(20px); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: 0.5s ease; }
-        .glass-card { background: white; padding: 3rem; border-radius: 3rem; shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.1); width: 100%; max-width: 400px; border: 1px solid rgba(255,255,255,0.5); }
+        #lock-screen { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); z-index: 9999; display: flex; align-items: center; justify-content: center; transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1); }
+        .glass-card { background: white; padding: 3rem; border-radius: 3.5rem; width: 100%; max-width: 400px; border: 1px solid #e2e8f0; }
+
+        input:focus { transform: translateY(-2px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1); }
+        ::-webkit-scrollbar { width: 0; background: transparent; }
     </style>
 </head>
 <body>
 
     <div id="lock-screen">
-        <div class="glass-card text-center shadow-2xl">
-            <div class="mb-6 flex justify-center">
-                <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-16 h-16 rounded-full shadow-lg">
+        <div class="glass-card text-center shadow-[0_32px_64px_-12px_rgba(0,0,0,0.1)]">
+            <div class="mb-8 flex justify-center">
+                <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-20 h-20 rounded-full shadow-xl border-4 border-white object-cover">
             </div>
-            <h2 class="text-xl font-black mb-6 tracking-tighter text-slate-800 uppercase">Secure Access</h2>
-            <input type="password" id="passcode" placeholder="ENTER CODE" class="w-full bg-slate-100 border-none p-4 rounded-2xl text-center font-bold text-xl mb-4 focus:ring-2 ring-blue-500 outline-none">
-            <button onclick="checkPass()" class="w-full bg-blue-600 text-white py-4 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all">Unlock Dashboard</button>
+            <h2 class="text-xl font-black mb-2 tracking-tighter text-slate-800 uppercase">控制中心</h2>
+            <p class="text-[9px] font-bold text-slate-400 uppercase tracking-[0.2em] mb-8">身份验证 · 瑞航国际</p>
+            
+            <input type="password" id="passcode" placeholder="输入访问代码" 
+                   class="w-full bg-slate-100 border-none p-5 rounded-2xl text-center font-bold text-2xl mb-5 focus:ring-4 ring-blue-500/20 outline-none transition-all">
+            
+            <button onclick="checkPass()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-blue-200 hover:bg-blue-700 active:scale-95 transition-all">
+                解锁工作台
+            </button>
         </div>
     </div>
 
-    <div class="max-w-6xl mx-auto px-4 py-12">
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-4">
+    <div class="max-w-6xl mx-auto px-6 py-12">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-12 gap-6">
             <div>
-                <h1 class="text-4xl font-black text-slate-900 tracking-tighter uppercase">Cockpit</h1>
-                <p class="text-blue-500 text-[10px] font-black tracking-[0.3em] uppercase">VortinT Enterprise System v3.0</p>
+                <div class="flex items-center space-x-3 mb-2">
+                    <div class="w-2 h-8 bg-blue-600 rounded-full"></div>
+                    <h1 class="text-3xl font-black text-slate-900 tracking-tighter">控制台</h1>
+                </div>
+                <p class="text-blue-500 text-[10px] font-black tracking-[0.2em] uppercase">瑞航（深圳）国际家居用品有限公司 · 企业管理系统</p>
             </div>
-            <div class="flex space-x-2">
-                <button onclick="location.reload()" class="bg-white border border-slate-200 px-6 py-2 rounded-xl text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-slate-50 transition-colors">Sync Data</button>
+            <div class="flex space-x-3">
+                <button onclick="location.href='index.html'" class="bg-white border border-slate-200 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-slate-50 transition-all flex items-center">
+                    返回官网
+                </button>
+                <button onclick="location.reload()" class="bg-blue-600 text-white px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-blue-200 hover:bg-blue-700 transition-all">
+                    同步云端数据
+                </button>
             </div>
         </header>
 
         <div class="grid grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Total Items</p>
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200/60">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">商品总数</p>
                 <p id="stat-total" class="text-4xl font-black text-slate-800">0</p>
             </div>
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Cloud Status</p>
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200/60">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">同步状态</p>
                 <div class="flex items-center space-x-2">
                     <span class="w-3 h-3 bg-green-500 rounded-full animate-pulse"></span>
-                    <p class="text-xl font-black text-slate-800 uppercase">Active</p>
+                    <p class="text-xl font-black text-slate-800 uppercase">在线</p>
                 </div>
             </div>
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Redirect Delay</p>
-                <p class="text-4xl font-black text-blue-600">1.5<span class="text-sm">s</span></p>
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200/60">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">接口延迟</p>
+                <p class="text-xl font-black text-blue-600">低延迟 (CN)</p>
             </div>
-            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-100">
-                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">Support Email</p>
-                <p class="text-sm font-black text-slate-800 truncate mt-3">cs@vortexd.com</p>
+            <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-slate-200/60">
+                <p class="text-[9px] font-black text-slate-400 uppercase tracking-widest mb-1">系统版本</p>
+                <p class="text-xl font-black text-slate-800">v3.2 Stable</p>
             </div>
         </div>
 
         <div id="product-list" class="space-y-6">
-            <div class="text-center py-20 text-slate-300 font-bold uppercase tracking-widest animate-pulse text-sm">Loading Cloud Records...</div>
+            <div class="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-200">
+                <p class="text-slate-400 font-bold uppercase tracking-widest text-xs">等待身份验证...</p>
+            </div>
         </div>
+
+        <footer class="mt-20 text-center">
+            <p id="visitor-count" class="text-[9px] text-slate-300 font-mono opacity-40">ID: --</p>
+        </footer>
     </div>
 
     <script>
-        // 配置 Vika 参数
-        const CFG = { 
-            TOKEN: "usk6WsQlH4X6ST2hQRk4vAz", 
-            SHEET: "dstUcVqARey53sJnMh", 
-            PASS: "666888" // 你可以随时在这里改密码
-        };
-
+        const CFG = { TOKEN: "usk6WsQlH4X6ST2hQRk4vAz", SHEET: "dstUcVqARey53sJnMh", PASS: "666888" };
         let db = [];
 
-        // 登录验证
         function checkPass() {
-            const val = document.getElementById('passcode').value;
-            if(val === CFG.PASS) {
+            if(document.getElementById('passcode').value === CFG.PASS) {
                 document.getElementById('lock-screen').style.opacity = '0';
-                setTimeout(() => document.getElementById('lock-screen').remove(), 500);
+                document.getElementById('lock-screen').style.pointerEvents = 'none';
                 fetchData();
-            } else {
-                alert("Incorrect Code");
-            }
+                recordVisit();
+            } else { alert("验证失败：访问代码错误"); }
         }
 
-        // 获取数据
+        async function recordVisit() {
+            try {
+                const res = await fetch('https://api.counterapi.dev/v1/vortint_brand/homepage/up');
+                const data = await res.json();
+                document.getElementById('visitor-count').innerText = `ID: ${data.count}`;
+            } catch (e) {}
+        }
+
         async function fetchData() {
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
@@ -97,41 +117,44 @@
                 db = json.data.records;
                 document.getElementById('stat-total').innerText = db.length;
                 render();
-            } catch (e) {
-                alert("Failed to connect to Vika. Check your Token/Sheet ID.");
-            }
+            } catch (e) { alert("云端连接失败，请检查网络"); }
         }
 
-        // 渲染列表
         function render() {
             const list = document.getElementById('product-list');
-            list.innerHTML = db.map(item => {
+            list.innerHTML = db.map((item, index) => {
                 const f = item.fields;
-                const img = Array.isArray(f['图片']) ? f['图片'][0].url : f['图片'];
+                const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || 'https://via.placeholder.com/150');
+                
+                // 逻辑控制：第一个读取视频链接，其余读取链接
+                const fieldName = (index === 0) ? "视频链接" : "链接";
+                const labelText = (index === 0) ? "首屏海报视频 (MP4地址)" : "跳转详情链接 (Amazon/Shopify URL)";
+                
                 return `
-                <div class="bg-white p-6 md:p-8 rounded-[3rem] shadow-sm border border-slate-100 flex flex-col lg:flex-row items-center gap-8 hover:shadow-xl hover:shadow-blue-500/5 transition-all">
-                    <div class="w-32 h-32 flex-shrink-0 bg-slate-50 rounded-[2rem] overflow-hidden border border-slate-50">
+                <div class="bg-white p-6 md:p-8 rounded-[3rem] shadow-sm border border-slate-200/60 flex flex-col lg:flex-row items-center gap-8 hover:border-blue-200 transition-all">
+                    <div class="w-24 h-24 flex-shrink-0 bg-slate-50 rounded-[2rem] overflow-hidden border border-slate-100 relative">
                         <img src="${img}" class="w-full h-full object-cover">
+                        ${index === 0 ? '<span class="absolute top-0 left-0 bg-blue-600 text-white text-[8px] px-2 py-0.5 rounded-br-lg font-bold">主图视频项</span>' : ''}
                     </div>
                     
                     <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-6 w-full">
                         <div>
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Product Title</label>
+                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">显示标题</label>
                             <input id="t-${item.recordId}" type="text" value="${f['标题'] || ''}" 
-                                   class="w-full bg-slate-50 border-none p-4 rounded-2xl text-sm font-bold text-slate-700 focus:ring-2 ring-blue-500 transition-all outline-none">
+                                   class="w-full bg-slate-50 border-none p-5 rounded-2xl text-sm font-bold text-slate-700 outline-none">
                         </div>
                         <div>
-                            <label class="text-[9px] font-black text-slate-400 uppercase tracking-widest block mb-2 px-1">Display Video (MP4 Link)</label>
-                            <input id="v-${item.recordId}" type="text" value="${f['视频链接'] || ''}" 
-                                   placeholder="https://...mp4"
-                                   class="w-full bg-slate-50 border-none p-4 rounded-2xl text-[11px] font-mono text-blue-600 focus:ring-2 ring-blue-500 transition-all outline-none">
+                            <label class="text-[9px] font-black text-blue-500 uppercase tracking-widest block mb-2 px-1">${labelText}</label>
+                            <input id="link-${item.recordId}" type="text" value="${f[fieldName] || ''}" 
+                                   data-field="${fieldName}"
+                                   class="w-full bg-slate-50 border-none p-5 rounded-2xl text-[11px] font-mono text-blue-600 outline-none">
                         </div>
                     </div>
 
                     <div class="flex-shrink-0 w-full lg:w-auto">
-                        <button onclick="updateRecord('${item.recordId}')" id="btn-${item.recordId}"
-                                class="w-full lg:w-auto bg-slate-900 text-white px-10 py-5 rounded-[1.5rem] font-black text-[11px] uppercase tracking-widest shadow-lg active:scale-95 transition-all">
-                            Update
+                        <button onclick="updateRecord('${item.recordId}', '${fieldName}')" id="btn-${item.recordId}"
+                                class="w-full lg:w-auto bg-slate-900 text-white px-10 py-5 rounded-2xl font-black text-[11px] uppercase tracking-widest shadow-xl active:scale-95 transition-all">
+                            更新数据
                         </button>
                     </div>
                 </div>
@@ -139,53 +162,40 @@
             }).join('');
         }
 
-        // 更新单条数据
-        async function updateRecord(rid) {
+        async function updateRecord(rid, fieldName) {
             const btn = document.getElementById(`btn-${rid}`);
-            const originalText = btn.innerText;
-            
             const newTitle = document.getElementById(`t-${rid}`).value;
-            const newVideo = document.getElementById(`v-${rid}`).value;
+            const newLink = document.getElementById(`link-${rid}`).value;
 
-            btn.innerText = "Saving...";
+            btn.innerText = "正在保存...";
             btn.disabled = true;
+
+            const fieldsObj = { "标题": newTitle };
+            fieldsObj[fieldName] = newLink; // 动态决定更新哪个字段
 
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
                     method: 'PATCH',
-                    headers: { 
-                        'Authorization': `Bearer ${CFG.TOKEN}`,
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        records: [
-                            {
-                                recordId: rid,
-                                fields: {
-                                    "标题": newTitle,
-                                    "视频链接": newVideo
-                                }
-                            }
-                        ]
-                    })
+                    headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ records: [{ recordId: rid, fields: fieldsObj }] })
                 });
 
                 const result = await res.json();
                 if(result.success) {
-                    btn.innerText = "Success";
-                    btn.classList.replace('bg-slate-900', 'bg-green-500');
+                    btn.innerText = "保存成功";
+                    btn.className = btn.className.replace('bg-slate-900', 'bg-green-500');
                     setTimeout(() => {
-                        btn.innerText = originalText;
-                        btn.classList.replace('bg-green-500', 'bg-slate-900');
+                        btn.innerText = "更新数据";
+                        btn.className = btn.className.replace('bg-green-500', 'bg-slate-900');
                         btn.disabled = false;
                     }, 1500);
                 }
             } catch (e) {
-                btn.innerText = "Error";
-                btn.classList.replace('bg-slate-900', 'bg-red-500');
+                btn.innerText = "重试";
+                btn.className = btn.className.replace('bg-slate-900', 'bg-red-500');
                 setTimeout(() => {
-                    btn.innerText = originalText;
-                    btn.classList.replace('bg-red-500', 'bg-slate-900');
+                    btn.innerText = "更新数据";
+                    btn.className = btn.className.replace('bg-red-500', 'bg-slate-900');
                     btn.disabled = false;
                 }, 1500);
             }
