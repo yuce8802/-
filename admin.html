@@ -3,66 +3,66 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VortinT | 智能排版控制中心</title>
+    <title>VortinT | 品牌排版控制中心</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap');
-        body { font-family: 'Space Grotesk', 'PingFang SC', sans-serif; background: #f1f5f9; color: #0f172a; }
+        body { font-family: 'Space Grotesk', 'PingFang SC', sans-serif; background: #f8fafc; color: #0f172a; }
         
-        #lock-screen { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(25px); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .glass-card { background: white; padding: 3rem; border-radius: 3.5rem; width: 100%; max-width: 400px; border: 1px solid #e2e8f0; }
+        #lock-screen { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(20px); z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .glass-card { background: white; padding: 3rem; border-radius: 3rem; width: 100%; max-width: 400px; border: 1px solid #e2e8f0; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.08); }
 
-        /* 拖拽时的样式 */
-        .sortable-ghost { opacity: 0.3; background: #dbeafe !important; border: 2px dashed #2563eb !important; }
-        .sortable-drag { cursor: grabbing; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
-        .drag-handle { cursor: grab; }
+        .sortable-ghost { opacity: 0; }
+        .sortable-chosen { background: #f1f5f9 !important; scale: 1.02; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05); }
+        .drag-handle { cursor: grab; padding: 10px; transition: color 0.2s; }
+        .drag-handle:active { cursor: grabbing; }
         
-        input:focus { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1); }
+        input:focus { transform: translateY(-1px); box-shadow: 0 10px 15px -3px rgba(37, 99, 235, 0.1); outline: none; }
         ::-webkit-scrollbar { width: 0; }
     </style>
 </head>
 <body>
 
     <div id="lock-screen">
-        <div class="glass-card text-center shadow-2xl">
+        <div class="glass-card text-center">
             <div class="mb-8 flex justify-center">
-                <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-20 h-20 rounded-full shadow-xl border-4 border-white object-cover">
+                <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-20 h-20 rounded-full shadow-lg border-4 border-white object-cover">
             </div>
-            <h2 class="text-xl font-black mb-6 text-slate-800 uppercase">控制中心</h2>
-            <input type="password" id="passcode" placeholder="输入访问代码" class="w-full bg-slate-100 border-none p-5 rounded-2xl text-center font-bold text-2xl mb-5 outline-none">
-            <button onclick="checkPass()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest shadow-xl hover:bg-blue-700 transition-all">解锁</button>
+            <h2 class="text-xl font-black mb-6 text-slate-800 uppercase tracking-tight">控制中心</h2>
+            <input type="password" id="passcode" placeholder="输入访问代码" class="w-full bg-slate-50 border-none p-5 rounded-2xl text-center font-bold text-2xl mb-6 shadow-inner">
+            <button onclick="checkPass()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black uppercase tracking-widest hover:bg-blue-700 transition-all active:scale-95 shadow-lg shadow-blue-200">进入工作台</button>
         </div>
     </div>
 
-    <div class="max-w-6xl mx-auto px-6 py-12">
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-6">
+    <div class="max-w-5xl mx-auto px-6 py-12">
+        <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
             <div>
-                <h1 class="text-3xl font-black text-slate-900 tracking-tighter">排版工作台</h1>
-                <p class="text-blue-500 text-[10px] font-black tracking-[0.2em] uppercase">瑞航国际 · 拖拽排版系统 v4.0</p>
+                <h1 class="text-3xl font-black text-slate-900 tracking-tighter">自由排版控制台</h1>
+                <p class="text-blue-500 text-[10px] font-black tracking-[0.2em] uppercase">VortinT Brand Space · CMS v4.5</p>
             </div>
             <div class="flex space-x-3">
-                <button onclick="saveOrder()" id="save-order-btn" class="hidden bg-green-600 text-white px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg hover:bg-green-700 transition-all">
+                <button onclick="saveOrder()" id="save-order-btn" class="hidden bg-green-500 text-white px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-green-100 hover:bg-green-600 transition-all">
                     保存当前排序
                 </button>
-                <button onclick="goBackHome()" class="bg-white border border-slate-200 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-sm hover:bg-slate-50 transition-all">
+                <button onclick="goBackHome()" class="bg-white border border-slate-200 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-all">
                     返回官网
                 </button>
             </div>
         </header>
 
-        <div class="flex overflow-x-auto space-x-2 mb-8 pb-2" id="category-filter">
-            <button onclick="filterCategory('全部')" class="cat-btn active px-6 py-2 bg-blue-600 text-white rounded-full text-xs font-bold whitespace-nowrap">全部商品</button>
-            </div>
+        <div class="flex overflow-x-auto space-x-2 mb-8 no-scrollbar" id="category-filter">
+            <button class="px-6 py-2 bg-blue-600 text-white rounded-full text-xs font-bold shadow-md">加载中...</button>
+        </div>
 
         <div id="product-list" class="space-y-4">
-            <div class="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-200">
-                <p class="text-slate-400 font-bold uppercase tracking-widest text-xs">正在连接云端...</p>
+            <div class="text-center py-24 bg-white rounded-[3rem] border-2 border-dashed border-slate-200">
+                <p class="text-slate-400 font-bold uppercase tracking-widest text-xs animate-pulse">正在同步云端数据...</p>
             </div>
         </div>
 
-        <footer class="mt-20 text-center opacity-20 text-[9px]">
-            VORTINT ENTERPRISE ERP SYSTEM
+        <footer class="mt-24 text-center">
+            <p class="text-[9px] text-slate-300 font-mono tracking-[0.3em] uppercase opacity-50">Authorized by Ruihang International</p>
         </footer>
     </div>
 
@@ -77,20 +77,18 @@
         let currentFilter = '全部';
         let sortableInstance;
 
-        // 1. 验证
         function checkPass() {
             if(document.getElementById('passcode').value === CFG.PASS) {
                 document.getElementById('lock-screen').style.display = 'none';
                 fetchData();
-            } else { alert("代码错误"); }
+            } else { alert("验证失败"); }
         }
 
         function goBackHome() { alert("您辛苦了！"); location.href = 'index.html'; }
 
-        // 2. 获取数据 (包含排序字段)
         async function fetchData() {
             try {
-                // 请求时按“排序”字段升序排列
+                // 读取时按照你截图里的“排序”字段进行升序排列
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records?sort=[{"field":"排序","order":"asc"}]`, {
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
                 });
@@ -98,17 +96,16 @@
                 db = json.data.records;
                 renderCategories();
                 renderList();
-            } catch (e) { alert("获取数据失败"); }
+            } catch (e) { console.error(e); }
         }
 
-        // 3. 渲染分类按钮
         function renderCategories() {
-            const categories = ['全部', ...new Set(db.map(item => item.fields['分类'] || '未分类'))];
+            const categories = ['全部', ...new Set(db.map(item => item.fields['分类']).filter(Boolean))];
             const container = document.getElementById('category-filter');
             container.innerHTML = categories.map(cat => `
                 <button onclick="filterCategory('${cat}')" 
-                        class="cat-btn px-6 py-2 ${currentFilter === cat ? 'bg-blue-600 text-white' : 'bg-white text-slate-500'} border border-slate-100 rounded-full text-xs font-bold whitespace-nowrap transition-all shadow-sm">
-                    ${cat}
+                        class="px-6 py-2 rounded-full text-xs font-bold transition-all ${currentFilter === cat ? 'bg-blue-600 text-white shadow-lg shadow-blue-100' : 'bg-white text-slate-400 border border-slate-100 hover:bg-slate-50'}">
+                    ${cat === '全部' ? '全部商品' : cat}
                 </button>
             `).join('');
         }
@@ -119,7 +116,6 @@
             renderList();
         }
 
-        // 4. 渲染列表并初始化拖拽
         function renderList() {
             const list = document.getElementById('product-list');
             const filteredData = currentFilter === '全部' ? db : db.filter(item => item.fields['分类'] === currentFilter);
@@ -127,65 +123,79 @@
             list.innerHTML = filteredData.map((item, index) => {
                 const f = item.fields;
                 const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || '');
+                
+                // 逻辑：只有在“全部”视图下，第一个商品才显示为“视频链接”
+                const isVideoField = (index === 0 && currentFilter === '全部');
+                const fieldName = isVideoField ? "视频链接" : "链接";
+                const labelText = isVideoField ? "首屏视频链接" : "Amazon商品链接";
+                
                 return `
-                <div class="product-item bg-white p-4 md:p-6 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center gap-4 group" data-id="${item.recordId}">
-                    <div class="drag-handle p-2 text-slate-300 hover:text-blue-500 transition-colors">
-                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M4 8h16M4 16h16"></path></svg>
+                <div class="product-card bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center gap-5 group transition-all" data-id="${item.recordId}">
+                    <div class="drag-handle text-slate-200 group-hover:text-blue-400">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 8h16M4 16h16"></path></svg>
                     </div>
 
-                    <img src="${img}" class="w-16 h-16 rounded-2xl object-cover bg-slate-50">
+                    <div class="w-16 h-16 flex-shrink-0 rounded-2xl overflow-hidden border border-slate-50 bg-slate-50">
+                        <img src="${img}" class="w-full h-full object-cover">
+                    </div>
                     
                     <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <input id="t-${item.recordId}" type="text" value="${f['标题'] || ''}" placeholder="标题" class="bg-slate-50 border-none p-3 rounded-xl text-sm font-bold text-slate-700 outline-none focus:ring-2 ring-blue-500/10">
-                        <input id="l-${item.recordId}" type="text" value="${(index === 0 && currentFilter === '全部') ? (f['视频链接'] || '') : (f['链接'] || '')}" placeholder="链接" class="bg-slate-50 border-none p-3 rounded-xl text-[11px] font-mono text-blue-600 outline-none focus:ring-2 ring-blue-500/10">
+                        <div class="space-y-1">
+                            <span class="text-[8px] font-black text-slate-300 uppercase ml-1">标题名称</span>
+                            <input id="t-${item.recordId}" type="text" value="${f['标题'] || ''}" class="w-full bg-slate-50 border-none p-3 rounded-xl text-sm font-bold text-slate-700">
+                        </div>
+                        <div class="space-y-1">
+                            <span class="text-[8px] font-black text-blue-400 uppercase ml-1">${labelText}</span>
+                            <input id="l-${item.recordId}" type="text" value="${f[fieldName] || ''}" class="w-full bg-slate-50 border-none p-3 rounded-xl text-[10px] font-mono text-blue-600">
+                        </div>
                     </div>
 
-                    <button onclick="updateSingle('${item.recordId}', ${index})" class="bg-slate-900 text-white px-6 py-3 rounded-xl text-[10px] font-black uppercase tracking-widest active:scale-95 transition-all">更新</button>
+                    <button onclick="updateSingle('${item.recordId}', ${isVideoField})" class="flex-shrink-0 bg-slate-900 text-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all active:scale-90">更新</button>
                 </div>
                 `;
             }).join('');
 
-            // 初始化 SortableJS
-            if(sortableInstance) sortableInstance.destroy();
-            sortableInstance = new Sortable(list, {
-                handle: '.drag-handle',
-                animation: 150,
-                ghostClass: 'sortable-ghost',
-                onEnd: () => {
-                    document.getElementById('save-order-btn').classList.remove('hidden');
-                }
-            });
+            // 只有在“全部”分类下允许自由拖拽排版（为了防止分类下的排序混乱）
+            if(currentFilter === '全部') {
+                if(sortableInstance) sortableInstance.destroy();
+                sortableInstance = new Sortable(list, {
+                    handle: '.drag-handle',
+                    animation: 200,
+                    onEnd: () => {
+                        document.getElementById('save-order-btn').classList.remove('hidden');
+                    }
+                });
+            }
         }
 
-        // 5. 保存排序 (批量更新云端)
         async function saveOrder() {
             const btn = document.getElementById('save-order-btn');
-            btn.innerText = "正在同步位置...";
-            btn.disabled = true;
-
-            const items = document.querySelectorAll('.product-item');
+            btn.innerText = "同步中...";
+            
+            const items = document.querySelectorAll('.product-card');
             const records = Array.from(items).map((el, index) => ({
                 recordId: el.getAttribute('data-id'),
-                fields: { "排序": index + 1 } // 设置新的排序数字
+                fields: { "排序": index + 1 } 
             }));
 
             try {
-                await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
+                const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
                     method: 'PATCH',
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ records })
                 });
-                alert("排序已成功保存到云端！");
-                btn.classList.add('hidden');
-                fetchData(); // 刷新本地数据
-            } catch (e) { alert("排序保存失败"); }
+                const data = await res.json();
+                if(data.success) {
+                    btn.classList.add('hidden');
+                    alert("排序已更新至云端");
+                    fetchData(); 
+                }
+            } catch (e) { alert("同步失败"); }
             btn.innerText = "保存当前排序";
-            btn.disabled = false;
         }
 
-        // 6. 单个更新按钮逻辑
-        async function updateSingle(rid, index) {
-            const fieldName = (index === 0 && currentFilter === '全部') ? "视频链接" : "链接";
+        async function updateSingle(rid, isVideo) {
+            const fieldName = isVideo ? "视频链接" : "链接";
             const updateFields = { "标题": document.getElementById(`t-${rid}`).value };
             updateFields[fieldName] = document.getElementById(`l-${rid}`).value;
 
@@ -196,7 +206,7 @@
                     body: JSON.stringify({ records: [{ recordId: rid, fields: updateFields }] })
                 });
                 alert("数据已更新");
-            } catch (e) { alert("更新失败"); }
+            } catch (e) { alert("更新出错"); }
         }
     </script>
 </body>
