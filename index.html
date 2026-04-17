@@ -23,6 +23,9 @@
         .float-btn { animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
 
+        /* 导航栏平滑位移动画 */
+        .nav-hidden { transform: translateY(-100%); }
+
         /* 隐藏滚动条 */
         ::-webkit-scrollbar { width: 0; background: transparent; }
     </style>
@@ -47,14 +50,14 @@
         </div>
     </div>
 
-    <nav class="fixed top-6 left-1/2 -translate-x-1/2 z-[100] w-[92vw] max-w-5xl bg-white/90 backdrop-blur-xl rounded-full px-5 py-3 flex justify-between items-center shadow-sm border border-blue-100">
+    <nav id="main-nav" class="fixed top-0 left-0 w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-blue-100 px-6 py-3 flex justify-between items-center shadow-sm transition-transform duration-300 ease-in-out">
         <div class="flex items-center space-x-4">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
                  onclick="adminGate()" class="h-16 w-16 rounded-full cursor-pointer active:scale-90 transition-transform shadow-md border-2 border-white object-cover">
             <span class="text-sm font-black text-blue-900 uppercase tracking-tighter">VortinT™</span>
         </div>
         
-        <div class="flex items-center space-x-2 bg-white px-4 py-2 rounded-full border border-blue-200 shadow-sm">
+        <div class="flex items-center space-x-2 bg-blue-50 px-4 py-2 rounded-full border border-blue-100">
             <svg class="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
                 <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"></path>
@@ -63,7 +66,7 @@
         </div>
     </nav>
 
-    <main class="max-w-5xl mx-auto px-4 pt-32 pb-12">
+    <main class="max-w-5xl mx-auto px-4 pt-28 pb-12">
         
         <section class="mb-10 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/10 bg-black aspect-video relative group">
             <video id="v-player" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
@@ -115,6 +118,21 @@
         };
         
         let products = [], timer = null, clicks = 0;
+        let lastScrollTop = 0;
+        const nav = document.getElementById('main-nav');
+
+        // 核心交互：下滑隐藏，上滑显示
+        window.addEventListener('scroll', () => {
+            let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+            if (scrollTop > lastScrollTop && scrollTop > 100) {
+                // 向下滑动，隐藏导航
+                nav.classList.add('nav-hidden');
+            } else {
+                // 向上滑动，显示导航
+                nav.classList.remove('nav-hidden');
+            }
+            lastScrollTop = scrollTop <= 0 ? 0 : scrollTop; 
+        }, false);
 
         async function recordVisit() {
             try {
