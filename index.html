@@ -89,15 +89,7 @@
     <footer class="w-full pb-16 px-4 text-center z-10 relative">
         <div class="max-w-5xl mx-auto flex flex-col items-center space-y-2 text-[11px] font-bold tracking-wider">
             <p class="text-blue-900/70 text-[12px] uppercase">瑞航（深圳）国际家居用品有限公司</p>
-            
-            <p class="text-blue-900/40">
-                <a href="https://www.google.com/maps/search/?api=1&query=深圳市龙岗区平湖街道上木古社区新木路328号1303" 
-                   target="_blank" 
-                   class="hover:text-blue-600 transition-colors underline decoration-blue-200">
-                   深圳市龙岗区平湖街道上木古社区新木路328号1303
-                </a>
-            </p>
-            
+            <p class="text-blue-900/40">深圳市龙岗区平湖街道上木古社区新木路328号1303</p>
             <p class="text-blue-900/30">邮箱：<a href="mailto:cs@vortexd.com" class="hover:text-blue-600 transition-colors">cs@vortexd.com</a></p>
         </div>
     </footer>
@@ -126,7 +118,6 @@
         let lastScrollTop = 0;
         const nav = document.getElementById('main-nav');
 
-        // 导航栏滚动逻辑：下滑隐藏，上滑显示
         window.addEventListener('scroll', () => {
             let scrollTop = window.pageYOffset || document.documentElement.scrollTop;
             if (scrollTop > lastScrollTop && scrollTop > 100) {
