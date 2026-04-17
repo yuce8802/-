@@ -3,54 +3,48 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>VortinT | 品牌排版控制中心</title>
+    <title>VortinT | 品牌控制中心</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.0/Sortable.min.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap');
-        body { font-family: 'Space Grotesk', 'PingFang SC', sans-serif; background: #f8fafc; color: #0f172a; }
-        #lock-screen { position: fixed; inset: 0; background: rgba(255, 255, 255, 0.98); backdrop-filter: blur(20px); z-index: 9999; display: flex; align-items: center; justify-content: center; }
-        .drag-handle { cursor: grab; padding: 10px; color: #cbd5e1; transition: color 0.2s; }
+        body { font-family: 'Space Grotesk', 'PingFang SC', sans-serif; background: #f8fafc; }
+        #lock-screen { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; }
+        .drag-handle { cursor: grab; padding: 10px; color: #cbd5e1; }
         .drag-handle:hover { color: #3b82f6; }
-        .sortable-ghost { opacity: 0.2; background: #f1f5f9; }
         ::-webkit-scrollbar { width: 0; }
     </style>
 </head>
 <body>
 
     <div id="lock-screen">
-        <div class="bg-white p-12 rounded-[3rem] shadow-2xl border border-slate-100 text-center max-w-sm w-full mx-4">
-            <h2 class="text-2xl font-black mb-6 tracking-tight text-slate-800">VortinT ADMIN</h2>
-            <input type="password" id="passcode" placeholder="输入代码解锁" class="w-full bg-slate-50 border-none p-5 rounded-2xl text-center font-bold text-2xl mb-6 shadow-inner outline-none focus:ring-4 ring-blue-500/10">
+        <div class="text-center p-10 max-w-sm w-full">
+            <h2 class="text-2xl font-black mb-6 uppercase tracking-widest">VortinT Admin</h2>
+            <input type="password" id="passcode" placeholder="输入 666888" class="w-full bg-slate-50 border-none p-5 rounded-2xl text-center font-bold text-2xl mb-6 outline-none focus:ring-2 ring-blue-500/10">
             <button onclick="checkPass()" class="w-full bg-blue-600 text-white py-5 rounded-2xl font-black shadow-lg shadow-blue-200 active:scale-95 transition-all">确认解锁</button>
         </div>
     </div>
 
     <div class="max-w-5xl mx-auto px-6 py-12">
-        <header class="flex flex-col md:flex-row justify-between items-start md:items-end mb-10 gap-6">
+        <header class="flex justify-between items-end mb-10">
             <div>
                 <h1 class="text-3xl font-black text-slate-900 tracking-tighter">自由排版控制台</h1>
-                <p class="text-blue-500 text-[10px] font-black tracking-[0.2em] uppercase">RUIHANG INT. · CMS v4.7 (Stable)</p>
+                <p class="text-blue-500 text-[10px] font-black uppercase tracking-[0.2em]">CMS v5.0 (Stable)</p>
             </div>
             <div class="flex space-x-3">
                 <button onclick="saveOrder()" id="save-order-btn" class="hidden bg-green-500 text-white px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest shadow-lg shadow-green-100">保存当前排序</button>
-                <button onclick="goBackHome()" class="bg-white border border-slate-200 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest hover:bg-slate-50 transition-all">返回官网</button>
+                <button onclick="goBackHome()" class="bg-white border border-slate-200 px-6 py-3 rounded-2xl text-[10px] font-bold uppercase tracking-widest">返回官网</button>
             </div>
         </header>
 
         <div id="product-list" class="space-y-4">
-            <div class="text-center py-24 bg-white rounded-[3rem] border-2 border-dashed border-slate-200">
-                <p class="text-slate-400 font-bold uppercase tracking-widest text-xs animate-pulse">正在从维格表调取数据...</p>
+            <div class="text-center py-20 bg-white rounded-[3rem] border-2 border-dashed border-slate-100 text-slate-300 text-xs font-bold animate-pulse">
+                数据连接中...
             </div>
         </div>
-
-        <footer class="mt-20 text-center">
-            <p class="text-[9px] text-slate-300 font-mono tracking-[0.3em] uppercase opacity-50">Authorized by Ruihang International</p>
-        </footer>
     </div>
 
     <script>
-        // 配置信息
         const CFG = { 
             TOKEN: "usk6WsQlH4X6ST2hQRk4vAz", 
             SHEET: "dstUcVqARey53sJnMh", 
@@ -64,97 +58,86 @@
             if(document.getElementById('passcode').value === CFG.PASS) {
                 document.getElementById('lock-screen').style.display = 'none';
                 fetchData();
-            } else { alert("验证码错误"); }
+            } else { alert("验证失败"); }
         }
 
-        function goBackHome() { alert("您辛苦了！"); location.href = 'index.html'; }
+        function goBackHome() { alert("祝您工作愉快！"); location.href = 'index.html'; }
 
-        // 获取数据 (移除了强制排序参数，防止因字段名不对导致的API报错)
         async function fetchData() {
             const listContainer = document.getElementById('product-list');
             try {
+                // 不再在URL里加排序参数，防止字段不存在报错
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
                 });
                 const json = await res.json();
                 
                 if(!json.success) {
-                    listContainer.innerHTML = `<div class="p-10 text-red-500 bg-white rounded-3xl font-bold">错误: ${json.message}</div>`;
+                    listContainer.innerHTML = `<div class="p-10 text-red-500 bg-white rounded-3xl font-bold">API错误: ${json.message}</div>`;
                     return;
                 }
 
-                // 本地根据“排序”字段做一次简单的升序排列（如果该字段存在的话）
+                // 在本地进行安全排序
                 db = json.data.records.sort((a, b) => {
-                    const sortA = a.fields['排序'] || 999;
-                    const sortB = b.fields['排序'] || 999;
-                    return sortA - sortB;
+                    const valA = parseInt(a.fields['排序']) || 999;
+                    const valB = parseInt(b.fields['排序']) || 999;
+                    return valA - valB;
                 });
 
                 renderList();
             } catch (e) {
-                listContainer.innerHTML = `<div class="p-10 text-red-500 bg-white rounded-3xl font-bold">无法连接到维格表，请检查网络或Token</div>`;
+                listContainer.innerHTML = `<div class="p-10 text-red-500 bg-white rounded-3xl font-bold">网络异常，请刷新</div>`;
             }
         }
 
         function renderList() {
             const list = document.getElementById('product-list');
-            if(db.length === 0) {
-                list.innerHTML = `<div class="p-10 text-slate-400 bg-white rounded-3xl text-center">表格中没有任何数据</div>`;
-                return;
-            }
-
             list.innerHTML = db.map((item, index) => {
                 const f = item.fields;
-                // 兼容性图片读取
-                const img = (f['图片'] && Array.isArray(f['图片'])) ? f['图片'][0].url : 'https://via.placeholder.com/100/f8fafc/cbd5e1?text=No+Img';
+                // 直接读取你截图中的“图片”链接列
+                const imgUrl = f['图片'] || 'https://via.placeholder.com/100/f8fafc/cbd5e1?text=No+Img';
                 
-                // 逻辑：第一项是视频，其余是跳转链接
-                const isVideo = (index === 0);
-                const fieldName = isVideo ? "视频链接" : "链接";
-                const labelText = isVideo ? "首屏海报视频 (MP4)" : "Amazon商品链接";
-                const currentVal = f[fieldName] || "";
+                // 逻辑：第一个条目更新“视频链接”，其余更新“链接”
+                const isFirst = (index === 0);
+                const targetField = isFirst ? "视频链接" : "链接";
+                const labelName = isFirst ? "首屏视频链接" : "Amazon跳转链接";
 
                 return `
-                <div class="product-card bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center gap-5 group transition-all" data-id="${item.recordId}">
+                <div class="product-card bg-white p-5 rounded-[2.5rem] shadow-sm border border-slate-100 flex items-center gap-5" data-id="${item.recordId}">
                     <div class="drag-handle">
                         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M4 8h16M4 16h16"></path></svg>
                     </div>
 
-                    <div class="w-16 h-16 flex-shrink-0 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100">
-                        <img src="${img}" class="w-full h-full object-cover">
+                    <div class="w-16 h-16 flex-shrink-0 rounded-2xl overflow-hidden bg-slate-50 border border-slate-100 flex items-center justify-center">
+                        <img src="${imgUrl}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/100/f8fafc/cbd5e1?text=Err'">
                     </div>
                     
-                    <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div class="flex-grow grid grid-cols-1 md:grid-cols-2 gap-4 text-left">
                         <div class="flex flex-col">
-                            <span class="text-[8px] font-black text-slate-300 uppercase ml-1 mb-1">标题名称</span>
-                            <input id="t-${item.recordId}" type="text" value="${f['标题'] || ''}" class="w-full bg-slate-50 border-none p-3 rounded-xl text-sm font-bold text-slate-700 outline-none focus:ring-2 ring-blue-500/5">
+                            <span class="text-[8px] font-black text-slate-300 uppercase ml-1 mb-1">标题</span>
+                            <input id="t-${item.recordId}" type="text" value="${f['标题'] || ''}" class="bg-slate-50 border-none p-3 rounded-xl text-sm font-bold text-slate-700 outline-none focus:ring-2 ring-blue-500/5">
                         </div>
                         <div class="flex flex-col">
-                            <span class="text-[8px] font-black text-blue-400 uppercase ml-1 mb-1">${labelText}</span>
-                            <input id="l-${item.recordId}" type="text" value="${currentVal}" class="w-full bg-slate-50 border-none p-3 rounded-xl text-[10px] font-mono text-blue-600 outline-none focus:ring-2 ring-blue-500/5">
+                            <span class="text-[8px] font-black text-blue-400 uppercase ml-1 mb-1">${labelName}</span>
+                            <input id="l-${item.recordId}" type="text" value="${f[targetField] || ''}" class="bg-slate-50 border-none p-3 rounded-xl text-[10px] font-mono text-blue-600 outline-none focus:ring-2 ring-blue-500/5">
                         </div>
                     </div>
 
-                    <button onclick="updateSingle('${item.recordId}', ${isVideo})" class="bg-slate-900 text-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase tracking-widest hover:bg-blue-600 transition-all active:scale-90">更新</button>
+                    <button onclick="updateSingle('${item.recordId}', ${isFirst})" class="bg-slate-900 text-white px-6 py-4 rounded-2xl text-[10px] font-black uppercase active:scale-90 transition-all">更新</button>
                 </div>
                 `;
             }).join('');
 
-            // 启用拖拽
             if(sortableInstance) sortableInstance.destroy();
             sortableInstance = new Sortable(list, {
                 handle: '.drag-handle',
                 animation: 250,
-                ghostClass: 'sortable-ghost',
-                onEnd: () => {
-                    document.getElementById('save-order-btn').classList.remove('hidden');
-                }
+                onEnd: () => document.getElementById('save-order-btn').classList.remove('hidden')
             });
         }
 
-        // 更新单条数据
-        async function updateSingle(rid, isVideo) {
-            const fieldName = isVideo ? "视频链接" : "链接";
+        async function updateSingle(rid, isFirst) {
+            const fieldName = isFirst ? "视频链接" : "链接";
             const updateFields = { "标题": document.getElementById(`t-${rid}`).value };
             updateFields[fieldName] = document.getElementById(`l-${rid}`).value;
 
@@ -164,23 +147,20 @@
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify({ records: [{ recordId: rid, fields: updateFields }] })
                 });
-                const result = await res.json();
-                if(result.success) alert("✅ 更新成功");
-                else alert("❌ 更新失败: " + result.message);
+                const data = await res.json();
+                alert(data.success ? "✅ 同步成功" : "❌ 失败: " + data.message);
             } catch (e) { alert("网络异常"); }
         }
 
-        // 保存拖拽后的全局排序
         async function saveOrder() {
             const btn = document.getElementById('save-order-btn');
-            const originalText = btn.innerText;
-            btn.innerText = "同步排序中...";
+            btn.innerText = "正在同步云端...";
             btn.disabled = true;
 
             const items = document.querySelectorAll('.product-card');
             const records = Array.from(items).map((el, index) => ({
                 recordId: el.getAttribute('data-id'),
-                fields: { "排序": index + 1 } 
+                fields: { "排序": index + 1 }
             }));
 
             try {
@@ -191,15 +171,14 @@
                 });
                 const data = await res.json();
                 if(data.success) {
-                    alert("✅ 排序已成功同步至云端");
+                    alert("✅ 排序已保存");
                     btn.classList.add('hidden');
-                    fetchData(); // 重新加载以确认数据
+                    fetchData();
                 } else {
-                    alert("❌ 排序保存失败，请检查维格表是否有名为‘排序’的数字列");
+                    alert("❌ 排序更新失败，请确认维格表中有名为'排序'的数字列");
                 }
             } catch (e) { alert("同步失败"); }
-            
-            btn.innerText = originalText;
+            btn.innerText = "保存当前排序";
             btn.disabled = false;
         }
     </script>
