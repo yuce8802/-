@@ -4,23 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="google-site-verification" content="Ej676alK0IKKwuEeIfiT26VqSAoNNb8of91qB0IoljI" />
-    <meta name="description" content="VortinT智能收纳空间 - 瑞航（深圳）国际家居用品有限公司专业提供创新玩具收纳解决方案">
-    <meta name="keywords" content="玩具收纳,智能家具,儿童收纳,收纳柜,家居用品,瑞航国际,VortinT">
-    <title>VortinT | Official Smart Space - 创新玩具收纳解决方案</title>
+    <title>VortinT | Official Smart Space</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap');
         body { font-family: 'Space Grotesk', sans-serif; background: #ffffff; color: #0f172a; overflow-x: hidden; }
-        /* 保持原有的弹窗进度条样式 */
-        .progress-bar { position: absolute; top: 0; left: 0; height: 4px; background: linear-gradient(90deg, #2563eb, #3b82f6); width: 0%; box-shadow: 0 2px 10px rgba(37, 99, 235, 0.3); }
+        .progress-bar { position: absolute; top: 0; left: 0; height: 4px; background: #2563eb; width: 0%; }
         .modal-show .progress-bar { width: 100%; transition: width 1.5s linear; }
         #detail-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(12px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 1.5rem; }
-        .modal-content { background: white; width: 100%; max-width: 420px; border-radius: 2.5rem; transform: scale(0.9); opacity: 0; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; }
+        .modal-content { background: white; width: 100%; max-width: 420px; border-radius: 2rem; transform: scale(0.9); opacity: 0; transition: 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; border: 2px solid #eff6ff; }
         .modal-show .modal-content { transform: scale(1); opacity: 1; }
         .float-btn { animation: float 3s ease-in-out infinite; }
         @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
-        .badge-new { position: absolute; top: 12px; right: 12px; background: #ef4444; color: white; padding: 4px 10px; border-radius: 99px; font-size: 10px; font-weight: 900; letter-spacing: 1px; z-index: 10; }
+        /* 只增加一个新标签样式 */
+        .new-tag { position: absolute; top: 10px; right: 10px; background: #ff4757; color: white; padding: 2px 8px; border-radius: 6px; font-size: 10px; font-weight: bold; z-index: 10; }
         ::-webkit-scrollbar { width: 0; background: transparent; }
     </style>
 </head>
@@ -29,52 +27,50 @@
     <div id="splash" class="fixed inset-0 bg-white z-[9999] flex items-center justify-center transition-opacity duration-700">
         <div class="flex flex-col items-center">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-24 h-24 rounded-full animate-bounce mb-5 border-[3px] border-blue-500 shadow-xl object-cover">
-            <span class="text-blue-600 font-bold text-xs tracking-widest uppercase animate-pulse">VortinT Smart Space</span>
+            <span class="text-blue-600 font-bold text-base tracking-widest uppercase animate-pulse">Loading VortinT...</span>
         </div>
     </div>
 
     <div id="detail-modal" onclick="closeDetail()">
-        <div class="modal-content shadow-2xl" onclick="event.stopPropagation()">
+        <div class="modal-content" onclick="event.stopPropagation()">
             <div class="progress-bar" id="p-bar"></div>
             <img id="m-img" src="" class="w-full aspect-square object-cover bg-blue-50">
             <div class="p-8 text-center">
-                <div id="m-cat" class="text-[10px] text-blue-500 font-black uppercase tracking-widest mb-2"></div>
-                <h2 id="m-title" class="text-xl font-bold mb-4 text-slate-800 uppercase tracking-tighter"></h2>
-                <div id="m-price" class="text-2xl font-black text-slate-900 mb-6"></div>
-                <div class="bg-blue-600 text-white px-8 py-3 rounded-full text-xs font-black tracking-widest uppercase shadow-lg shadow-blue-200">Connecting...</div>
+                <p id="m-cat" class="text-[9px] text-blue-500 font-bold uppercase mb-1"></p>
+                <h2 id="m-title" class="text-xl font-bold mb-2 text-slate-800 uppercase tracking-tighter"></h2>
+                <p id="m-price" class="text-lg font-black text-slate-900 mb-4"></p>
+                <div class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-[10px] font-black tracking-widest uppercase animate-pulse inline-block">Connecting Store...</div>
             </div>
         </div>
     </div>
 
-    <nav class="fixed top-0 left-0 w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-blue-50 px-6 py-4 flex justify-between items-center shadow-sm">
+    <nav id="main-nav" class="fixed top-0 left-0 w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-blue-100 px-6 py-3 flex justify-between items-center shadow-sm">
         <div class="flex items-center space-x-3">
-            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-10 w-10 rounded-full border-2 border-white shadow-md object-cover">
+            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-12 w-12 rounded-full shadow-md border-2 border-white object-cover">
             <div class="flex flex-col">
-                <span class="text-xs font-black text-blue-900 uppercase tracking-tighter leading-tight">瑞航（深圳）国际家居用品有限公司</span>
-                <span class="text-[7px] font-bold text-blue-900/50 uppercase tracking-tighter">SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD</span>
+                <span class="text-[10px] md:text-sm font-black text-blue-900 uppercase tracking-tighter leading-tight">瑞航（深圳）国际家居用品有限公司</span>
+                <span class="text-[6px] md:text-[9px] font-bold text-blue-900/60 uppercase tracking-tighter mt-0.5">SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.</span>
             </div>
         </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto px-4 pt-28 pb-20">
-        <section class="mb-12 rounded-[2.5rem] overflow-hidden shadow-2xl bg-black aspect-video relative group border-4 border-white">
+    <main class="max-w-5xl mx-auto px-4 pt-28 pb-12">
+        <section class="mb-10 rounded-[2.5rem] overflow-hidden shadow-2xl bg-black aspect-video relative group border-2 border-white/10">
             <video id="v-player" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
-            <div class="absolute bottom-8 left-8 z-10">
-                <h1 id="typed" class="text-white text-xl md:text-3xl font-bold drop-shadow-xl"></h1>
+            <div class="absolute bottom-6 left-8 z-10">
+                <h1 id="typed" class="text-white text-xl md:text-2xl font-bold drop-shadow-lg"></h1>
             </div>
-            <div class="absolute inset-0 bg-gradient-to-t from-blue-900/60 via-transparent to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-transparent to-transparent pointer-events-none"></div>
         </section>
-
-        <div id="p-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-8"></div>
+        <div id="p-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"></div>
     </main>
 
-    <footer class="w-full pb-20 text-center opacity-40 text-[10px] font-bold uppercase tracking-widest space-y-2">
-        <p>Copyright © 2026 VortinT™ Official</p>
-        <p>Email: cs@vortexd.com</p>
+    <footer class="w-full pb-16 px-4 text-center">
+        <p class="text-blue-900/70 text-[12px] uppercase font-bold">瑞航（深圳）国际家居用品有限公司</p>
     </footer>
 
     <div class="fixed bottom-8 right-8 z-[1500]">
-        <a id="service-link" href="#" target="_blank" class="float-btn bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center border-2 border-white active:scale-95 transition-transform">
+        <a id="service-link" href="#" target="_blank" class="float-btn bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center border-2 border-white">
             <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.63 1.44h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         </a>
     </div>
@@ -90,26 +86,25 @@
                 });
                 const { data } = await res.json();
                 
-                // 1. 处理特殊链接
+                // 处理 SERVICE_LINK
                 const sRec = data.records.find(r => r.fields['标题'] === 'SERVICE_LINK');
                 if(sRec && sRec.fields['链接']) document.getElementById('service-link').href = sRec.fields['链接'];
                 else document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}`;
 
-                // 2. 排序并过滤产品
+                // 排序与过滤
                 products = data.records.filter(r => r.fields['标题'] !== 'SERVICE_LINK')
                                        .sort((a, b) => (a.fields['排序'] || 999) - (b.fields['排序'] || 999));
                 
-                // 3. 视频逻辑：找第一个有视频链接的产品
+                // 视频链接
                 const vItem = data.records.find(r => r.fields['视频链接']);
                 if (vItem) document.getElementById('v-player').src = vItem.fields['视频链接'];
 
                 render();
                 
                 new Typed('#typed', {
-                    strings: ['Innovation in Toy Storage.', 'Smart Solutions for Home.', 'Designed for Kids & Parents.'],
+                    strings: ['Toy Storage Innovation.', 'Happy Families Join Us.', 'VortinT™ Signature.'],
                     typeSpeed: 50, backSpeed: 30, loop: true
                 });
-                
                 document.getElementById('splash').style.opacity = '0';
                 setTimeout(() => document.getElementById('splash').remove(), 700);
             } catch (e) { console.error(e); }
@@ -120,21 +115,17 @@
             grid.innerHTML = products.map((p, i) => {
                 const f = p.fields;
                 const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || '');
+                // 只有这里嵌入了新字段：新标签、价格、分类
                 return `
-                <div class="relative bg-white p-3 rounded-[2.5rem] shadow-sm hover:shadow-xl hover:-translate-y-2 transition-all duration-500 cursor-pointer group border border-blue-50/50" onclick="openP(${i})">
-                    ${f['新标签'] === '是' ? '<div class="badge-new">NEW</div>' : ''}
-                    <div class="overflow-hidden rounded-[2rem] mb-4 bg-slate-50">
-                        <img src="${img}" class="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-1000">
+                <div class="relative bg-white p-2.5 rounded-[2rem] shadow-sm border-2 border-transparent hover:border-blue-400 transition-all cursor-pointer group" onclick="openP(${i})">
+                    ${f['新标签'] === '是' ? '<div class="new-tag">NEW</div>' : ''}
+                    <div class="overflow-hidden rounded-[1.5rem] mb-3 bg-blue-50">
+                        <img src="${img}" class="w-full aspect-square object-cover group-hover:scale-110 transition-transform duration-700">
                     </div>
                     <div class="px-3">
-                        <p class="text-[9px] font-black text-blue-500 uppercase tracking-widest mb-1">${f['分类'] || 'VortinT Space'}</p>
-                        <h3 class="text-sm font-bold truncate text-slate-800 uppercase tracking-tighter mb-2">${f['标题'] || 'Storage Unit'}</h3>
-                        <div class="flex justify-between items-center">
-                            <span class="text-blue-600 font-black text-sm">${f['价格'] ? '$'+f['价格'] : 'FREE'}</span>
-                            <div class="w-6 h-6 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
-                                <i class="fas fa-arrow-right text-[10px]"></i>
-                            </div>
-                        </div>
+                        <p class="text-[8px] text-blue-500 font-bold uppercase">${f['分类'] || ''}</p>
+                        <h3 class="text-[10px] font-black truncate text-slate-800 uppercase tracking-tighter">${f['标题'] || 'VortinT Unit'}</h3>
+                        <p class="text-[10px] font-bold text-blue-600 mt-1">${f['价格'] ? '$' + f['价格'] : ''}</p>
                     </div>
                 </div>`;
             }).join('');
@@ -144,16 +135,14 @@
             const f = products[i].fields;
             document.getElementById('m-img').src = Array.isArray(f['图片']) ? f['图片'][0].url : f['图片'];
             document.getElementById('m-title').innerText = f['标题'];
-            document.getElementById('m-cat').innerText = f['分类'] || 'Official Product';
+            document.getElementById('m-cat').innerText = f['分类'] || '';
             document.getElementById('m-price').innerText = f['价格'] ? '$' + f['价格'] : '';
             
             const modal = document.getElementById('detail-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('modal-show'), 10);
             
-            const waMsg = encodeURIComponent(`Hi! I'm interested in the "${f['标题']}" ($${f['价格'] || 'TBD'}). Please give me more info.`);
-            document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}?text=${waMsg}`;
-            
+            // 计时器跳转逻辑完全保留
             timer = setTimeout(() => { 
                 if (modal.classList.contains('modal-show') && f['链接']) window.location.href = f['链接']; 
             }, 1500);
@@ -163,11 +152,9 @@
             clearTimeout(timer);
             document.getElementById('detail-modal').classList.remove('modal-show');
             setTimeout(() => document.getElementById('detail-modal').style.display = 'none', 300);
-            document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}`;
         }
 
         window.onload = init;
     </script>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 </body>
 </html>
