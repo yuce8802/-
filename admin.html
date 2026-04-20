@@ -3,61 +3,61 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortinT Admin | 瑞航国际后台</title>
+    <title>VortinT Admin | 瑞航国际尊享版后台</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
         body { font-family: 'Space Grotesk', sans-serif; background: #f8fafc; color: #0f172a; }
-        .sidebar { height: 100vh; position: fixed; left: 0; top: 0; width: 260px; background: #1e293b; transition: all 0.3s; z-index: 50; }
-        .main-content { margin-left: 260px; transition: all 0.3s; padding: 2rem; }
+        .sidebar { height: 100vh; position: fixed; left: 0; top: 0; width: 260px; background: #1e293b; z-index: 50; }
+        .main-content { margin-left: 260px; padding: 2rem; }
         .glass-card { background: white; border-radius: 1.25rem; border: 1px solid #e2e8f0; box-shadow: 0 1px 3px rgba(0,0,0,0.05); }
         .nav-link { display: flex; align-items: center; padding: 0.8rem 1.5rem; color: #94a3b8; border-radius: 0.75rem; margin: 0.3rem 1rem; transition: 0.2s; }
-        .nav-link:hover, .nav-link.active { background: #334155; color: white; }
-        .loader { border-top-color: #3b82f6; animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        .nav-link.active { background: #334155; color: white; }
+        .badge-new { background: #ef4444; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; }
         @media (max-width: 1024px) { .sidebar { transform: translateX(-100%); } .main-content { margin-left: 0; } }
     </style>
 </head>
 <body>
 
-    <aside class="sidebar">
+    <aside class="sidebar shadow-2xl">
         <div class="p-6">
             <div class="flex items-center space-x-3 mb-10">
-                <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-10 h-10 rounded-full border-2 border-blue-500">
-                <span class="text-white font-bold text-xl tracking-tighter">VortinT</span>
+                <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-10 h-10 rounded-full border-2 border-blue-500 shadow-lg">
+                <span class="text-white font-bold text-xl tracking-tighter uppercase">VortinT</span>
             </div>
             <nav>
-                <a href="#" class="nav-link active"><i class="fas fa-database mr-3"></i> 产品管理</a>
-                <a href="index.html" target="_blank" class="nav-link"><i class="fas fa-external-link-alt mr-3"></i> 预览前台</a>
+                <a href="#" class="nav-link active"><i class="fas fa-layer-group mr-3"></i> 全局库存管理</a>
+                <a href="index.html" target="_blank" class="nav-link"><i class="fas fa-eye mr-3"></i> 预览前台</a>
             </nav>
         </div>
     </aside>
 
     <main class="main-content">
-        <header class="flex justify-between items-center mb-8">
+        <header class="flex justify-between items-end mb-8">
             <div>
-                <h1 class="text-2xl font-black text-slate-800 uppercase tracking-tighter">Inventory Console</h1>
-                <p class="text-slate-500 text-sm">瑞航（深圳）国际家居用品有限公司 - 数据中心</p>
+                <h1 class="text-3xl font-black text-slate-800 tracking-tighter uppercase">Product Database</h1>
+                <p class="text-slate-500 text-sm font-medium">当前表结构：标题 / 分类 / 价格 / 新标签 / 排序 / 视频</p>
             </div>
-            <button onclick="editP(null)" class="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-xl font-bold shadow-lg transition-all">
-                <i class="fas fa-plus mr-2"></i> 新增产品
+            <button onclick="editRecord(null)" class="bg-blue-600 hover:bg-blue-700 text-white px-8 py-3 rounded-2xl font-bold shadow-xl shadow-blue-100 transition-all active:scale-95">
+                <i class="fas fa-plus mr-2"></i> 发布新产品
             </button>
         </header>
 
-        <div id="loading-state" class="flex flex-col items-center py-20">
-            <div class="loader ease-linear rounded-full border-4 border-t-4 border-slate-200 h-12 w-12 mb-4"></div>
-            <p class="text-slate-400 font-bold animate-pulse uppercase tracking-widest text-xs">Connecting Vika API...</p>
+        <div id="loading" class="py-20 text-center">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-4 border-blue-500 border-t-transparent mb-4"></div>
+            <p class="text-slate-400 text-xs font-black uppercase tracking-widest">Syncing with Vika...</p>
         </div>
 
-        <div id="data-container" class="hidden glass-card overflow-hidden">
+        <div id="table-view" class="hidden glass-card overflow-hidden border-none shadow-xl shadow-slate-200/50">
             <table class="w-full text-left">
-                <thead class="bg-slate-50 border-b border-slate-100">
+                <thead class="bg-slate-50/50 border-b border-slate-100">
                     <tr>
-                        <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase">产品信息</th>
-                        <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase">排序权重</th>
-                        <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase text-right">操作</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">产品详情</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">分类/价格</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest">状态</th>
+                        <th class="px-6 py-4 text-[10px] font-black text-slate-400 uppercase tracking-widest text-right">操作</th>
                     </tr>
                 </thead>
                 <tbody id="p-tbody" class="divide-y divide-slate-50"></tbody>
@@ -69,9 +69,9 @@
         const CFG = { TOKEN: "usk6WsQlH4X6ST2hQRk4vAz", SHEET: "dstUcVqARey53sJnMh" };
         let localData = [];
 
-        async function refresh() {
-            document.getElementById('loading-state').style.display = 'flex';
-            document.getElementById('data-container').classList.add('hidden');
+        async function init() {
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('table-view').classList.add('hidden');
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
@@ -79,54 +79,99 @@
                 const { data } = await res.json();
                 localData = data.records.sort((a,b) => (a.fields['排序'] || 999) - (b.fields['排序'] || 999));
                 render();
-            } catch (e) { Swal.fire('Error', '无法连接维格表', 'error'); }
-            document.getElementById('loading-state').style.display = 'none';
-            document.getElementById('data-container').classList.remove('hidden');
+            } catch (e) { Swal.fire('Error', 'API连接失败', 'error'); }
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('table-view').classList.remove('hidden');
         }
 
         function render() {
             document.getElementById('p-tbody').innerHTML = localData.map(p => {
                 const f = p.fields;
                 const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || '');
-                const isService = f['标题'] === 'SERVICE_LINK';
                 return `
-                <tr class="hover:bg-blue-50/30 transition-all">
+                <tr class="hover:bg-blue-50/20 transition-all">
                     <td class="px-6 py-4">
                         <div class="flex items-center space-x-4">
-                            <img src="${img}" class="w-12 h-12 rounded-xl object-cover bg-slate-100 border">
+                            <div class="relative">
+                                <img src="${img}" class="w-14 h-14 rounded-2xl object-cover border bg-white shadow-sm">
+                                ${f['新标签'] === '是' ? '<span class="absolute -top-2 -right-2 badge-new">NEW</span>' : ''}
+                            </div>
                             <div>
-                                <div class="font-bold text-slate-800 ${isService ? 'text-blue-600' : ''}">${f['标题'] || '未命名'}</div>
-                                <div class="text-[10px] text-slate-400 truncate max-w-xs">${f['链接'] || '无链接'}</div>
+                                <div class="font-bold text-slate-800 text-sm uppercase">${f['标题'] || 'Untitled'}</div>
+                                <div class="text-[10px] text-slate-400 font-mono tracking-tighter">${p.recordId}</div>
                             </div>
                         </div>
                     </td>
-                    <td class="px-6 py-4 font-black text-slate-500">${f['排序'] || '--'}</td>
+                    <td class="px-6 py-4">
+                        <span class="text-[10px] font-black px-2 py-1 bg-slate-100 rounded text-slate-500 uppercase">${f['分类'] || 'General'}</span>
+                        <div class="text-blue-600 font-bold mt-1 text-sm">${f['价格'] ? '$' + f['价格'] : 'TBD'}</div>
+                    </td>
+                    <td class="px-6 py-4">
+                        <div class="flex items-center text-[10px] font-bold ${f['视频链接'] ? 'text-emerald-500' : 'text-slate-300'}">
+                            <i class="fas fa-video mr-1"></i> ${f['视频链接'] ? 'HAS VIDEO' : 'NO VIDEO'}
+                        </div>
+                        <div class="text-[10px] text-slate-400 mt-1 uppercase font-black">Sort: ${f['排序'] || 999}</div>
+                    </td>
                     <td class="px-6 py-4 text-right">
-                        <button onclick="editP('${p.recordId}')" class="text-blue-500 hover:bg-blue-100 px-3 py-2 rounded-lg transition-all"><i class="fas fa-edit"></i></button>
-                        <button onclick="delP('${p.recordId}')" class="text-red-400 hover:bg-red-50 px-3 py-2 rounded-lg transition-all ml-1"><i class="fas fa-trash"></i></button>
+                        <button onclick="editRecord('${p.recordId}')" class="text-blue-500 hover:bg-blue-50 p-2 rounded-lg transition-all"><i class="fas fa-pencil-alt"></i></button>
+                        <button onclick="deleteRecord('${p.recordId}')" class="text-red-300 hover:text-red-500 p-2 rounded-lg transition-all ml-1"><i class="fas fa-trash-alt"></i></button>
                     </td>
                 </tr>`;
             }).join('');
         }
 
-        async function editP(id) {
+        async function editRecord(id) {
             const p = id ? localData.find(x => x.recordId === id) : { fields: {} };
             const { value: f } = await Swal.fire({
-                title: id ? '编辑记录' : '新增产品',
+                title: id ? '编辑产品信息' : '发布全新产品',
+                width: '600px',
                 html: `
-                    <input id="s-title" class="swal2-input" placeholder="产品标题 / SERVICE_LINK" value="${p.fields['标题'] || ''}">
-                    <input id="s-img" class="swal2-input" placeholder="图片链接" value="${Array.isArray(p.fields['图片']) ? p.fields['图片'][0].url : (p.fields['图片'] || '')}">
-                    <input id="s-link" class="swal2-input" placeholder="跳转链接 (Amazon/WhatsApp)" value="${p.fields['链接'] || ''}">
-                    <input id="s-video" class="swal2-input" placeholder="视频链接 (可选)" value="${p.fields['视频链接'] || ''}">
-                    <input id="s-sort" type="number" class="swal2-input" placeholder="排序权重 (数字越小越靠前)" value="${p.fields['排序'] || ''}">
+                    <div class="grid grid-cols-2 gap-3 text-left">
+                        <div class="col-span-2">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">产品标题</label>
+                            <input id="f-title" class="swal2-input !m-0 !w-full" value="${p.fields['标题'] || ''}">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">图片链接</label>
+                            <input id="f-img" class="swal2-input !m-0 !w-full" value="${Array.isArray(p.fields['图片']) ? p.fields['图片'][0].url : (p.fields['图片'] || '')}">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">分类 (如: Storage)</label>
+                            <input id="f-cat" class="swal2-input !m-0 !w-full" value="${p.fields['分类'] || ''}">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">价格 (不含货币符号)</label>
+                            <input id="f-price" class="swal2-input !m-0 !w-full" value="${p.fields['价格'] || ''}">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">新标签 (填“是”显示红标)</label>
+                            <input id="f-new" class="swal2-input !m-0 !w-full" value="${p.fields['新标签'] || ''}">
+                        </div>
+                        <div>
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">排序权重</label>
+                            <input id="f-sort" type="number" class="swal2-input !m-0 !w-full" value="${p.fields['排序'] || ''}">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">跳转链接 (Amazon/WhatsApp)</label>
+                            <input id="f-link" class="swal2-input !m-0 !w-full" value="${p.fields['链接'] || ''}">
+                        </div>
+                        <div class="col-span-2">
+                            <label class="text-[10px] font-bold text-slate-400 uppercase">视频链接 (Cloudinary/MP4 URL)</label>
+                            <input id="f-video" class="swal2-input !m-0 !w-full" value="${p.fields['视频链接'] || ''}">
+                        </div>
+                    </div>
                 `,
                 showCancelButton: true,
+                confirmButtonText: '保存到云端',
                 preConfirm: () => ({
-                    "标题": document.getElementById('s-title').value,
-                    "图片": document.getElementById('s-img').value,
-                    "链接": document.getElementById('s-link').value,
-                    "视频链接": document.getElementById('s-video').value,
-                    "排序": parseInt(document.getElementById('s-sort').value) || 999
+                    "标题": document.getElementById('f-title').value,
+                    "图片": document.getElementById('f-img').value,
+                    "分类": document.getElementById('f-cat').value,
+                    "价格": document.getElementById('f-price').value,
+                    "新标签": document.getElementById('f-new').value,
+                    "排序": parseInt(document.getElementById('f-sort').value) || 999,
+                    "链接": document.getElementById('f-link').value,
+                    "视频链接": document.getElementById('f-video').value
                 })
             });
 
@@ -138,19 +183,28 @@
                     method, headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
                     body: JSON.stringify(body)
                 });
-                refresh();
+                init();
             }
         }
 
-        async function delP(id) {
-            if (!(await Swal.fire({ title: '确认删除?', icon: 'warning', showCancelButton: true }).then(r => r.isConfirmed))) return;
-            await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records?recordIds=${id}`, {
-                method: 'DELETE', headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
+        async function deleteRecord(id) {
+            const result = await Swal.fire({
+                title: '确定彻底删除?',
+                text: "此操作不可逆，请谨慎操作",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#ef4444',
+                confirmButtonText: '确定删除'
             });
-            refresh();
+            if (result.isConfirmed) {
+                await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records?recordIds=${id}`, {
+                    method: 'DELETE', headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
+                });
+                init();
+            }
         }
 
-        window.onload = refresh;
+        window.onload = init;
     </script>
 </body>
 </html>
