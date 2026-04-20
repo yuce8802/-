@@ -15,209 +15,32 @@
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
-        body { 
-            font-family: 'Space Grotesk', sans-serif; 
-            background: #ffffff; 
-            color: #0f172a; 
-            overflow-x: hidden;
-            line-height: 1.6;
-        }
-        .progress-bar { 
-            position: absolute; 
-            top: 0; 
-            left: 0; 
-            height: 4px; 
-            background: linear-gradient(90deg, #2563eb, #3b82f6); 
-            width: 0%; 
-            box-shadow: 0 2px 10px rgba(37, 99, 235, 0.3);
-        }
-        .modal-show .progress-bar { 
-            width: 100%; 
-            transition: width 1.5s linear; 
-        }
-        #detail-modal, #terms-modal, #privacy-modal { 
-            position: fixed; 
-            inset: 0; 
-            background: rgba(15, 23, 42, 0.4); 
-            backdrop-filter: blur(12px); 
-            z-index: 2000; 
-            display: none; 
-            align-items: center; 
-            justify-content: center; 
-            padding: 1.5rem;
-            animation: fadeIn 0.3s ease-out;
-        }
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-        .modal-content { 
-            background: white; 
-            width: 100%; 
-            max-width: 420px; 
-            border-radius: 2rem; 
-            transform: scale(0.9); 
-            opacity: 0; 
-            transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); 
-            position: relative; 
-            overflow: hidden; 
-            border: 2px solid #eff6ff;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-        }
-        .modal-show .modal-content { 
-            transform: scale(1); 
-            opacity: 1; 
-        }
-        .float-btn { 
-            animation: float 3s ease-in-out infinite; 
-            box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4);
-        }
-        @keyframes float { 
-            0%, 100% { transform: translateY(0); } 
-            50% { transform: translateY(-10px); } 
-        }
-        .nav-hidden { 
-            transform: translateY(-100%); 
-        }
-        ::-webkit-scrollbar { 
-            width: 0; 
-            background: transparent; 
-        }
-        .product-card {
-            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-        }
-        .product-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        }
-        .product-image {
-            transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1);
-        }
-        .product-card:hover .product-image {
-            transform: scale(1.1) rotate(2deg);
-        }
-        .badge-new {
-            position: absolute;
-            top: 12px;
-            right: 12px;
-            background: linear-gradient(135deg, #ef4444, #dc2626);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3);
-            z-index: 10;
-        }
-        /* 搜索框样式 */
-        .search-container {
-            position: relative;
-            max-width: 500px;
-            margin: 0 auto 2rem;
-        }
-        .search-input {
-            width: 100%;
-            padding: 12px 20px 12px 45px;
-            border: 2px solid #e0e7ff;
-            border-radius: 50px;
-            font-size: 14px;
-            transition: all 0.3s;
-            background: white;
-            box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1);
-        }
-        .search-input:focus {
-            outline: none;
-            border-color: #3b82f6;
-            box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-        }
-        .search-icon {
-            position: absolute;
-            left: 18px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: #64748b;
-        }
-        /* 反馈按钮 */
-        .feedback-btn {
-            position: fixed;
-            bottom: 100px;
-            right: 24px;
-            z-index: 1400;
-            background: linear-gradient(135deg, #10b981, #059669);
-            color: white;
-            width: 56px;
-            height: 56px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4);
-            cursor: pointer;
-            transition: all 0.3s;
-        }
-        .feedback-btn:hover {
-            transform: scale(1.1) rotate(5deg);
-            box-shadow: 0 12px 30px rgba(16, 185, 129, 0.6);
-        }
-        /* 加载状态 */
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(37, 99, 235, 0.3);
-            border-radius: 50%;
-            border-top-color: #2563eb;
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        /* 通知样式 */
-        .notification {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            z-index: 9999;
-            background: white;
-            padding: 16px 24px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            animation: slideIn 0.3s ease-out, fadeOut 0.5s ease-out 2.5s;
-            animation-fill-mode: forwards;
-        }
-        @keyframes slideIn {
-            from {
-                transform: translateX(400px);
-                opacity: 0;
-            }
-            to {
-                transform: translateX(0);
-                opacity: 1;
-            }
-        }
-        @keyframes fadeOut {
-            from {
-                opacity: 1;
-            }
-            to {
-                opacity: 0;
-                transform: translateX(400px);
-            }
-        }
+        body { font-family: 'Space Grotesk', sans-serif; background: #ffffff; color: #0f172a; overflow-x: hidden; line-height: 1.6; }
+        .progress-bar { position: absolute; top: 0; left: 0; height: 4px; background: linear-gradient(90deg, #2563eb, #3b82f6); width: 0%; box-shadow: 0 2px 10px rgba(37, 99, 235, 0.3); }
+        .modal-show .progress-bar { width: 100%; transition: width 1.5s linear; }
+        #detail-modal, #terms-modal, #privacy-modal { position: fixed; inset: 0; background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(12px); z-index: 2000; display: none; align-items: center; justify-content: center; padding: 1.5rem; animation: fadeIn 0.3s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .modal-content { background: white; width: 100%; max-width: 420px; border-radius: 2rem; transform: scale(0.9); opacity: 0; transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1); position: relative; overflow: hidden; border: 2px solid #eff6ff; box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25); }
+        .modal-show .modal-content { transform: scale(1); opacity: 1; }
+        .float-btn { animation: float 3s ease-in-out infinite; box-shadow: 0 10px 30px rgba(37, 99, 235, 0.4); }
+        @keyframes float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-10px); } }
+        ::-webkit-scrollbar { width: 0; background: transparent; }
+        .product-card { transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+        .product-card:hover { transform: translateY(-5px); box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+        .product-image { transition: transform 0.5s cubic-bezier(0.165, 0.84, 0.44, 1); }
+        .product-card:hover .product-image { transform: scale(1.1) rotate(2deg); }
+        .badge-new { position: absolute; top: 12px; right: 12px; background: linear-gradient(135deg, #ef4444, #dc2626); color: white; padding: 4px 12px; border-radius: 20px; font-size: 10px; font-weight: 700; text-transform: uppercase; z-index: 10; box-shadow: 0 4px 6px rgba(239, 68, 68, 0.3); }
+        .search-container { position: relative; max-width: 500px; margin: 0 auto 2rem; }
+        .search-input { width: 100%; padding: 12px 20px 12px 45px; border: 2px solid #e0e7ff; border-radius: 50px; font-size: 14px; transition: all 0.3s; background: white; box-shadow: 0 2px 8px rgba(37, 99, 235, 0.1); }
+        .search-icon { position: absolute; left: 18px; top: 50%; transform: translateY(-50%); color: #64748b; }
+        .feedback-btn { position: fixed; bottom: 100px; right: 24px; z-index: 1400; background: linear-gradient(135deg, #10b981, #059669); color: white; width: 56px; height: 56px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.4); cursor: pointer; transition: all 0.3s; }
     </style>
 </head>
 <body class="bg-blue-50/20">
 
     <div id="splash" class="fixed inset-0 bg-white z-[9999] flex items-center justify-center transition-opacity duration-700">
         <div class="flex flex-col items-center">
-            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                 class="w-24 h-24 rounded-full animate-bounce mb-5 border-[3px] border-blue-500 shadow-xl object-cover"
-                 alt="VortinT Logo">
+            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="w-24 h-24 rounded-full animate-bounce mb-5 border-[3px] border-blue-500 shadow-xl object-cover">
             <span class="text-blue-600 font-bold text-base tracking-widest uppercase animate-pulse">Loading VortinT...</span>
         </div>
     </div>
@@ -225,479 +48,173 @@
     <div id="detail-modal" onclick="closeDetail()" role="dialog" aria-modal="true">
         <div class="modal-content" onclick="event.stopPropagation()">
             <div class="progress-bar" id="p-bar"></div>
-            <img id="m-img" src="" class="w-full aspect-square object-cover bg-blue-50" alt="Product Image">
+            <img id="m-img" src="" class="w-full aspect-square object-cover bg-blue-50">
             <div class="p-8 text-center">
-                <p id="m-cat" class="text-[10px] text-blue-500 font-black uppercase tracking-widest mb-1"></p>
-                <h2 id="m-title" class="text-xl font-bold mb-2 text-slate-800 uppercase tracking-tighter"></h2>
-                <div id="m-price" class="text-xl font-black text-slate-900 mb-4"></div>
-                <div class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-[10px] font-black tracking-widest uppercase animate-pulse inline-block">
-                    Connecting Store...
-                </div>
+                <h2 id="m-title" class="text-xl font-bold mb-4 text-slate-800 uppercase tracking-tighter"></h2>
+                <div class="bg-blue-100 text-blue-700 px-4 py-2 rounded-full text-[10px] font-black tracking-widest uppercase animate-pulse inline-block">Connecting Store...</div>
             </div>
         </div>
     </div>
 
     <div id="terms-modal" onclick="closeTerms()" role="dialog" aria-modal="true">
         <div class="modal-content max-w-4xl" onclick="event.stopPropagation()">
-            <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6">
-                <h2 class="text-2xl font-bold">Terms of Service</h2>
-                <p class="text-sm opacity-90 mt-2">Last Updated: April 2026</p>
+            <div class="bg-gradient-to-r from-blue-600 to-blue-700 text-white p-6"><h2 class="text-2xl font-bold">Terms of Service</h2><p class="text-sm opacity-90 mt-2">Last Updated: April 2026</p></div>
+            <div class="p-6 max-h-[60vh] overflow-y-auto text-sm space-y-4">
+                <section><h3 class="font-bold text-lg mb-2">1. Acceptance of Terms</h3><p>By accessing and using VortinT's website and services, you accept and agree to be bound by these Terms of Service...</p></section>
+                <section><h3 class="font-bold text-lg mb-2">2. Product Information</h3><p>We strive to provide accurate product descriptions and images. However, we do not guarantee that all information is error-free...</p></section>
+                <section><h3 class="font-bold text-lg mb-2">5. Returns and Refunds</h3><p>We offer a 30-day return policy for unused and undamaged products. Return shipping costs are the responsibility of the customer...</p></section>
+                <section><h3 class="font-bold text-lg mb-2">6. Intellectual Property</h3><p>All content on this website, including text, graphics, logos, and images, is the property of VortinT...</p></section>
             </div>
-            <div class="p-6 max-h-[60vh] overflow-y-auto">
-                <div class="space-y-4 text-sm">
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">1. Acceptance of Terms</h3>
-                        <p>By accessing and using VortinT's website and services, you accept and agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use our services.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">2. Product Information</h3>
-                        <p>We strive to provide accurate product descriptions and images. However, we do not guarantee that all information is error-free. We reserve the right to correct any errors and change product specifications at any time.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">3. Pricing and Payment</h3>
-                        <p>All prices are subject to change without notice. We accept various payment methods through our authorized partners. Prices displayed are in the currency of your region.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">4. Shipping and Delivery</h3>
-                        <p>Delivery times are estimates and not guaranteed. We are not responsible for delays caused by customs, weather, or other factors beyond our control. Shipping costs and delivery times vary by location.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">5. Returns and Refunds</h3>
-                        <p>We offer a 30-day return policy for unused and undamaged products. Return shipping costs are the responsibility of the customer unless the return is due to our error. Refunds will be processed within 14 business days.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">6. Intellectual Property</h3>
-                        <p>All content on this website, including text, graphics, logos, and images, is the property of VortinT and protected by copyright laws. Unauthorized use is strictly prohibited.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">7. Limitation of Liability</h3>
-                        <p>VortinT shall not be liable for any indirect, incidental, or consequential damages arising from the use of our products or services. Our total liability shall not exceed the purchase price of the product.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">8. Privacy</h3>
-                        <p>Your privacy is important to us. Please review our Privacy Policy to understand how we collect, use, and protect your personal information.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">9. Contact Information</h3>
-                        <p>For any questions regarding these Terms of Service, please contact us at cs@vortexd.com or through our WhatsApp support.</p>
-                    </section>
-                </div>
-                <div class="mt-6 pt-4 border-t border-blue-100">
-                    <button onclick="closeTerms()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold hover:bg-blue-700 transition-colors">
-                        I Understand
-                    </button>
-                </div>
-            </div>
+            <div class="p-4 border-t"><button onclick="closeTerms()" class="w-full bg-blue-600 text-white py-3 rounded-xl font-bold">I Understand</button></div>
         </div>
     </div>
 
     <div id="privacy-modal" onclick="closePrivacy()" role="dialog" aria-modal="true">
         <div class="modal-content max-w-4xl" onclick="event.stopPropagation()">
-            <div class="bg-gradient-to-r from-green-600 to-green-700 text-white p-6">
-                <h2 class="text-2xl font-bold">Privacy Policy</h2>
-                <p class="text-sm opacity-90 mt-2">Last Updated: April 2026</p>
+            <div class="bg-gradient-to-r from-green-600 to-green-700 text-white p-6"><h2 class="text-2xl font-bold">Privacy Policy</h2><p class="text-sm opacity-90 mt-2">Last Updated: April 2026</p></div>
+            <div class="p-6 max-h-[60vh] overflow-y-auto text-sm space-y-4">
+                <section><h3 class="font-bold text-lg mb-2">1. Information We Collect</h3><p>We collect personal information that you provide directly to us when you make a purchase or contact us.</p></section>
+                <section><h3 class="font-bold text-lg mb-2">3. Data Security</h3><p>We implement appropriate security measures. All payment information is encrypted using SSL technology.</p></section>
             </div>
-            <div class="p-6 max-h-[60vh] overflow-y-auto">
-                <div class="space-y-4 text-sm">
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">1. Information We Collect</h3>
-                        <p>We collect personal information that you provide directly to us, including your name, email address, phone number, and shipping address when you make a purchase or contact us.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">2. How We Use Your Information</h3>
-                        <p>Your information is used to process orders, provide customer support, send order confirmations and updates, and improve our services. We may also use anonymized data for analytics and marketing purposes.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">3. Data Security</h3>
-                        <p>We implement appropriate security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction. All payment information is encrypted using SSL technology.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">4. Third-Party Sharing</h3>
-                        <p>We do not sell, trade, or rent your personal information to third parties. We may share information with trusted partners who assist us in operating our website, conducting business, or servicing you, provided they agree to keep this information confidential.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">5. Cookies and Tracking</h3>
-                        <p>Our website uses cookies to enhance your browsing experience. You can control cookie settings through your browser. Disabling cookies may affect website functionality.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">6. Your Rights</h3>
-                        <p>You have the right to access, correct, or delete your personal information. You can also opt-out of marketing communications at any time by clicking the unsubscribe link in our emails.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">7. Children's Privacy</h3>
-                        <p>Our services are not intended for children under 13. We do not knowingly collect personal information from children. If we discover that we have collected information from a child, we will delete it immediately.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">8. Data Retention</h3>
-                        <p>We retain your personal information only for as long as necessary to fulfill the purposes outlined in this policy, unless a longer retention period is required by law.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">9. International Transfers</h3>
-                        <p>Your information may be transferred to and processed in countries other than your country of residence. These countries may have different data protection laws.</p>
-                    </section>
-                    <section>
-                        <h3 class="font-bold text-lg mb-2">10. Changes to This Policy</h3>
-                        <p>We may update this Privacy Policy from time to time. We will notify you of any changes by posting the new policy on this page and updating the "Last Updated" date.</p>
-                    </section>
-                </div>
-                <div class="mt-6 pt-4 border-t border-green-100">
-                    <button onclick="closePrivacy()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold hover:bg-green-700 transition-colors">
-                        I Understand
-                    </button>
-                </div>
-            </div>
+            <div class="p-4 border-t"><button onclick="closePrivacy()" class="w-full bg-green-600 text-white py-3 rounded-xl font-bold">I Understand</button></div>
         </div>
     </div>
 
-    <nav id="main-nav" class="fixed top-0 left-0 w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-blue-100 px-6 py-3 flex justify-between items-center shadow-sm transition-transform duration-300 ease-in-out">
+    <nav id="main-nav" class="fixed top-0 left-0 w-full z-[100] bg-white/95 backdrop-blur-xl border-b border-blue-100 px-6 py-3 flex justify-between items-center transition-transform duration-300">
         <div class="flex items-center space-x-3">
-            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
-                 onclick="adminGate()" 
-                 class="h-12 w-12 rounded-full cursor-pointer active:scale-90 transition-transform shadow-md border-2 border-white object-cover"
-                 alt="Company Logo"
-                 aria-label="Company Logo">
-            <div class="flex flex-col">
-                <span class="text-[10px] md:text-sm font-black text-blue-900 uppercase tracking-tighter leading-tight">瑞航（深圳）国际家居用品有限公司</span>
-                <span class="text-[6px] md:text-[9px] font-bold text-blue-900/60 uppercase tracking-tighter leading-tight mt-0.5">SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.</span>
-            </div>
+            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" onclick="adminGate()" class="h-12 w-12 rounded-full cursor-pointer shadow-md border-2 border-white object-cover">
+            <div class="flex flex-col"><span class="text-[10px] md:text-sm font-black text-blue-900 uppercase">瑞航（深圳）国际家居用品有限公司</span><span class="text-[6px] md:text-[9px] font-bold text-blue-900/60 uppercase mt-0.5">SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.</span></div>
         </div>
     </nav>
 
     <main class="max-w-5xl mx-auto px-4 pt-28 pb-12">
-        <section class="mb-10 rounded-[2.5rem] overflow-hidden shadow-2xl shadow-blue-900/10 bg-black aspect-video relative group border-2 border-white/10">
+        <section class="mb-10 rounded-[2.5rem] overflow-hidden shadow-2xl bg-black aspect-video relative border-2 border-white/10">
             <video id="v-player" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
-            <div class="absolute bottom-6 left-8 z-10">
-                <h1 id="typed" class="text-white text-xl md:text-2xl font-bold drop-shadow-lg"></h1>
-            </div>
-            <div class="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-transparent to-transparent pointer-events-none"></div>
+            <div class="absolute bottom-6 left-8 z-10"><h1 id="typed" class="text-white text-xl md:text-2xl font-bold drop-shadow-lg"></h1></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-blue-900/80 via-transparent to-transparent"></div>
         </section>
 
-        <div class="search-container mb-6">
-            <div class="search-icon">
-                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
-                </svg>
-            </div>
+        <div class="search-container">
+            <div class="search-icon"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/></svg></div>
             <input type="text" id="search-input" class="search-input" placeholder="Search products..." oninput="filterProducts()">
         </div>
 
         <div class="mb-6 flex justify-center space-x-3">
-            <button onclick="filterCategory('all')" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-xs font-bold hover:bg-blue-200 transition-colors category-btn active">All Products</button>
-            <button onclick="filterCategory('Storage')" class="px-4 py-2 bg-white text-blue-600 border-2 border-blue-200 rounded-full text-xs font-bold hover:bg-blue-50 transition-colors category-btn">Storage Cabinets</button>
-            <button onclick="filterCategory('ToyBox')" class="px-4 py-2 bg-white text-blue-600 border-2 border-blue-200 rounded-full text-xs font-bold hover:bg-blue-50 transition-colors category-btn">Toy Boxes</button>
-            <button onclick="filterCategory('New')" class="px-4 py-2 bg-white text-blue-600 border-2 border-blue-200 rounded-full text-xs font-bold hover:bg-blue-50 transition-colors category-btn">New Arrivals</button>
+            <button onclick="filterCategory('all')" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-full text-xs font-bold category-btn active">All Products</button>
+            <button onclick="filterCategory('Storage')" class="px-4 py-2 bg-white text-blue-600 border-2 border-blue-200 rounded-full text-xs font-bold category-btn">Storage Cabinets</button>
+            <button onclick="filterCategory('ToyBox')" class="px-4 py-2 bg-white text-blue-600 border-2 border-blue-200 rounded-full text-xs font-bold category-btn">Toy Boxes</button>
+            <button onclick="filterCategory('New')" class="px-4 py-2 bg-white text-blue-600 border-2 border-blue-200 rounded-full text-xs font-bold category-btn">New Arrivals</button>
         </div>
 
         <div id="p-grid" class="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6"></div>
-
-        <div id="empty-state" class="hidden text-center py-12">
-            <svg class="w-24 h-24 mx-auto text-blue-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 13V6a2 2 0 00-2-2H6a2 2 0 00-2 2v7m16 0v5a2 2 0 01-2 2H6a2 2 0 01-2-2v-5m16 0h-2.586a1 1 0 00-.707.293l-2.414 2.414a1 1 0 01-.707.293h-3.172a1 1 0 01-.707-.293l-2.414-2.414A1 1 0 006.586 13H4"/>
-            </svg>
-            <h3 class="text-xl font-bold text-blue-600 mb-2">No Products Found</h3>
-            <p class="text-blue-400">Try adjusting your search or filters</p>
-        </div>
+        <div id="empty-state" class="hidden text-center py-12 text-blue-600 font-bold">No Products Found</div>
     </main>
 
-    <div class="feedback-btn" onclick="showFeedback()" title="Leave Feedback">
-        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
-        </svg>
-    </div>
+    <div class="feedback-btn" onclick="showFeedback()"><svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg></div>
 
-    <footer class="w-full pb-16 px-4 text-center z-10 relative">
-        <div class="max-w-5xl mx-auto flex flex-col items-center space-y-2 text-[11px] font-bold tracking-wider">
-            <p class="text-blue-900/70 text-[12px] uppercase">Copyright © 2026 瑞航（深圳）国际家居用品有限公司</p>
-            <p class="text-blue-900/30">All Rights Reserved</p>
-            <div class="mt-4 flex space-x-4">
-                <button onclick="showTerms()" class="text-blue-600 hover:text-blue-800 transition-colors text-[10px]">Terms of Service</button>
-                <span class="text-blue-900/30">|</span>
-                <button onclick="showPrivacy()" class="text-blue-600 hover:text-blue-800 transition-colors text-[10px]">Privacy Policy</button>
-            </div>
-            <div class="mt-8 opacity-20 text-[10px]">网页访问人数: <span id="visitor-count">...</span></div>
+    <footer class="w-full pb-16 px-4 text-center z-10 relative text-[11px] font-bold">
+        <p class="text-blue-900/70 uppercase">Copyright © 2026 瑞航（深圳）国际家居用品有限公司</p>
+        <div class="mt-4 flex justify-center space-x-4">
+            <button onclick="showTerms()" class="text-blue-600">Terms of Service</button>
+            <span class="text-blue-900/30">|</span>
+            <button onclick="showPrivacy()" class="text-blue-600">Privacy Policy</button>
         </div>
+        <div class="mt-8 opacity-20">网页访问人数: <span id="visitor-count">...</span></div>
     </footer>
 
     <div class="fixed bottom-8 right-8 z-[1500]">
         <a id="service-link" href="#" target="_blank" class="float-btn bg-blue-600 text-white w-14 h-14 rounded-full shadow-2xl flex items-center justify-center border-2 border-white active:scale-95 transition-transform">
-            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
-                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.63 1.44h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
-            </svg>
-            <span class="sr-only">Contact us on WhatsApp</span>
+            <svg class="w-7 h-7" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L0 24l6.335-1.662c1.72.94 3.659 1.437 5.63 1.44h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
         </a>
     </div>
 
     <script>
-        // 配置信息
-        const CFG = { 
-            TOKEN: "usk6WsQlH4X6ST2hQRk4vAz", 
-            SHEET: "dstUcVqARey53sJnMh", 
-            WA_PHONE: "85269517551" 
-        };
-        
+        const CFG = { TOKEN: "usk6WsQlH4X6ST2hQRk4vAz", SHEET: "dstUcVqARey53sJnMh", WA_PHONE: "85269517551" };
         let products = [], timer = null, clicks = 0, filteredProducts = [];
-        let serviceLink = `https://wa.me/${CFG.WA_PHONE}?text=${encodeURIComponent("Hi! I'm interested in VortinT.")}`;
-        
-        // 初始化函数
+        let serviceLink = `https://wa.me/${CFG.WA_PHONE}?text=Hi!`;
+
         async function init() {
             try {
-                // 获取访问计数
-                const vRes = await fetch(`https://api.counterapi.dev/v1/vortint_brand/homepage/up`);
-                const vData = await vRes.json();
-                document.getElementById('visitor-count').innerText = vData.count;
-            } catch (e) { 
-                console.error('Failed to fetch visitor count:', e);
-                document.getElementById('visitor-count').innerText = '800+'; 
-            }
-
-            try {
-                // 从Vika获取数据
-                const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
-                    headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
-                });
-                
-                if (!res.ok) {
-                    throw new Error(`API request failed with status: ${res.status}`);
-                }
-                
+                fetch(`https://api.counterapi.dev/v1/vortint_brand/homepage/up`).then(r => r.json()).then(d => document.getElementById('visitor-count').innerText = d.count);
+                const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, { headers: { 'Authorization': `Bearer ${CFG.TOKEN}` } });
                 const { data } = await res.json();
                 
-                // 1. 提取通讯专用链接
                 const sRec = data.records.find(r => r.fields['标题'] === 'SERVICE_LINK');
-                if(sRec && sRec.fields['链接']) {
-                    serviceLink = sRec.fields['链接'];
-                }
+                if(sRec && sRec.fields['链接']) serviceLink = sRec.fields['链接'];
                 document.getElementById('service-link').href = serviceLink;
 
-                // 2. 排序并过滤产品
-                products = data.records.filter(r => r.fields['标题'] !== 'SERVICE_LINK')
-                                       .sort((a, b) => (a.fields['排序'] || 999) - (b.fields['排序'] || 999));
+                products = data.records.filter(r => r.fields['标题'] !== 'SERVICE_LINK').sort((a, b) => (a.fields['排序'] || 999) - (b.fields['排序'] || 999));
                 filteredProducts = [...products];
                 
-                // 视频设置
-                const videoTarget = data.records.find(r => r.fields['视频链接']);
-                if (videoTarget) {
-                    document.getElementById('v-player').src = videoTarget.fields['视频链接'];
-                }
+                const vItem = data.records.find(r => r.fields['视频链接']);
+                if (vItem) document.getElementById('v-player').src = vItem.fields['视频链接'];
                 
                 render();
-                
-                // 打字动画
-                new Typed('#typed', {
-                    strings: [
-                        'Toy Storage Innovation.',
-                        'Happy Families Join Us.',
-                        'VortinT™ Signature.',
-                        'Smart Home Solutions.'
-                    ],
-                    typeSpeed: 50, 
-                    backSpeed: 30, 
-                    loop: true,
-                    showCursor: true,
-                    cursorChar: '|'
-                });
-                
-                // 隐藏预加载动画
+                new Typed('#typed', { strings: ['Toy Storage Innovation.', 'Happy Families Join Us.', 'VortinT™ Signature.', 'Smart Home Solutions.'], typeSpeed: 50, backSpeed: 30, loop: true });
                 document.getElementById('splash').style.opacity = '0';
                 setTimeout(() => document.getElementById('splash').remove(), 700);
-            } catch (e) { 
-                console.error('Initialization error:', e);
-                alert('页面加载失败，请刷新重试。');
-            }
+            } catch (e) { document.getElementById('splash').remove(); }
         }
 
-        // 修改点 2: 渲染产品网格（加入分类和价格显示）
         function render() {
             const grid = document.getElementById('p-grid');
-            const emptyState = document.getElementById('empty-state');
-            
-            if (filteredProducts.length === 0) {
-                grid.innerHTML = '';
-                emptyState.classList.remove('hidden');
-                return;
-            }
-            
-            emptyState.classList.add('hidden');
+            if (filteredProducts.length === 0) { grid.innerHTML = ''; document.getElementById('empty-state').classList.remove('hidden'); return; }
+            document.getElementById('empty-state').classList.add('hidden');
             grid.innerHTML = filteredProducts.map((p, i) => {
                 const f = p.fields;
                 const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || '');
+                // 修复核心：兼容字符串 'true' / '是' 和布尔值 true
                 const isNew = f['新标签'] === true || f['新标签'] === 'true' || f['新标签'] === '是';
-                
                 return `
-                <div class="product-card bg-white p-2.5 rounded-[2rem] shadow-sm border-2 border-transparent hover:border-blue-400 active:scale-95 transition-all duration-300 cursor-pointer group" 
-                     onclick="openP(${i})" 
-                     role="button" 
-                     aria-label="View details of ${f['标题'] || 'VortinT Unit'}">
+                <div class="product-card bg-white p-2.5 rounded-[2rem] shadow-sm relative cursor-pointer border-2 border-transparent hover:border-blue-400 transition-all" onclick="openP(${i})">
                     ${isNew ? '<div class="badge-new">NEW</div>' : ''}
-                    <div class="overflow-hidden rounded-[1.5rem] mb-3 bg-blue-50">
-                        <img src="${img}" 
-                             class="product-image w-full aspect-square object-cover" 
-                             alt="${f['标题'] || 'Product image'}"
-                             loading="lazy"
-                             onerror="this.src='https://via.placeholder.com/300x300?text=No+Image'">
-                    </div>
-                    <p class="text-[8px] text-blue-500 font-black px-3 uppercase tracking-widest mb-0.5">${f['分类'] || ''}</p>
+                    <div class="overflow-hidden rounded-[1.5rem] mb-3 bg-blue-50"><img src="${img}" class="product-image w-full aspect-square object-cover"></div>
                     <h3 class="text-[10px] font-black px-3 truncate text-slate-800 uppercase tracking-tighter">${f['标题'] || 'VortinT Unit'}</h3>
-                    ${f['价格'] ? `<p class="text-[9px] text-slate-900 font-black px-3 mt-1">$${f['价格']}</p>` : ''}
+                    ${f['价格'] ? `<p class="text-[8px] text-blue-600 font-bold px-3 mt-1">${f['价格']}</p>` : ''}
                 </div>`;
             }).join('');
         }
 
-        // 修改点 3: 打开产品详情（填入弹窗分类和价格）
         function openP(i) {
             const f = filteredProducts[i].fields;
             document.getElementById('m-img').src = Array.isArray(f['图片']) ? f['图片'][0].url : f['图片'];
             document.getElementById('m-title').innerText = f['标题'];
-            
-            // 填入分类和价格到弹窗
-            if(document.getElementById('m-cat')) document.getElementById('m-cat').innerText = f['分类'] || '';
-            if(document.getElementById('m-price')) document.getElementById('m-price').innerText = f['价格'] ? '$' + f['价格'] : '';
-            
             const modal = document.getElementById('detail-modal');
             modal.style.display = 'flex';
             setTimeout(() => modal.classList.add('modal-show'), 10);
-            
-            // 点击产品后，临时修改通讯按钮的消息
-            const waMsg = encodeURIComponent(`Hi! I'm interested in the "${f['标题']}". Could you provide more details?`);
-            document.getElementById('service-link').href = `https://wa.me/${CFG.WA_PHONE}?text=${waMsg}`;
-            
-            // 1.5秒后自动跳转（如果有链接）
-            timer = setTimeout(() => { 
-                if (modal.classList.contains('modal-show') && f['链接']) {
-                    window.location.href = f['链接']; 
-                }
-            }, 1500);
+            timer = setTimeout(() => { if (modal.classList.contains('modal-show') && f['链接']) window.location.href = f['链接']; }, 1500);
         }
 
-        // 关闭详情模态框
-        function closeDetail() {
-            clearTimeout(timer);
-            document.getElementById('detail-modal').classList.remove('modal-show');
-            setTimeout(() => {
-                document.getElementById('detail-modal').style.display = 'none';
-                // 恢复原始 serviceLink
-                document.getElementById('service-link').href = serviceLink;
-            }, 300);
-        }
-
-        // 管理员入口（5次点击）
-        function adminGate() { 
-            if (++clicks >= 5) {
-                // 添加确认对话框提高安全性
-                if (confirm('Enter admin mode?')) {
-                    window.location.href = 'admin.html';
-                }
-            }
-            setTimeout(() => clicks = 0, 2000); 
-        }
-        
-        // 显示服务条款
-        function showTerms() {
-            const modal = document.getElementById('terms-modal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('modal-show'), 10);
-        }
-        
-        // 关闭服务条款
-        function closeTerms() {
-            const modal = document.getElementById('terms-modal');
-            modal.classList.remove('modal-show');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-        
-        // 显示隐私政策
-        function showPrivacy() {
-            const modal = document.getElementById('privacy-modal');
-            modal.style.display = 'flex';
-            setTimeout(() => modal.classList.add('modal-show'), 10);
-        }
-        
-        // 关闭隐私政策
-        function closePrivacy() {
-            const modal = document.getElementById('privacy-modal');
-            modal.classList.remove('modal-show');
-            setTimeout(() => modal.style.display = 'none', 300);
-        }
-        
-        // 显示反馈
-        function showFeedback() {
-            const feedback = prompt('Please share your feedback about our products or website:');
-            if (feedback && feedback.trim().length > 0) {
-                // 这里可以添加发送反馈到服务器的逻辑
-                alert('Thank you for your feedback!');
-            }
-        }
-        
-        // 搜索产品
         function filterProducts() {
-            const searchTerm = document.getElementById('search-input').value.toLowerCase();
-            filteredProducts = products.filter(p => {
-                const title = p.fields['标题'] || '';
-                return title.toLowerCase().includes(searchTerm);
-            });
+            const s = document.getElementById('search-input').value.toLowerCase();
+            filteredProducts = products.filter(p => (p.fields['标题'] || '').toLowerCase().includes(s));
             render();
         }
-        
-        // 按分类筛选
-        function filterCategory(category) {
-            // 更新按钮状态
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.classList.remove('bg-blue-100', 'text-blue-700');
-                btn.classList.add('bg-white', 'text-blue-600', 'border-2', 'border-blue-200');
-            });
-            event.target.classList.remove('bg-white', 'text-blue-600', 'border-2', 'border-blue-200');
-            event.target.classList.add('bg-blue-100', 'text-blue-700');
-            
-            if (category === 'all') {
-                filteredProducts = [...products];
-            } else if (category === 'New') {
-                filteredProducts = products.filter(p => 
-                    p.fields['新标签'] === true || p.fields['新标签'] === 'true' || p.fields['新标签'] === '是'
-                );
-            } else {
-                filteredProducts = products.filter(p => 
-                    p.fields['分类'] === category
-                );
-            }
+
+        function filterCategory(c) {
+            document.querySelectorAll('.category-btn').forEach(b => { b.classList.remove('bg-blue-100', 'text-blue-700'); b.classList.add('bg-white', 'text-blue-600', 'border-2', 'border-blue-200'); });
+            event.target.classList.remove('bg-white', 'text-blue-600', 'border-2', 'border-blue-200'); event.target.classList.add('bg-blue-100', 'text-blue-700');
+            if (c === 'all') filteredProducts = [...products];
+            else if (c === 'New') filteredProducts = products.filter(p => p.fields['新标签'] === true || p.fields['新标签'] === 'true' || p.fields['新标签'] === '是');
+            else filteredProducts = products.filter(p => p.fields['分类'] === c);
             render();
         }
+
+        function closeDetail() { clearTimeout(timer); document.getElementById('detail-modal').classList.remove('modal-show'); setTimeout(() => document.getElementById('detail-modal').style.display = 'none', 300); }
+        function showTerms() { document.getElementById('terms-modal').style.display = 'flex'; setTimeout(() => document.getElementById('terms-modal').classList.add('modal-show'), 10); }
+        function closeTerms() { document.getElementById('terms-modal').classList.remove('modal-show'); setTimeout(() => document.getElementById('terms-modal').style.display = 'none', 300); }
+        function showPrivacy() { document.getElementById('privacy-modal').style.display = 'flex'; setTimeout(() => document.getElementById('privacy-modal').classList.add('modal-show'), 10); }
+        function closePrivacy() { document.getElementById('privacy-modal').classList.remove('modal-show'); setTimeout(() => document.getElementById('privacy-modal').style.display = 'none', 300); }
+        function showFeedback() { const f = prompt('Please share your feedback:'); if (f) alert('Thank you!'); }
+        function adminGate() { if (++clicks >= 5) { if (confirm('Enter admin mode?')) window.location.href = 'admin.html'; } setTimeout(() => clicks = 0, 2000); }
         
-        // 页面加载完成时初始化
         window.addEventListener('load', init);
-        
-        // 添加滚动监听（可选：导航栏滚动效果）
-        window.addEventListener('scroll', () => {
-            const nav = document.getElementById('main-nav');
-            if (window.scrollY > 50) {
-                nav.classList.add('shadow-lg');
-            } else {
-                nav.classList.remove('shadow-lg');
-            }
+        window.addEventListener('scroll', () => { const nav = document.getElementById('main-nav'); if (window.scrollY > 50) nav.classList.add('shadow-lg'); else nav.classList.remove('shadow-lg'); });
+        document.addEventListener('keydown', (e) => { 
+            if (e.ctrlKey && e.key === 'f') { e.preventDefault(); document.getElementById('search-input').focus(); }
+            if (e.key === 'Escape') { closeDetail(); closeTerms(); closePrivacy(); }
         });
-        
-        // 添加键盘快捷键
-        document.addEventListener('keydown', (e) => {
-            // Ctrl+F 激活搜索
-            if (e.ctrlKey && e.key === 'f') {
-                e.preventDefault();
-                document.getElementById('search-input').focus();
-            }
-            // Esc 关闭所有模态框
-            if (e.key === 'Escape') {
-                closeDetail();
-                closeTerms();
-                closePrivacy();
-            }
-        });
-        
-        // 添加离线检测
-        window.addEventListener('offline', () => {
-            alert('You are offline. Some features may not work.');
-        });
-        
-        window.addEventListener('online', () => {
-            alert('Back online!');
-        });
+        window.addEventListener('offline', () => alert('You are offline.'));
     </script>
 </body>
 </html>
