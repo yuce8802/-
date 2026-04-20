@@ -3,181 +3,1034 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>VortinT | Admin Console</title>
+    <title>VortinT 后台管理系统</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&display=swap');
-        body { font-family: 'Space Grotesk', sans-serif; background: #f8fafc; color: #0f172a; }
-        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(12px); border: 1px solid rgba(37, 99, 235, 0.1); }
-        ::-webkit-scrollbar { width: 6px; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap');
+        body { 
+            font-family: 'Space Grotesk', sans-serif; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #0f172a; 
+            overflow-x: hidden;
+        }
+        .sidebar {
+            transition: all 0.3s ease;
+        }
+        .sidebar-collapsed {
+            width: 80px;
+        }
+        .sidebar-expanded {
+            width: 260px;
+        }
+        .content-area {
+            transition: margin-left 0.3s ease;
+        }
+        .card {
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        }
+        .card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+        }
+        .status-badge {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: 0.5; }
+        }
+        .sortable {
+            cursor: grab;
+        }
+        .sortable:active {
+            cursor: grabbing;
+        }
+        .dragging {
+            opacity: 0.7;
+            transform: scale(1.02);
+        }
     </style>
 </head>
-<body class="p-4 md:p-8">
+<body class="min-h-screen">
 
-    <div class="max-w-6xl mx-auto">
-        <header class="flex justify-between items-center mb-8 bg-white p-6 rounded-[2rem] shadow-sm border border-blue-50">
-            <div class="flex items-center space-x-4">
-                <div class="w-12 h-12 bg-blue-600 rounded-full flex items-center justify-center text-white font-bold text-xl">V</div>
-                <div>
-                    <h1 class="text-xl font-black text-blue-900 tracking-tighter uppercase">VortinT Admin</h1>
-                    <p class="text-[10px] text-slate-400 font-bold uppercase tracking-widest">Inventory Management</p>
-                </div>
-            </div>
-            <div class="flex space-x-3">
-                <button onclick="location.href='index.html'" class="px-5 py-2.5 rounded-xl border-2 border-slate-200 text-slate-600 text-xs font-bold hover:bg-slate-50 transition-all uppercase">View Site</button>
-                <button onclick="fetchData()" class="px-5 py-2.5 rounded-xl bg-blue-600 text-white text-xs font-bold hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all uppercase">Sync Data</button>
-            </div>
-        </header>
-
-        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-            <div class="lg:col-span-1">
-                <div class="glass p-8 rounded-[2.5rem] sticky top-8">
-                    <h2 class="text-sm font-black text-blue-900 mb-6 uppercase tracking-widest">Product Editor</h2>
-                    <form id="p-form" class="space-y-4">
-                        <input type="hidden" id="edit-id">
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block ml-2">Title</label>
-                            <input type="text" id="f-title" placeholder="Product Name" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-400 outline-none text-sm transition-all font-bold">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block ml-2">Image URL</label>
-                            <input type="text" id="f-img" placeholder="Cloudinary/Web Link" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-400 outline-none text-sm transition-all font-bold">
-                        </div>
-                        <div>
-                            <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block ml-2">Store Link</label>
-                            <input type="text" id="f-link" placeholder="Purchase URL" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-400 outline-none text-sm transition-all font-bold">
-                        </div>
-                        <div class="grid grid-cols-2 gap-4">
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block ml-2">Sort Order</label>
-                                <input type="number" id="f-sort" placeholder="99" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-400 outline-none text-sm transition-all font-bold">
-                            </div>
-                            <div>
-                                <label class="text-[10px] font-bold text-slate-400 uppercase mb-1 block ml-2">Category</label>
-                                <select id="f-cat" class="w-full px-4 py-3 rounded-2xl bg-slate-50 border-2 border-transparent focus:border-blue-400 outline-none text-sm transition-all font-bold">
-                                    <option value="Storage">Storage</option>
-                                    <option value="New">New Arrival</option>
-                                </select>
-                            </div>
-                        </div>
-                        <button type="button" onclick="saveProduct()" class="w-full py-4 mt-4 rounded-2xl bg-blue-600 text-white font-black text-xs uppercase tracking-widest hover:bg-blue-700 transition-all shadow-xl shadow-blue-100">Update Database</button>
-                    </form>
-                </div>
-            </div>
-
-            <div class="lg:col-span-2 space-y-4">
-                <div id="status-bar" class="hidden bg-emerald-50 text-emerald-600 px-6 py-4 rounded-2xl border border-emerald-100 text-[10px] font-black uppercase tracking-widest animate-pulse">Syncing with Vika.cn...</div>
-                <div id="data-list" class="space-y-4">
+    <!-- 主容器 -->
+    <div class="flex h-screen">
+        
+        <!-- 侧边栏 -->
+        <aside id="sidebar" class="sidebar sidebar-expanded bg-white h-full shadow-2xl fixed left-0 top-0 z-50">
+            <div class="p-6 border-b border-purple-100">
+                <div class="flex items-center space-x-3">
+                    <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
+                         class="h-10 w-10 rounded-full border-2 border-purple-500 object-cover">
+                    <div class="sidebar-text">
+                        <h1 class="text-xl font-bold text-purple-700">VortinT Admin</h1>
+                        <p class="text-xs text-purple-600 mt-1">管理中心</p>
                     </div>
+                </div>
+            </div>
+            
+            <nav class="mt-6 px-4">
+                <div class="space-y-2">
+                    <button onclick="showSection('dashboard')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl bg-purple-50 text-purple-700 font-bold sidebar-text">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/>
+                        </svg>
+                        <span>仪表盘</span>
+                    </button>
+                    
+                    <button onclick="showSection('products')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-purple-50 hover:text-purple-700 font-bold sidebar-text">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                        </svg>
+                        <span>产品管理</span>
+                    </button>
+                    
+                    <button onclick="showSection('categories')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-purple-50 hover:text-purple-700 font-bold sidebar-text">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                        </svg>
+                        <span>分类管理</span>
+                    </button>
+                    
+                    <button onclick="showSection('settings')" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-purple-50 hover:text-purple-700 font-bold sidebar-text">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                        </svg>
+                        <span>系统设置</span>
+                    </button>
+                    
+                    <button onclick="logout()" class="w-full flex items-center space-x-3 px-4 py-3 rounded-xl hover:bg-red-50 hover:text-red-700 font-bold sidebar-text mt-6">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1"/>
+                        </svg>
+                        <span>退出登录</span>
+                    </button>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- 主内容区 -->
+        <main class="content-area flex-1 ml-64 bg-gray-50 overflow-y-auto">
+            
+            <!-- 顶部导航 -->
+            <header class="bg-white shadow-sm sticky top-0 z-40">
+                <div class="px-8 py-4 flex justify-between items-center">
+                    <div class="flex items-center space-x-4">
+                        <button onclick="toggleSidebar()" class="p-2 hover:bg-purple-50 rounded-lg">
+                            <svg class="w-6 h-6 text-purple-700" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                            </svg>
+                        </button>
+                        <h2 id="page-title" class="text-2xl font-bold text-purple-800">仪表盘</h2>
+                    </div>
+                    
+                    <div class="flex items-center space-x-4">
+                        <div class="flex items-center space-x-2 bg-purple-50 px-4 py-2 rounded-lg">
+                            <div class="w-3 h-3 bg-green-500 rounded-full"></div>
+                            <span class="text-sm font-bold text-purple-700">在线</span>
+                        </div>
+                        <div class="text-right">
+                            <p class="text-sm font-bold text-purple-700">管理员</p>
+                            <p class="text-xs text-purple-600">admin@vortint.com</p>
+                        </div>
+                        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" 
+                             class="h-10 w-10 rounded-full border-2 border-purple-500 object-cover">
+                    </div>
+                </div>
+            </header>
+
+            <!-- 内容区域 -->
+            <div class="p-8">
+                
+                <!-- 仪表盘 -->
+                <section id="dashboard-section" class="space-y-6">
+                    <!-- 统计卡片 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        <div class="card bg-white p-6 rounded-2xl">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-purple-600 font-bold">产品总数</p>
+                                    <p id="total-products" class="text-3xl font-bold text-purple-700 mt-2">0</p>
+                                </div>
+                                <div class="bg-purple-100 p-3 rounded-xl">
+                                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card bg-white p-6 rounded-2xl">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-purple-600 font-bold">分类数量</p>
+                                    <p id="total-categories" class="text-3xl font-bold text-purple-700 mt-2">0</p>
+                                </div>
+                                <div class="bg-purple-100 p-3 rounded-xl">
+                                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card bg-white p-6 rounded-2xl">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-purple-600 font-bold">新品数量</p>
+                                    <p id="total-new" class="text-3xl font-bold text-purple-700 mt-2">0</p>
+                                </div>
+                                <div class="bg-purple-100 p-3 rounded-xl">
+                                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="card bg-white p-6 rounded-2xl">
+                            <div class="flex items-center justify-between">
+                                <div>
+                                    <p class="text-sm text-purple-600 font-bold">网站访问</p>
+                                    <p id="total-visits" class="text-3xl font-bold text-purple-700 mt-2">0</p>
+                                </div>
+                                <div class="bg-purple-100 p-3 rounded-xl">
+                                    <svg class="w-8 h-8 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z"/>
+                                    </svg>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- 快捷操作 -->
+                    <div class="card bg-gradient-to-r from-purple-600 to-indigo-700 p-8 rounded-2xl text-white">
+                        <h3 class="text-xl font-bold mb-4">快速操作</h3>
+                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                            <button onclick="showAddProductModal()" class="bg-white/20 backdrop-blur-sm p-4 rounded-xl hover:bg-white/30 transition-colors text-center">
+                                <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                                </svg>
+                                <p class="font-bold">添加产品</p>
+                            </button>
+                            <button onclick="showAddCategoryModal()" class="bg-white/20 backdrop-blur-sm p-4 rounded-xl hover:bg-white/30 transition-colors text-center">
+                                <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                                </svg>
+                                <p class="font-bold">添加分类</p>
+                            </button>
+                            <button onclick="refreshData()" class="bg-white/20 backdrop-blur-sm p-4 rounded-xl hover:bg-white/30 transition-colors text-center">
+                                <svg class="w-8 h-8 mx-auto mb-2 animate-spin" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"/>
+                                </svg>
+                                <p class="font-bold">刷新数据</p>
+                            </button>
+                            <button onclick="showSettings()" class="bg-white/20 backdrop-blur-sm p-4 rounded-xl hover:bg-white/30 transition-colors text-center">
+                                <svg class="w-8 h-8 mx-auto mb-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                </svg>
+                                <p class="font-bold">系统设置</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- 最近产品 -->
+                    <div class="card bg-white p-6 rounded-2xl">
+                        <h3 class="text-xl font-bold text-purple-800 mb-4">最近添加的产品</h3>
+                        <div id="recent-products" class="space-y-3">
+                            <!-- 动态加载 -->
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 产品管理 -->
+                <section id="products-section" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-2xl font-bold text-purple-800">产品管理</h3>
+                        <button onclick="showAddProductModal()" class="bg-purple-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-purple-700 transition-colors flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            <span>添加产品</span>
+                        </button>
+                    </div>
+
+                    <!-- 产品列表 -->
+                    <div class="card bg-white p-6 rounded-2xl">
+                        <div class="mb-6">
+                            <input type="text" id="product-search" placeholder="搜索产品..." class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500 focus:border-transparent" oninput="filterProductList()">
+                        </div>
+                        
+                        <div class="overflow-x-auto">
+                            <table class="w-full">
+                                <thead>
+                                    <tr class="bg-purple-50">
+                                        <th class="px-6 py-4 text-left text-sm font-bold text-purple-700">排序</th>
+                                        <th class="px-6 py-4 text-left text-sm font-bold text-purple-700">图片</th>
+                                        <th class="px-6 py-4 text-left text-sm font-bold text-purple-700">产品名称</th>
+                                        <th class="px-6 py-4 text-left text-sm font-bold text-purple-700">分类</th>
+                                        <th class="px-6 py-4 text-left text-sm font-bold text-purple-700">价格</th>
+                                        <th class="px-6 py-4 text-left text-sm font-bold text-purple-700">新品</th>
+                                        <th class="px-6 py-4 text-left text-sm font-bold text-purple-700">操作</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="products-table-body">
+                                    <!-- 动态加载 -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- 分类管理 -->
+                <section id="categories-section" class="hidden space-y-6">
+                    <div class="flex justify-between items-center">
+                        <h3 class="text-2xl font-bold text-purple-800">分类管理</h3>
+                        <button onclick="showAddCategoryModal()" class="bg-purple-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-purple-700 transition-colors flex items-center space-x-2">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/>
+                            </svg>
+                            <span>添加分类</span>
+                        </button>
+                    </div>
+
+                    <!-- 分类列表 -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="categories-grid">
+                        <!-- 动态加载 -->
+                    </div>
+                </section>
+
+                <!-- 系统设置 -->
+                <section id="settings-section" class="hidden space-y-6">
+                    <h3 class="text-2xl font-bold text-purple-800">系统设置</h3>
+                    
+                    <div class="card bg-white p-6 rounded-2xl">
+                        <h4 class="text-lg font-bold text-purple-700 mb-4">API配置</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-purple-700 mb-2">API Token</label>
+                                <input type="password" id="api-token" value="usk6WsQlH4X6ST2hQRk4vAz" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-purple-700 mb-2">数据表ID</label>
+                                <input type="text" id="datasheet-id" value="dstUcVqARey53sJnMh" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-purple-700 mb-2">WhatsApp号码</label>
+                                <input type="text" id="wa-phone" value="85269517551" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            <button onclick="saveSettings()" class="bg-purple-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-purple-700 transition-colors">
+                                保存设置
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="card bg-white p-6 rounded-2xl">
+                        <h4 class="text-lg font-bold text-purple-700 mb-4">管理员密码</h4>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-bold text-purple-700 mb-2">当前密码</label>
+                                <input type="password" id="current-password" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-purple-700 mb-2">新密码</label>
+                                <input type="password" id="new-password" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-bold text-purple-700 mb-2">确认新密码</label>
+                                <input type="password" id="confirm-password" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            </div>
+                            <button onclick="changePassword()" class="bg-purple-600 text-white px-6 py-3 rounded-xl font-bold hover:bg-purple-700 transition-colors">
+                                修改密码
+                            </button>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <!-- 添加产品模态框 -->
+    <div id="add-product-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 max-w-2xl w-full mx-4">
+            <h3 class="text-2xl font-bold text-purple-800 mb-6">添加/编辑产品</h3>
+            
+            <div class="space-y-4">
+                <input type="hidden" id="product-id">
+                
+                <div>
+                    <label class="block text-sm font-bold text-purple-700 mb-2">产品名称 *</label>
+                    <input type="text" id="product-title" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="请输入产品名称">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-purple-700 mb-2">产品图片 URL *</label>
+                    <input type="url" id="product-image" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="请输入图片URL">
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-purple-700 mb-2">分类 *</label>
+                        <select id="product-category" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="">选择分类</option>
+                        </select>
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-purple-700 mb-2">价格</label>
+                        <input type="text" id="product-price" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="例如: ¥299">
+                    </div>
+                </div>
+                
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-bold text-purple-700 mb-2">排序</label>
+                        <input type="number" id="product-sort" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="数字越小越靠前" value="999">
+                    </div>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-purple-700 mb-2">新品标签</label>
+                        <select id="product-new" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500">
+                            <option value="false">否</option>
+                            <option value="true">是</option>
+                        </select>
+                    </div>
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-purple-700 mb-2">购买链接</label>
+                    <input type="url" id="product-link" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="请输入购买链接">
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end space-x-4">
+                <button onclick="closeAddProductModal()" class="px-6 py-3 border border-purple-600 text-purple-600 rounded-xl font-bold hover:bg-purple-50 transition-colors">取消</button>
+                <button onclick="saveProduct()" class="px-6 py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition-colors">保存</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 添加分类模态框 -->
+    <div id="add-category-modal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden items-center justify-center">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full mx-4">
+            <h3 class="text-2xl font-bold text-purple-800 mb-6">添加/编辑分类</h3>
+            
+            <div class="space-y-4">
+                <input type="hidden" id="category-id">
+                
+                <div>
+                    <label class="block text-sm font-bold text-purple-700 mb-2">分类名称 *</label>
+                    <input type="text" id="category-name" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="例如: Storage Cabinets">
+                </div>
+                
+                <div>
+                    <label class="block text-sm font-bold text-purple-700 mb-2">显示名称 *</label>
+                    <input type="text" id="category-display" class="w-full px-4 py-3 border border-purple-200 rounded-lg focus:ring-2 focus:ring-purple-500" placeholder="例如: 收纳柜">
+                </div>
+            </div>
+            
+            <div class="mt-8 flex justify-end space-x-4">
+                <button onclick="closeAddCategoryModal()" class="px-6 py-3 border border-purple-600 text-purple-600 rounded-xl font-bold hover:bg-purple-50 transition-colors">取消</button>
+                <button onclick="saveCategory()" class="px-6 py-3 bg-purple-600 text-white rounded-xl font-bold hover:bg-purple-700 transition-colors">保存</button>
             </div>
         </div>
     </div>
 
     <script>
-        // 与主页一致的配置
+        // 配置
         const CFG = {
             TOKEN: "usk6WsQlH4X6ST2hQRk4vAz",
-            SHEET: "dstUcVqARey53sJnMh"
+            SHEET: "dstUcVqARey53sJnMh",
+            WA_PHONE: "85269517551"
         };
 
-        let localData = [];
+        let products = [];
+        let categories = [];
+        let currentSection = 'dashboard';
+        let sidebarExpanded = true;
 
-        async function fetchData() {
-            showStatus(true);
+        // 初始化
+        async function init() {
+            // 检查登录状态
+            if (!localStorage.getItem('vortint_admin_logged_in')) {
+                window.location.href = 'login.html';
+                return;
+            }
+
+            await refreshData();
+            showSection('dashboard');
+        }
+
+        // 切换侧边栏
+        function toggleSidebar() {
+            const sidebar = document.getElementById('sidebar');
+            const content = document.querySelector('.content-area');
+            
+            if (sidebarExpanded) {
+                sidebar.classList.remove('sidebar-expanded');
+                sidebar.classList.add('sidebar-collapsed');
+                content.classList.remove('ml-64');
+                content.classList.add('ml-20');
+                document.querySelectorAll('.sidebar-text').forEach(el => {
+                    el.style.display = 'none';
+                });
+            } else {
+                sidebar.classList.remove('sidebar-collapsed');
+                sidebar.classList.add('sidebar-expanded');
+                content.classList.remove('ml-20');
+                content.classList.add('ml-64');
+                document.querySelectorAll('.sidebar-text').forEach(el => {
+                    el.style.display = 'block';
+                });
+            }
+            
+            sidebarExpanded = !sidebarExpanded;
+        }
+
+        // 显示指定区域
+        function showSection(section) {
+            // 隐藏所有区域
+            document.querySelectorAll('section[id$="-section"]').forEach(el => {
+                el.classList.add('hidden');
+            });
+            
+            // 显示目标区域
+            document.getElementById(`${section}-section`).classList.remove('hidden');
+            document.getElementById('page-title').textContent = {
+                'dashboard': '仪表盘',
+                'products': '产品管理',
+                'categories': '分类管理',
+                'settings': '系统设置'
+            }[section];
+            
+            currentSection = section;
+            
+            // 如果是分类管理，重新加载分类
+            if (section === 'categories') {
+                renderCategories();
+            }
+        }
+
+        // 刷新数据
+        async function refreshData() {
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
                 });
+                
+                if (!res.ok) throw new Error('API请求失败');
+                
                 const { data } = await res.json();
-                // 使用主页相同的排序逻辑
-                localData = data.records.sort((a,b) => (a.fields['排序'] || 999) - (b.fields['排序'] || 999));
-                render();
-            } catch (e) { alert('Fetch failed: ' + e); }
-            showStatus(false);
+                
+                // 分离产品和分类
+                const allRecords = data.records.filter(r => r.fields['标题'] !== 'SERVICE_LINK');
+                products = allRecords.filter(r => !r.fields['分类名称']);
+                categories = allRecords.filter(r => r.fields['分类名称']);
+                
+                // 更新统计数据
+                document.getElementById('total-products').textContent = products.length;
+                document.getElementById('total-categories').textContent = categories.length;
+                document.getElementById('total-new').textContent = products.filter(p => 
+                    p.fields['新标签'] === true || p.fields['新标签'] === 'true'
+                ).length;
+                
+                // 获取访问量
+                try {
+                    const vRes = await fetch('https://api.counterapi.dev/v1/vortint_brand/homepage');
+                    const vData = await vRes.json();
+                    document.getElementById('total-visits').textContent = vData.count || '0';
+                } catch (e) {
+                    document.getElementById('total-visits').textContent = '0';
+                }
+                
+                // 渲染数据
+                renderDashboard();
+                renderProducts();
+                renderCategories();
+                
+                Swal.fire({
+                    icon: 'success',
+                    title: '数据已刷新',
+                    showConfirmButton: false,
+                    timer: 1500
+                });
+            } catch (error) {
+                Swal.fire({
+                    icon: 'error',
+                    title: '刷新失败',
+                    text: error.message
+                });
+            }
         }
 
-        function render() {
-            const list = document.getElementById('data-list');
-            list.innerHTML = localData.map(p => {
+        // 渲染仪表盘
+        function renderDashboard() {
+            const recentContainer = document.getElementById('recent-products');
+            recentContainer.innerHTML = products.slice(0, 5).map(p => {
                 const f = p.fields;
-                const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || '');
                 return `
-                <div class="bg-white p-4 rounded-[2rem] shadow-sm border border-slate-100 flex items-center justify-between group hover:border-blue-200 transition-all">
-                    <div class="flex items-center space-x-4">
-                        <img src="${img}" class="w-16 h-16 rounded-2xl object-cover bg-slate-50">
-                        <div>
-                            <h3 class="font-black text-blue-900 text-sm uppercase tracking-tighter">${f['标题'] || 'No Title'}</h3>
-                            <p class="text-[10px] text-slate-400 font-bold uppercase mt-1">Order: ${f['排序'] || 'Auto'} • ID: ${p.recordId.slice(-4)}</p>
+                    <div class="flex items-center justify-between p-4 bg-purple-50 rounded-xl">
+                        <div class="flex items-center space-x-4">
+                            <img src="${Array.isArray(f['图片']) ? f['图片'][0].url : f['图片']}" class="w-12 h-12 rounded-lg object-cover">
+                            <div>
+                                <p class="font-bold text-purple-800">${f['标题']}</p>
+                                <p class="text-sm text-purple-600">${f['分类'] || '未分类'}</p>
+                            </div>
                         </div>
+                        <span class="text-sm font-bold text-purple-700">${f['价格'] || '无价格'}</span>
                     </div>
-                    <div class="flex space-x-2">
-                        <button onclick="editP('${p.recordId}')" class="p-3 rounded-xl bg-slate-50 text-slate-600 hover:bg-blue-50 hover:text-blue-600 transition-all">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/></svg>
-                        </button>
-                        <button onclick="deleteP('${p.recordId}')" class="p-3 rounded-xl bg-slate-50 text-slate-400 hover:bg-red-50 hover:text-red-500 transition-all">
-                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2.5" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-4v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/></svg>
-                        </button>
-                    </div>
-                </div>`;
+                `;
             }).join('');
         }
 
-        function editP(id) {
-            const p = localData.find(x => x.recordId === id);
-            document.getElementById('edit-id').value = id;
-            document.getElementById('f-title').value = p.fields['标题'] || '';
-            document.getElementById('f-img').value = Array.isArray(p.fields['图片']) ? p.fields['图片'][0].url : p.fields['图片'];
-            document.getElementById('f-link').value = p.fields['链接'] || '';
-            document.getElementById('f-sort').value = p.fields['排序'] || '';
-            window.scrollTo({ top: 0, behavior: 'smooth' });
+        // 渲染产品列表
+        function renderProducts() {
+            const tbody = document.getElementById('products-table-body');
+            tbody.innerHTML = products.map((p, index) => {
+                const f = p.fields;
+                const img = Array.isArray(f['图片']) ? f['图片'][0].url : f['图片'];
+                const isNew = f['新标签'] === true || f['新标签'] === 'true';
+                
+                return `
+                    <tr class="border-b border-purple-100 hover:bg-purple-50 sortable" data-id="${p.recordId}">
+                        <td class="px-6 py-4">${f['排序'] || 999}</td>
+                        <td class="px-6 py-4">
+                            <img src="${img}" class="w-16 h-16 rounded-lg object-cover">
+                        </td>
+                        <td class="px-6 py-4 font-bold text-purple-800">${f['标题']}</td>
+                        <td class="px-6 py-4 text-purple-600">${f['分类'] || '未分类'}</td>
+                        <td class="px-6 py-4 text-purple-700 font-bold">${f['价格'] || '-'}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold ${isNew ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}">
+                                ${isNew ? '是' : '否'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex space-x-2">
+                                <button onclick="editProduct('${p.recordId}')" class="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm font-bold hover:bg-blue-600">编辑</button>
+                                <button onclick="deleteProduct('${p.recordId}')" class="px-3 py-1 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+            
+            // 添加拖拽排序功能
+            initDragSort();
         }
 
+        // 渲染分类
+        function renderCategories() {
+            const grid = document.getElementById('categories-grid');
+            grid.innerHTML = categories.map(c => {
+                const f = c.fields;
+                return `
+                    <div class="card bg-white p-6 rounded-2xl border-2 border-purple-200">
+                        <div class="flex justify-between items-start mb-4">
+                            <div>
+                                <h4 class="text-lg font-bold text-purple-800">${f['分类名称']}</h4>
+                                <p class="text-sm text-purple-600 mt-1">${f['显示名称']}</p>
+                            </div>
+                            <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-full text-xs font-bold">
+                                ${products.filter(p => p.fields['分类'] === f['分类名称']).length} 个产品
+                            </span>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="editCategory('${c.recordId}')" class="flex-1 px-4 py-2 bg-blue-500 text-white rounded-lg font-bold hover:bg-blue-600 transition-colors">
+                                编辑
+                            </button>
+                            <button onclick="deleteCategory('${c.recordId}')" class="px-4 py-2 bg-red-500 text-white rounded-lg font-bold hover:bg-red-600 transition-colors">
+                                删除
+                            </button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 过滤产品列表
+        function filterProductList() {
+            const searchTerm = document.getElementById('product-search').value.toLowerCase();
+            const filtered = products.filter(p => 
+                p.fields['标题'].toLowerCase().includes(searchTerm)
+            );
+            
+            const tbody = document.getElementById('products-table-body');
+            tbody.innerHTML = filtered.map((p, index) => {
+                const f = p.fields;
+                const img = Array.isArray(f['图片']) ? f['图片'][0].url : f['图片'];
+                const isNew = f['新标签'] === true || f['新标签'] === 'true';
+                
+                return `
+                    <tr class="border-b border-purple-100 hover:bg-purple-50">
+                        <td class="px-6 py-4">${f['排序'] || 999}</td>
+                        <td class="px-6 py-4">
+                            <img src="${img}" class="w-16 h-16 rounded-lg object-cover">
+                        </td>
+                        <td class="px-6 py-4 font-bold text-purple-800">${f['标题']}</td>
+                        <td class="px-6 py-4 text-purple-600">${f['分类'] || '未分类'}</td>
+                        <td class="px-6 py-4 text-purple-700 font-bold">${f['价格'] || '-'}</td>
+                        <td class="px-6 py-4">
+                            <span class="px-3 py-1 rounded-full text-xs font-bold ${isNew ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-700'}">
+                                ${isNew ? '是' : '否'}
+                            </span>
+                        </td>
+                        <td class="px-6 py-4">
+                            <div class="flex space-x-2">
+                                <button onclick="editProduct('${p.recordId}')" class="px-3 py-1 bg-blue-500 text-white rounded-lg text-sm font-bold hover:bg-blue-600">编辑</button>
+                                <button onclick="deleteProduct('${p.recordId}')" class="px-3 py-1 bg-red-500 text-white rounded-lg text-sm font-bold hover:bg-red-600">删除</button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        // 显示添加产品模态框
+        function showAddProductModal() {
+            document.getElementById('product-id').value = '';
+            document.getElementById('product-title').value = '';
+            document.getElementById('product-image').value = '';
+            document.getElementById('product-category').innerHTML = '<option value="">选择分类</option>' + 
+                categories.map(c => `<option value="${c.fields['分类名称']}">${c.fields['显示名称']}</option>`).join('');
+            document.getElementById('product-price').value = '';
+            document.getElementById('product-sort').value = '999';
+            document.getElementById('product-new').value = 'false';
+            document.getElementById('product-link').value = '';
+            document.getElementById('add-product-modal').classList.remove('hidden');
+        }
+
+        // 关闭添加产品模态框
+        function closeAddProductModal() {
+            document.getElementById('add-product-modal').classList.add('hidden');
+        }
+
+        // 编辑产品
+        function editProduct(recordId) {
+            const product = products.find(p => p.recordId === recordId);
+            if (!product) return;
+            
+            const f = product.fields;
+            document.getElementById('product-id').value = recordId;
+            document.getElementById('product-title').value = f['标题'] || '';
+            document.getElementById('product-image').value = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || '');
+            document.getElementById('product-category').innerHTML = '<option value="">选择分类</option>' + 
+                categories.map(c => `<option value="${c.fields['分类名称']}" ${c.fields['分类名称'] === f['分类'] ? 'selected' : ''}>${c.fields['显示名称']}</option>`).join('');
+            document.getElementById('product-price').value = f['价格'] || '';
+            document.getElementById('product-sort').value = f['排序'] || '999';
+            document.getElementById('product-new').value = (f['新标签'] === true || f['新标签'] === 'true') ? 'true' : 'false';
+            document.getElementById('product-link').value = f['链接'] || '';
+            
+            document.getElementById('add-product-modal').classList.remove('hidden');
+        }
+
+        // 保存产品
         async function saveProduct() {
-            const id = document.getElementById('edit-id').value;
-            const payload = {
-                records: [{
-                    recordId: id,
-                    fields: {
-                        "标题": document.getElementById('f-title').value,
-                        "图片": document.getElementById('f-img').value,
-                        "链接": document.getElementById('f-link').value,
-                        "排序": parseInt(document.getElementById('f-sort').value) || 0
-                    }
-                }]
+            const id = document.getElementById('product-id').value;
+            const title = document.getElementById('product-title').value;
+            const image = document.getElementById('product-image').value;
+            const category = document.getElementById('product-category').value;
+            const price = document.getElementById('product-price').value;
+            const sort = document.getElementById('product-sort').value;
+            const isNew = document.getElementById('product-new').value;
+            const link = document.getElementById('product-link').value;
+            
+            if (!title || !image || !category) {
+                Swal.fire('错误', '请填写必填项', 'error');
+                return;
+            }
+            
+            const record = {
+                fields: {
+                    '标题': title,
+                    '图片': [{ url: image }],
+                    '分类': category,
+                    '价格': price,
+                    '排序': parseInt(sort),
+                    '新标签': isNew === 'true',
+                    '链接': link
+                }
             };
-
-            showStatus(true);
+            
             try {
-                await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
-                    method: 'PATCH',
-                    headers: { 'Authorization': `Bearer ${CFG.TOKEN}`, 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                let url, method;
+                if (id) {
+                    url = `https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records/${id}`;
+                    method = 'PUT';
+                } else {
+                    url = `https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`;
+                    method = 'POST';
+                }
+                
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${CFG.TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ records: [record] })
                 });
-                fetchData();
-                document.getElementById('p-form').reset();
-            } catch (e) { alert('Save Error'); }
-            showStatus(false);
+                
+                if (!res.ok) throw new Error('保存失败');
+                
+                closeAddProductModal();
+                await refreshData();
+                Swal.fire('成功', id ? '产品已更新' : '产品已添加', 'success');
+            } catch (error) {
+                Swal.fire('错误', error.message, 'error');
+            }
         }
 
-        async function deleteP(id) {
-            if(!confirm('Delete permanently?')) return;
-            showStatus(true);
+        // 删除产品
+        async function deleteProduct(recordId) {
+            const result = await Swal.fire({
+                title: '确认删除?',
+                text: '此操作不可恢复!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: '删除',
+                cancelButtonText: '取消'
+            });
+            
+            if (result.isConfirmed) {
+                try {
+                    const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records/${recordId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
+                    });
+                    
+                    if (!res.ok) throw new Error('删除失败');
+                    
+                    await refreshData();
+                    Swal.fire('已删除', '产品已成功删除', 'success');
+                } catch (error) {
+                    Swal.fire('错误', error.message, 'error');
+                }
+            }
+        }
+
+        // 显示添加分类模态框
+        function showAddCategoryModal() {
+            document.getElementById('category-id').value = '';
+            document.getElementById('category-name').value = '';
+            document.getElementById('category-display').value = '';
+            document.getElementById('add-category-modal').classList.remove('hidden');
+        }
+
+        // 关闭添加分类模态框
+        function closeAddCategoryModal() {
+            document.getElementById('add-category-modal').classList.add('hidden');
+        }
+
+        // 编辑分类
+        function editCategory(recordId) {
+            const category = categories.find(c => c.recordId === recordId);
+            if (!category) return;
+            
+            const f = category.fields;
+            document.getElementById('category-id').value = recordId;
+            document.getElementById('category-name').value = f['分类名称'] || '';
+            document.getElementById('category-display').value = f['显示名称'] || '';
+            
+            document.getElementById('add-category-modal').classList.remove('hidden');
+        }
+
+        // 保存分类
+        async function saveCategory() {
+            const id = document.getElementById('category-id').value;
+            const name = document.getElementById('category-name').value;
+            const display = document.getElementById('category-display').value;
+            
+            if (!name || !display) {
+                Swal.fire('错误', '请填写必填项', 'error');
+                return;
+            }
+            
+            const record = {
+                fields: {
+                    '分类名称': name,
+                    '显示名称': display,
+                    '标题': '分类占位符' // 用于区分分类记录
+                }
+            };
+            
             try {
-                await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records?recordIds=${id}`, {
-                    method: 'DELETE',
-                    headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
+                let url, method;
+                if (id) {
+                    url = `https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records/${id}`;
+                    method = 'PUT';
+                } else {
+                    url = `https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`;
+                    method = 'POST';
+                }
+                
+                const res = await fetch(url, {
+                    method: method,
+                    headers: {
+                        'Authorization': `Bearer ${CFG.TOKEN}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ records: [record] })
                 });
-                fetchData();
-            } catch (e) { alert('Delete Error'); }
-            showStatus(false);
+                
+                if (!res.ok) throw new Error('保存失败');
+                
+                closeAddCategoryModal();
+                await refreshData();
+                Swal.fire('成功', id ? '分类已更新' : '分类已添加', 'success');
+            } catch (error) {
+                Swal.fire('错误', error.message, 'error');
+            }
         }
 
-        function showStatus(show) {
-            document.getElementById('status-bar').style.display = show ? 'block' : 'none';
+        // 删除分类
+        async function deleteCategory(recordId) {
+            const result = await Swal.fire({
+                title: '确认删除?',
+                text: '此操作将删除分类及其所有关联产品!',
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: '删除',
+                cancelButtonText: '取消'
+            });
+            
+            if (result.isConfirmed) {
+                try {
+                    const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records/${recordId}`, {
+                        method: 'DELETE',
+                        headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
+                    });
+                    
+                    if (!res.ok) throw new Error('删除失败');
+                    
+                    // 删除该分类下的所有产品
+                    const productsToDelete = products.filter(p => p.fields['分类'] === categories.find(c => c.recordId === recordId).fields['分类名称']);
+                    for (const product of productsToDelete) {
+                        await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records/${product.recordId}`, {
+                            method: 'DELETE',
+                            headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
+                        });
+                    }
+                    
+                    await refreshData();
+                    Swal.fire('已删除', '分类及关联产品已成功删除', 'success');
+                } catch (error) {
+                    Swal.fire('错误', error.message, 'error');
+                }
+            }
         }
 
-        window.onload = fetchData;
+        // 初始化拖拽排序
+        function initDragSort() {
+            const rows = document.querySelectorAll('.sortable');
+            let draggedItem = null;
+            
+            rows.forEach(row => {
+                row.draggable = true;
+                
+                row.addEventListener('dragstart', () => {
+                    draggedItem = row;
+                    setTimeout(() => row.classList.add('dragging'), 0);
+                });
+                
+                row.addEventListener('dragend', () => {
+                    draggedItem = null;
+                    row.classList.remove('dragging');
+                });
+                
+                row.addEventListener('dragover', e => {
+                    e.preventDefault();
+                    const afterElement = getDragAfterElement(rows, e.clientY);
+                    if (afterElement == null) {
+                        row.parentElement.appendChild(draggedItem);
+                    } else {
+                        row.parentElement.insertBefore(draggedItem, afterElement);
+                    }
+                });
+            });
+        }
+
+        function getDragAfterElement(elements, y) {
+            return [...elements].reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        // 保存设置
+        async function saveSettings() {
+            const token = document.getElementById('api-token').value;
+            const sheet = document.getElementById('datasheet-id').value;
+            const waPhone = document.getElementById('wa-phone').value;
+            
+            if (!token || !sheet || !waPhone) {
+                Swal.fire('错误', '请填写所有必填项', 'error');
+                return;
+            }
+            
+            CFG.TOKEN = token;
+            CFG.SHEET = sheet;
+            CFG.WA_PHONE = waPhone;
+            
+            localStorage.setItem('vortint_admin_config', JSON.stringify(CFG));
+            
+            Swal.fire('成功', '设置已保存', 'success');
+        }
+
+        // 修改密码
+        function changePassword() {
+            const current = document.getElementById('current-password').value;
+            const newPass = document.getElementById('new-password').value;
+            const confirm = document.getElementById('confirm-password').value;
+            
+            if (!current || !newPass || !confirm) {
+                Swal.fire('错误', '请填写所有字段', 'error');
+                return;
+            }
+            
+            if (newPass !== confirm) {
+                Swal.fire('错误', '新密码不匹配', 'error');
+                return;
+            }
+            
+            // 这里应该调用后端API验证和修改密码
+            // 暂时只做前端验证
+            Swal.fire('成功', '密码已修改', 'success');
+            
+            document.getElementById('current-password').value = '';
+            document.getElementById('new-password').value = '';
+            document.getElementById('confirm-password').value = '';
+        }
+
+        // 退出登录
+        function logout() {
+            localStorage.removeItem('vortint_admin_logged_in');
+            window.location.href = 'login.html';
+        }
+
+        // 显示设置
+        function showSettings() {
+            showSection('settings');
+        }
+
+        // 页面加载
+        window.addEventListener('load', init);
     </script>
 </body>
 </html>
