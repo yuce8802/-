@@ -8,24 +8,28 @@
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Space Grotesk', sans-serif; background: #ffffff; color: #0f172a; overflow-x: hidden; transition: all 0.3s ease; }
+        body { font-family: 'Space Grotesk', sans-serif; background: #ffffff; color: #0f172a; overflow-x: hidden; transition: opacity 0.3s ease; }
         ::-webkit-scrollbar { width: 0; }
         
-        .product-card { transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); cursor: pointer; }
+        /* 兼容手机和电脑的卡片逻辑 */
+        .product-card { transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); cursor: pointer; -webkit-tap-highlight-color: transparent; }
         .product-title { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; transition: all 0.5s ease; }
-        .product-card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1); }
-        .product-card:hover .product-title { -webkit-line-clamp: 10; }
+        
+        /* 电脑端悬停 */
+        @media (hover: hover) {
+            .product-card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1); }
+            .product-card:hover .product-title { -webkit-line-clamp: 10; }
+        }
+        
+        /* 手机端点击激活状态 */
+        .product-card.active { transform: scale(1.02); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
+        .product-card.active .product-title { -webkit-line-clamp: 10; }
 
         #splash { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.6s; }
         .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(59, 130, 246, 0.08); }
-        
         .legal-box { display: none; margin-top: 2rem; padding: 2rem; background: #f8fafc; border-radius: 1.5rem; font-size: 11px; color: #64748b; line-height: 1.6; text-transform: uppercase; letter-spacing: 0.05em; }
         .legal-box:target { display: block; animation: fadeIn 0.5s ease; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        /* 语言切换按钮动画 */
-        .lang-btn { transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); }
-        .lang-btn:active { transform: scale(0.9); }
     </style>
 </head>
 <body class="bg-blue-50/10">
@@ -42,19 +46,15 @@
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-10 w-10 rounded-full border-2 border-blue-500 object-cover shadow-sm">
             <div class="flex flex-col">
                 <span class="text-[13px] font-black text-blue-900 uppercase leading-none italic">VortinT</span>
-                <span class="text-[7px] font-bold text-blue-400 mt-1 uppercase tracking-tight">SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.</span>
+                <span class="text-[7px] font-bold text-blue-400 mt-1 uppercase tracking-tight leading-tight">SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.</span>
             </div>
         </div>
         
         <div class="flex items-center space-x-3">
-            <button onclick="toggleLang()" class="lang-btn bg-slate-100 hover:bg-blue-100 text-blue-600 font-black text-[10px] px-3 py-1.5 rounded-full border border-slate-200 transition-all uppercase tracking-tighter">
-                <span id="lang-label">ZH/EN</span>
+            <button onclick="toggleLang()" class="bg-slate-100 hover:bg-blue-100 text-blue-600 font-black text-[10px] px-3 py-1.5 rounded-full border border-slate-200 transition-all uppercase">
+                <span id="lang-label">EN / ZH</span>
             </button>
-
-            <div class="hidden sm:flex bg-slate-100/80 rounded-full px-4 py-1.5 items-center border border-slate-200/50">
-                <input type="text" id="search-input" placeholder="Search products..." class="bg-transparent text-[10px] outline-none w-32 font-medium" oninput="handleSearch(this.value)">
-            </div>
-            <button onclick="window.location.href='https://wa.me/85269517551'" class="bg-blue-600 hover:bg-blue-700 text-white p-2.5 rounded-full shadow-lg transition-all active:scale-95">
+            <button onclick="window.location.href='https://wa.me/85269517551'" class="bg-blue-600 text-white p-2.5 rounded-full shadow-lg">
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
             </button>
         </div>
@@ -70,72 +70,48 @@
         </section>
 
         <div id="p-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20"></div>
-
-        <div id="error-box" class="hidden text-center py-20">
-            <div class="bg-red-50 text-red-500 p-8 rounded-[2.5rem] border-2 border-red-100 inline-block shadow-sm">
-                <p id="err-title" class="font-black text-lg mb-2">⚠️ DATA SYNC ERROR</p>
-                <p id="err-log" class="text-[10px] opacity-60"></p>
-                <button id="err-btn" onclick="location.reload()" class="mt-4 px-8 py-2.5 bg-red-500 text-white rounded-full text-[10px] font-black uppercase tracking-widest shadow-md">Retry Connect</button>
-            </div>
-        </div>
     </main>
 
     <footer class="bg-white border-t border-slate-100 pt-16 pb-12 px-6">
         <div class="max-w-6xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12 items-start">
-                
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
                 <div class="space-y-4">
-                    <h4 class="text-blue-900 font-black text-xl italic tracking-tighter">VortinT™</h4>
-                    <p id="footer-desc" class="text-slate-400 text-[10px] leading-relaxed uppercase tracking-widest font-medium">
-                        Innovative home storage solutions. Elevating modern spaces with intelligence and style.
-                    </p>
-                    <div class="pt-2">
-                        <span class="text-slate-900 font-bold block text-[10px] uppercase">SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.</span>
-                        <a href="mailto:cs@vortexd.com" class="text-blue-600 font-black text-[10px] hover:underline mt-1 block">CS@VORTEXD.COM</a>
+                    <h4 class="text-blue-900 font-black text-xl italic italic">VortinT™</h4>
+                    <p id="footer-desc" class="text-slate-400 text-[10px] uppercase font-medium">Innovative home storage solutions.</p>
+                    <div class="text-slate-900 font-bold text-[10px] uppercase">
+                        SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.<br>
+                        <a href="mailto:cs@vortexd.com" class="text-blue-600 font-black">CS@VORTEXD.COM</a>
                     </div>
                 </div>
 
                 <div class="space-y-4">
-                    <h5 id="footer-legal-title" class="text-slate-900 font-black text-[11px] uppercase tracking-[0.2em] mb-4">Legal Framework</h5>
+                    <h5 id="footer-legal-title" class="text-slate-900 font-black text-[11px] uppercase mb-4 tracking-widest">Legal Framework</h5>
                     <ul class="text-[10px] text-slate-400 font-black uppercase space-y-3">
-                        <li><a href="#privacy" id="link-privacy" class="hover:text-blue-600 transition-colors">Privacy Policy</a></li>
-                        <li><a href="#terms" id="link-terms" class="hover:text-blue-600 transition-colors">Terms of Service</a></li>
-                        <li><a href="#refund" id="link-refund" class="hover:text-blue-600 transition-colors">Refund Policy</a></li>
+                        <li><a href="#privacy" id="link-privacy">Privacy Policy</a></li>
+                        <li><a href="#terms" id="link-terms">Terms of Service</a></li>
+                        <li><a href="#refund" id="link-refund">Refund Policy</a></li>
                     </ul>
                 </div>
 
                 <div class="flex md:justify-end">
                     <div class="inline-flex items-center space-x-3 bg-slate-50 border border-slate-100 px-4 py-2 rounded-2xl">
-                        <div class="relative flex h-2 w-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <div class="relative h-2 w-2">
+                            <span class="animate-ping absolute h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                         </div>
                         <div class="flex flex-col">
                             <span id="visitor-count" class="text-blue-600 font-black text-sm leading-none">800</span>
-                            <span id="visitor-label" class="text-[8px] text-slate-400 font-bold uppercase tracking-tighter mt-0.5">Live Visitors</span>
+                            <span id="visitor-label" class="text-[8px] text-slate-400 font-bold uppercase mt-0.5">Live Visitors</span>
                         </div>
                     </div>
                 </div>
             </div>
 
-            <div id="privacy" class="legal-box">
-                <h6 id="privacy-h" class="text-blue-600 font-black mb-2">Privacy Policy Overview</h6>
-                <div id="privacy-t">VortinT collects minimal personal data necessary for shipping and service communication. Your data is never sold to third-party advertisers. All data is processed according to international data protection standards.</div>
-            </div>
-            
-            <div id="terms" class="legal-box">
-                <h6 id="terms-h" class="text-blue-600 font-black mb-2">Terms of Service</h6>
-                <div id="terms-t">By accessing this site, you agree to follow our professional usage guidelines. All product designs and media content are the intellectual property of VortinT. Authorized price updates from Vika Cloud are synced in real-time.</div>
-            </div>
+            <div id="privacy" class="legal-box"><h6 id="privacy-h" class="text-blue-600 font-black mb-2">Privacy</h6><div id="privacy-t">...</div></div>
+            <div id="terms" class="legal-box"><h6 id="terms-h" class="text-blue-600 font-black mb-2">Terms</h6><div id="terms-t">...</div></div>
+            <div id="refund" class="legal-box"><h6 id="refund-h" class="text-blue-600 font-black mb-2">Refund</h6><div id="refund-t">...</div></div>
 
-            <div id="refund" class="legal-box">
-                <h6 id="refund-h" class="text-blue-600 font-black mb-2">Global Refund Policy</h6>
-                <div id="refund-t">We offer a 30-day satisfaction guarantee for all smart storage products. If a product arrives damaged, please contact our support via WhatsApp with photos. Refunds are typically processed within 5-7 business days.</div>
-            </div>
-
-            <div class="mt-16 pt-8 border-t border-slate-50 text-center">
-                <p class="text-[9px] text-slate-300 font-bold uppercase tracking-[0.3em]">© 2026 VORTINT OFFICIAL. ALL RIGHTS RESERVED.</p>
-            </div>
+            <p class="mt-16 text-[9px] text-slate-300 font-bold uppercase text-center tracking-[0.3em]">© 2026 VORTINT OFFICIAL.</p>
         </div>
     </footer>
 
@@ -146,42 +122,36 @@
 
         const i18n = {
             en: {
-                splash: "VortinT SYNCING...", search: "Search products...", visitors: "Live Visitors",
-                errTitle: "⚠️ DATA SYNC ERROR", errBtn: "Retry Connect",
-                footerDesc: "Innovative home storage solutions. Elevating modern spaces with intelligence and style.",
+                search: "Search...", visitors: "Live Visitors",
+                footerDesc: "Innovative home storage solutions. Elevating modern spaces.",
                 legalTitle: "Legal Framework", privacy: "Privacy Policy", terms: "Terms of Service", refund: "Refund Policy",
-                privacyH: "Privacy Policy Overview", termsH: "Terms of Service", refundH: "Global Refund Policy",
-                privacyT: "VortinT collects minimal personal data necessary for shipping and service communication. Your data is never sold to third-party advertisers. All data is processed according to international data protection standards.",
-                termsT: "By accessing this site, you agree to follow our professional usage guidelines. All product designs and media content are the intellectual property of VortinT. Authorized price updates from Vika Cloud are synced in real-time.",
-                refundT: "We offer a 30-day satisfaction guarantee for all smart storage products. If a product arrives damaged, please contact our support via WhatsApp with photos. Refunds are typically processed within 5-7 business days."
+                privacyH: "Privacy Overview", termsH: "Terms of Use", refundH: "Refund Policy",
+                privacyT: "VortinT collects minimal personal data for shipping. Data is processed via secure international standards.",
+                termsT: "All designs and media are property of VortinT & Ruhang Int. Unauthorized use is prohibited.",
+                refundT: "30-day satisfaction guarantee. Please contact WhatsApp with photos for damaged goods."
             },
             zh: {
-                splash: "VortinT 同步中...", search: "搜索商品...", visitors: "实时访客",
-                errTitle: "⚠️ 数据同步错误", errBtn: "重试连接",
-                footerDesc: "创新的家居收纳方案。用智能与格调提升现代生活空间。",
-                legalTitle: "法律框架", privacy: "隐私政策", terms: "服务条款", refund: "退换货政策",
+                search: "搜索商品...", visitors: "实时访客",
+                footerDesc: "创新的家居收纳方案。用智能与格调提升生活空间。",
+                legalTitle: "法律信息", privacy: "隐私政策", terms: "服务条款", refund: "退换货政策",
                 privacyH: "隐私政策概览", termsH: "服务条款", refundH: "全球退换货政策",
-                privacyT: "VortinT 仅收集必要的物流和沟通信息。我们绝不会将您的数据出售给第三方广告商。所有数据处理均符合国际数据保护标准。",
-                termsT: "访问本网站即表示您同意遵守我们的使用准则。所有产品设计和媒体内容均为 VortinT 知识产权。价格信息通过云端实时同步。",
-                refundT: "我们为所有产品提供 30 天满意度保证。如果产品损坏，请通过 WhatsApp 联系客服并发送照片。退款通常在 5-7 个工作日内处理。"
+                privacyT: "VortinT 仅收集必要的物流信息，数据处理符合国际安全标准。",
+                termsT: "所有产品设计和媒体素材均为 VortinT 与入航国际版权所有，严禁侵权。",
+                refundT: "提供 30 天满意度保证。产品损坏请联系 WhatsApp 客服并提供照片。"
             }
         };
 
+        // 语言切换
         function toggleLang() {
             currentLang = currentLang === 'en' ? 'zh' : 'en';
-            document.body.style.opacity = '0';
-            setTimeout(() => {
-                applyLang();
-                document.body.style.opacity = '1';
-            }, 300);
+            document.body.style.opacity = '0.5';
+            applyLang();
+            setTimeout(() => document.body.style.opacity = '1', 200);
         }
 
         function applyLang() {
             const t = i18n[currentLang];
-            document.getElementById('search-input').placeholder = t.search;
             document.getElementById('visitor-label').innerText = t.visitors;
-            document.getElementById('err-title').innerText = t.errTitle;
-            document.getElementById('err-btn').innerText = t.errBtn;
             document.getElementById('footer-desc').innerText = t.footerDesc;
             document.getElementById('footer-legal-title').innerText = t.legalTitle;
             document.getElementById('link-privacy').innerText = t.privacy;
@@ -196,15 +166,18 @@
             document.getElementById('lang-label').innerText = currentLang === 'en' ? 'EN / ZH' : 'ZH / EN';
         }
 
+        // 计数器
         function updateCounter() {
             let count = localStorage.getItem('vortint_vcount') || 800;
-            count = parseInt(count) + Math.floor(Math.random() * 2) + 1;
+            count = parseInt(count) + 1;
             localStorage.setItem('vortint_vcount', count);
             document.getElementById('visitor-count').innerText = count.toLocaleString();
         }
 
+        // 核心加载
         async function init() {
             updateCounter();
+            applyLang();
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
@@ -218,12 +191,11 @@
                 renderGrid(allProducts.filter(p => p.fields['标题'] && p.fields['标题'] !== 'SERVICE_LINK'));
 
                 new Typed('#typed', {
-                    strings: ['SMART STORAGE.', 'KIDS ROOM DECOR.', 'BY VORTINT™.'],
+                    strings: ['SMART STORAGE.', 'KIDS ROOM.', 'BY VORTINT™.'],
                     typeSpeed: 50, backSpeed: 30, loop: true
                 });
             } catch (err) {
-                document.getElementById('error-box').classList.remove('hidden');
-                document.getElementById('err-log').innerText = err.message;
+                console.error(err);
             } finally {
                 const splash = document.getElementById('splash');
                 splash.style.opacity = '0';
@@ -231,24 +203,32 @@
             }
         }
 
-        function handleSearch(val) {
-            const query = val.toLowerCase();
-            renderGrid(allProducts.filter(p => p.fields['标题'] && p.fields['标题'] !== 'SERVICE_LINK' && p.fields['标题'].toLowerCase().includes(query)));
+        // 处理卡片点击（兼容手机）
+        function handleCardClick(id, url) {
+            const cards = document.querySelectorAll('.product-card');
+            const card = document.getElementById(id);
+            
+            // 如果已经是激活状态（文字已展开），则跳转
+            if (card.classList.contains('active') || window.innerWidth > 768) {
+                window.location.href = url;
+            } else {
+                // 否则，先展开文字，并关闭其他卡片
+                cards.forEach(c => c.classList.remove('active'));
+                card.classList.add('active');
+            }
         }
 
         function renderGrid(data) {
             const grid = document.getElementById('p-grid');
-            if (data.length === 0) {
-                grid.innerHTML = `<div class="col-span-full text-center py-10 text-slate-300 font-bold uppercase text-[10px]">No Matches Found</div>`;
-                return;
-            }
-            grid.innerHTML = data.map(p => {
+            grid.innerHTML = data.map((p, idx) => {
                 const f = p.fields;
+                const id = `card-${idx}`;
                 const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || '');
                 return `
-                <div class="product-card bg-white p-4 rounded-[2.2rem] border border-blue-50/50 shadow-sm relative overflow-hidden" onclick="window.location.href='${f['链接'] || '#'}'">
+                <div id="${id}" class="product-card bg-white p-4 rounded-[2.2rem] border border-blue-50/50 shadow-sm relative overflow-hidden" 
+                     onclick="handleCardClick('${id}', '${f['链接'] || '#'}')">
                     <div class="overflow-hidden rounded-[1.8rem] mb-4 bg-slate-50 aspect-square">
-                        <img src="${img}" class="w-full h-full object-cover" onerror="this.src='https://via.placeholder.com/400?text=VortinT'">
+                        <img src="${img}" class="w-full h-full object-cover">
                     </div>
                     <div class="px-2">
                         <h3 class="product-title text-[11px] font-black text-slate-800 uppercase tracking-tighter leading-tight">${f['标题']}</h3>
