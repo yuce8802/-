@@ -20,7 +20,6 @@
         }
         
         .product-card.active { transform: scale(1.02); box-shadow: 0 10px 25px rgba(59, 130, 246, 0.1); border-color: rgba(59, 130, 246, 0.3); }
-        .product-card.active .product-title { -webkit-line-clamp: 10; }
 
         #splash { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.6s; }
         .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(59, 130, 246, 0.08); }
@@ -59,7 +58,7 @@
     <nav class="fixed top-0 w-full z-[100] glass-nav px-6 py-4 flex justify-between items-center">
         <div class="flex items-center space-x-3">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-10 w-10 rounded-full border-2 border-blue-500 object-cover shadow-sm">
-            <div class="flex flex-col">
+            <div class="flex flex-col text-left">
                 <span class="text-[13px] font-black text-blue-900 uppercase leading-none italic"></span>
                 <span class="text-[13px] font-bold text-blue-800 mt-1">瑞航（深圳）国际家居用品有限公司</span>
                 <span class="text-[9.5px] font-bold text-blue-400 mt-0.5 uppercase tracking-tight leading-tight">SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.</span>
@@ -125,7 +124,7 @@
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
                         </div>
                         <div class="flex flex-col">
-                            <span id="visitor-count" class="text-blue-600 font-black text-sm leading-none">812</span>
+                            <span id="visitor-count" class="text-blue-600 font-black text-sm leading-none">---</span>
                             <span id="visitor-label" class="text-[8px] text-slate-400 font-bold uppercase mt-0.5"></span>
                         </div>
                     </div>
@@ -193,7 +192,6 @@
             document.getElementById('footer-desc').innerText = t.footerDesc;
             document.getElementById('footer-legal-title').innerText = t.legalTitle;
             document.getElementById('lang-label').innerText = currentLang === 'en' ? 'EN / ZH' : 'ZH / EN';
-            
             document.getElementById('link-privacy').innerText = t.privacy;
             document.getElementById('link-terms').innerText = t.terms;
             document.getElementById('link-refund').innerText = t.refund;
@@ -208,32 +206,41 @@
             if (keyword === 'ALL') {
                 return allProducts.filter(p => p.fields['标题'] && p.fields['标题'] !== 'SERVICE_LINK');
             }
-            return allProducts.filter(p => {
-                const title = p.fields['标题'] || "";
-                return title.toUpperCase().includes(keyword.toUpperCase());
-            });
+            return allProducts.filter(p => (p.fields['标题'] || "").toUpperCase().includes(keyword.toUpperCase()));
         }
 
         function filterByKeyword(keyword) {
             document.querySelectorAll('.filter-btn').forEach(btn => {
                 btn.classList.remove('active');
-                if(btn.innerText.includes(keyword.toUpperCase()) || (keyword === 'all' && btn.innerText === 'ALL')) {
+                if(btn.innerText.toUpperCase().includes(keyword.toUpperCase()) || (keyword === 'all' && btn.innerText === 'ALL')) {
                     btn.classList.add('active');
                 }
             });
             renderGrid(getCurrentFilteredData());
         }
 
+        function initCounter() {
+            let count = parseInt(localStorage.getItem('v_count_stable')) || 15284;
+            count += 1;
+            localStorage.setItem('v_count_stable', count);
+            document.getElementById('visitor-count').innerText = count.toLocaleString();
+            setInterval(() => {
+                if(Math.random() > 0.8) {
+                    count += 1;
+                    document.getElementById('visitor-count').innerText = count.toLocaleString();
+                }
+            }, 10000);
+        }
+
         async function init() {
             applyLang();
+            initCounter();
             try {
                 const res = await fetch(`https://api.vika.cn/fusion/v1/datasheets/${CFG.SHEET}/records`, {
                     headers: { 'Authorization': `Bearer ${CFG.TOKEN}` }
                 });
                 const json = await res.json();
                 allProducts = json.data.records;
-
-                // 优先展示有排序值的商品
                 allProducts.sort((a, b) => (a.fields['排序'] || 999) - (b.fields['排序'] || 999));
 
                 const vRow = allProducts.find(r => r.fields['视频链接']);
@@ -248,8 +255,10 @@
             } catch (err) { console.error(err); } 
             finally {
                 const splash = document.getElementById('splash');
-                splash.style.opacity = '0';
-                setTimeout(() => splash.remove(), 600);
+                if(splash) {
+                    splash.style.opacity = '0';
+                    setTimeout(() => splash.remove(), 600);
+                }
             }
         }
 
@@ -258,11 +267,8 @@
             grid.innerHTML = data.map((p) => {
                 const f = p.fields;
                 const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || '');
-                
-                // 关键点：直接从表格里的“排序”列取值，并补足两位数
                 const rawSortValue = f['排序'];
                 const displayIndex = rawSortValue ? String(rawSortValue).padStart(2, '0') : '--'; 
-                
                 return `
                 <div class="product-card bg-white p-4 rounded-[2.2rem] border border-blue-50/50 shadow-sm relative overflow-hidden" 
                      onclick="window.location.href='${f['链接'] || '#'}';">
