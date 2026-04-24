@@ -12,22 +12,34 @@
     <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Space Grotesk', sans-serif; background: #ffffff; color: #0f172a; overflow-x: hidden; transition: opacity 0.3s ease; }
+        
+        /* 基础样式与手机端流畅度优化 */
+        body { font-family: 'Space Grotesk', sans-serif; background: #ffffff; color: #0f172a; overflow-x: hidden; transition: opacity 0.3s ease; -webkit-font-smoothing: antialiased; }
         ::-webkit-scrollbar { width: 0; }
+        
+        /* 产品卡片交互 */
         .product-card { transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); cursor: pointer; -webkit-tap-highlight-color: transparent; }
         
-        /* 💡 修复：你之前的样式里有 display:none，如果想看标题请注释掉下面这行 */
-        /* .product-title { display: none !important; } */
+        /* 核心要求：彻底隐藏产品名 */
+        .product-title { display: none !important; }
 
         @media (hover: hover) {
-            .product-card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(59, 130, 246, 0.1); }
+            .product-card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(59, 130, 246, 0.08); }
         }
+
+        /* 动画与导航 */
         #splash { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.6s; }
         .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(59, 130, 246, 0.08); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .nav-hidden { transform: translateY(-100%); }
-        .filter-btn { border: 1px solid #e2e8f0; border-radius: 9999px; padding: 8px 16px; font-size: 10px; font-weight: 800; text-transform: uppercase; transition: all 0.3s; color: #64748b; background: white; }
+
+        /* 过滤按钮样式 */
+        .filter-btn { border: 1px solid #e2e8f0; border-radius: 9999px; padding: 8px 18px; font-size: 10px; font-weight: 800; text-transform: uppercase; transition: all 0.3s; color: #64748b; background: white; }
         .filter-btn.active { background: #2563eb; color: white; border-color: #2563eb; transform: scale(1.05); }
+
+        /* 产品编号标签 */
         .product-index { position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); color: white; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 8px; z-index: 10; }
+
+        /* 法律内容显示逻辑 */
         .legal-content-box { display: none; margin-top: 2rem; padding: 2rem; background: #f8fafc; border-radius: 1.5rem; font-size: 11px; color: #64748b; line-height: 1.8; text-transform: uppercase; letter-spacing: 0.02em; border: 1px dashed #e2e8f0; }
         .legal-content-box:target { display: block; animation: fadeIn 0.5s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -37,100 +49,98 @@
 
     <div id="splash">
         <div class="text-center">
-            <div class="w-16 h-16 border-4 border-blue-600 border-t-transparent rounded-full animate-spin mb-4 mx-auto"></div>
-            <p id="splash-text" class="text-blue-600 font-bold tracking-widest animate-pulse text-xs">VortinT SYNCING...</p>
+            <div class="w-12 h-12 border-[3px] border-blue-600 border-t-transparent rounded-full animate-spin mb-4 mx-auto"></div>
+            <p class="text-blue-600 font-bold tracking-[0.2em] animate-pulse text-[10px]">VortinT SYNCING</p>
         </div>
     </div>
 
     <nav class="fixed top-0 w-full z-[100] glass-nav px-6 py-4 flex justify-between items-center">
         <div class="flex items-center space-x-3">
-            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-10 w-10 rounded-full border-2 border-blue-500 object-cover shadow-sm">
-            <span class="text-[15px] font-bold text-blue-900 mt-1">VortinT瑞航</span>
+            <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-9 w-9 rounded-full border-2 border-blue-500 object-cover shadow-sm">
+            <span class="text-[14px] font-bold text-blue-900 tracking-tight">VortinT瑞航</span>
         </div>
         <div class="flex items-center space-x-3">
-            <button onclick="toggleLang()" class="bg-slate-100 hover:bg-blue-100 text-blue-600 font-black text-[10px] px-3 py-1.5 rounded-full border border-slate-200 transition-all uppercase">
+            <button onclick="toggleLang()" class="bg-slate-100 hover:bg-blue-100 text-blue-600 font-black text-[9px] px-3 py-1.5 rounded-full border border-slate-200 transition-all uppercase">
                 <span id="lang-label">EN / 中文</span>
             </button>
-            <button onclick="window.location.href='https://wa.me/85269517551'" class="bg-blue-600 text-white p-2.5 rounded-full shadow-lg">
-                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3 18.7-68.1-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.5-11.3 2.5-2.5 5.6-6.5 8.3-9.7 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.6 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
+            <button onclick="window.location.href='https://wa.me/85269517551'" class="bg-blue-600 text-white p-2.5 rounded-full shadow-lg active:scale-95 transition-transform">
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 448 512"><path d="M380.9 97.1C339 55.1 283.2 32 223.9 32c-122.4 0-222 99.6-222 222 0 39.1 10.2 77.3 29.6 111L0 480l117.7-30.9c32.4 17.7 68.9 27 106.1 27h.1c122.3 0 224.1-99.6 224.1-222 0-59.3-25.2-115-67.1-157zm-157 341.6c-33.2 0-65.7-8.9-94-25.7l-6.7-4-69.8 18.3 18.7-68.1-4.4-7c-18.5-29.4-28.2-63.3-28.2-98.2 0-101.7 82.8-184.5 184.6-184.5 49.3 0 95.6 19.2 130.4 54.1 34.8 34.9 56.2 81.2 56.1 130.5 0 101.8-84.9 184.6-186.6 184.6zm101.2-138.2c-5.5-2.8-32.8-16.2-37.9-18-5.1-1.9-8.8-2.8-12.5 2.8-3.7 5.6-14.3 18-17.6 21.8-3.2 3.7-6.5 4.2-12 1.4-5.5-2.8-23.2-8.5-44.2-27.1-16.4-14.6-27.4-32.7-30.6-38.2-3.2-5.6-.3-8.6 2.5-11.3 2.5-2.5 5.6-6.5 8.3-9.7 2.8-3.3 3.7-5.6 5.6-9.3 1.9-3.7.9-6.9-.5-9.7-1.4-2.8-12.5-30.1-17.1-41.2-4.5-10.8-9.1-9.3-12.5-9.5-3.2-.2-6.9-.2-10.6-.2-3.7 0-9.7 1.4-14.8 6.9-5.1 5.6-19.4 19-19.4 46.3 0 27.3 19.9 53.7 22.6 57.4 2.8 3.7 39.1 59.7 94.8 83.8 13.2 5.8 23.5 9.2 31.6 11.8 13.3 4.2 25.4 3.6 35 2.2 10.7-1.6 32.8-13.4 37.4-26.4 4.6-13 4.6-24.1 3.2-26.4-1.3-2.5-5-3.9-10.5-6.6z"/></svg>
             </button>
         </div>
     </nav>
 
-    <main class="max-w-6xl mx-auto px-4 pt-28 pb-10">
-        <section class="mb-12 rounded-[2.5rem] overflow-hidden bg-slate-900 aspect-video relative shadow-2xl border-[6px] border-white">
+    <main class="max-w-6xl mx-auto px-4 pt-24 pb-10">
+        <section class="mb-10 rounded-[2rem] overflow-hidden bg-slate-900 aspect-video relative shadow-2xl border-[4px] border-white">
             <video id="v-player" class="w-full h-full object-cover" autoplay muted loop playsinline></video>
-            <div class="absolute bottom-8 left-8 z-10">
-                <h2 id="typed" class="text-white text-2xl md:text-4xl font-black drop-shadow-2xl italic tracking-tighter"></h2>
+            <div class="absolute bottom-6 left-6 z-10">
+                <h2 id="typed" class="text-white text-xl md:text-3xl font-black drop-shadow-xl italic tracking-tighter"></h2>
             </div>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
+            <div class="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent"></div>
         </section>
 
-        <div id="filter-container" class="flex flex-wrap justify-center gap-3 mb-12">
-            <button onclick="filterByKeyword('all')" class="filter-btn active">ALL</button>
-            <button onclick="filterByKeyword('Softness')" class="filter-btn">Collect the Softness</button>
-            <button onclick="filterByKeyword('Reading')" class="filter-btn">Elevate Your Reading</button>
-            <button onclick="filterByKeyword('Diary')" class="filter-btn">The Visual Diary</button>
-            <button onclick="filterByKeyword('Brick')" class="filter-btn">Brick</button>
+        <div id="filter-container" class="flex overflow-x-auto no-scrollbar justify-start md:justify-center gap-3 mb-10 pb-2">
+            <button onclick="filterByKeyword('all')" class="filter-btn active whitespace-nowrap">ALL</button>
+            <button onclick="filterByKeyword('Softness')" class="filter-btn whitespace-nowrap">Softness</button>
+            <button onclick="filterByKeyword('Reading')" class="filter-btn whitespace-nowrap">Reading</button>
+            <button onclick="filterByKeyword('Diary')" class="filter-btn whitespace-nowrap">Visual Diary</button>
+            <button onclick="filterByKeyword('Brick')" class="filter-btn whitespace-nowrap">Brick</button>
         </div>
 
-        <div id="p-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6 mb-20"></div>
+        <div id="p-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 md:gap-6 mb-20"></div>
     </main>
 
     <footer class="bg-white border-t border-slate-100 pt-16 pb-12 px-6">
         <div class="max-w-6xl mx-auto">
-            <div class="grid grid-cols-1 md:grid-cols-3 gap-12">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-10">
                 <div class="space-y-4">
-                    <div class="flex items-center space-x-4">
-                        <h4 class="text-blue-900 font-black text-xl italic leading-none">VortinT™</h4>
-                        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1777012728/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260424143420_370_74_nicx1c.jpg" class="h-10 object-contain">
+                    <div class="flex items-center space-x-3">
+                        <h4 class="text-blue-900 font-black text-xl italic">VortinT™</h4>
+                        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1777012728/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260424143420_370_74_nicx1c.jpg" class="h-8 object-contain">
                     </div>
-                    <p id="footer-desc" class="text-slate-400 text-[10px] uppercase font-medium"></p>
-                    <div class="text-slate-900 font-bold text-[10px] uppercase leading-relaxed">
+                    <div class="text-slate-900 font-bold text-[9px] uppercase leading-relaxed tracking-wide">
                         <span id="co-name-zh">瑞航（深圳）国际家居用品有限公司</span><br>
                         <span id="co-name-en">深圳市龙岗区平湖街道上木古社区新木路328号1303</span><br>
-                        <a href="mailto:cs@vortexd.com" class="text-blue-600 font-black underline">CS@VORTEXD.COM</a><br>
-                        <span id="co-address" class="text-slate-400">SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.</span>
+                        <a href="mailto:cs@vortexd.com" class="text-blue-600 font-black border-b border-blue-600">CS@VORTEXD.COM</a>
                     </div>
                 </div>
 
-                <div class="space-y-4">
-                    <h5 id="footer-legal-title" class="text-slate-900 font-black text-[11px] uppercase mb-4 tracking-widest">Legal</h5>
-                    <ul class="text-[10px] text-slate-400 font-black uppercase space-y-3">
-                        <li><a href="#privacy" id="link-privacy">Privacy Policy</a></li>
-                        <li><a href="#terms" id="link-terms">Terms of Service</a></li>
-                        <li><a href="#refund" id="link-refund">Refund Policy</a></li>
+                <div class="space-y-3">
+                    <h5 id="footer-legal-title" class="text-slate-900 font-black text-[10px] uppercase tracking-[0.2em] mb-4">Legal</h5>
+                    <ul class="text-[9px] text-slate-400 font-black uppercase space-y-2">
+                        <li><a href="#privacy" id="link-privacy" class="hover:text-blue-600 transition-colors">Privacy Policy</a></li>
+                        <li><a href="#terms" id="link-terms" class="hover:text-blue-600 transition-colors">Terms of Service</a></li>
+                        <li><a href="#refund" id="link-refund" class="hover:text-blue-600 transition-colors">Refund Policy</a></li>
                     </ul>
                 </div>
 
-                <div class="flex md:justify-end">
+                <div class="flex md:justify-end items-start">
                     <div class="inline-flex items-center space-x-3 bg-slate-50 border border-slate-100 px-4 py-2 rounded-2xl">
-                        <div class="relative h-2 w-2">
-                            <span class="animate-ping absolute h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
                             <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                        </div>
+                        </span>
                         <div class="flex flex-col">
-                            <span id="visitor-count" class="text-blue-600 font-black text-sm leading-none">---</span>
-                            <span id="visitor-label" class="text-[8px] text-slate-400 font-bold uppercase mt-0.5">Live Visitors</span>
+                            <span id="visitor-count" class="text-blue-600 font-black text-sm tabular-nums">---</span>
+                            <span id="visitor-label" class="text-[7px] text-slate-400 font-bold uppercase">Live Visitors</span>
                         </div>
                     </div>
                 </div>
             </div>
 
             <div id="privacy" class="legal-content-box">
-                <h6 class="font-black text-blue-900 mb-2 underline">Privacy Policy / 隐私政策</h6>
+                <h6 class="font-black text-blue-900 mb-2">Privacy Policy / 隐私政策</h6>
                 <p id="txt-privacy"></p>
             </div>
             <div id="terms" class="legal-content-box">
-                <h6 class="font-black text-blue-900 mb-2 underline">Terms of Service / 服务条款</h6>
+                <h6 class="font-black text-blue-900 mb-2">Terms of Service / 服务条款</h6>
                 <p id="txt-terms"></p>
             </div>
             <div id="refund" class="legal-content-box">
-                <h6 class="font-black text-blue-900 mb-2 underline">Refund Policy / 退换货政策</h6>
+                <h6 class="font-black text-blue-900 mb-2">Refund Policy / 退换货政策</h6>
                 <p id="txt-refund"></p>
             </div>
 
-            <p class="mt-16 text-[9px] text-slate-300 font-bold uppercase text-center tracking-[0.3em]">©VORTINT ALL RIGHTS RESERVED</p>
+            <p class="mt-16 text-[8px] text-slate-300 font-bold uppercase text-center tracking-[0.4em]">©VORTINT ALL RIGHTS RESERVED</p>
         </div>
     </footer>
 
@@ -142,40 +152,36 @@
         const i18n = {
             en: { 
                 visitors: "Live Visitors", 
-                footerDesc: "Innovative home storage solutions.", 
                 legalTitle: "Legal Framework", 
                 privacy: "Privacy Policy", terms: "Terms of Service", refund: "Refund Policy",
-                p_text: "We collect only essential data for order fulfillment.",
-                t_text: "By accessing VortinT, you agree to our service terms.",
-                r_text: "30-day quality guarantee on all products.",
+                p_text: "We collect essential data to provide and improve our storage solutions.",
+                t_text: "Accessing VortinT implies agreement with our operational guidelines.",
+                r_text: "30-day satisfaction guarantee for all smart space products.",
                 companyName: "SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.",
                 companyAddr: "Room 1303, No. 328 Xinmu Road, Shangmugu Community, Pinghu Street, Longgang District, Shenzhen",
-                companySub: "INNOVATING SPACE FOR KIDS",
-                cats: ["ALL", "Collect the Softness", "Elevate Your Reading", "The Visual Diary", "Brick"]
+                cats: ["ALL", "Softness", "Reading", "Diary", "Brick"]
             },
             zh: { 
                 visitors: "实时访客", 
-                footerDesc: "创新的家居收纳方案。", 
-                legalTitle: "法律信息", 
+                legalTitle: "法律合规", 
                 privacy: "隐私政策", terms: "服务条款", refund: "退换货政策",
-                p_text: "我们仅收集履行订单所需的必要信息。",
-                t_text: "访问 VortinT 即表示您同意我们的条款。",
-                r_text: "所有产品享 30 天质量保证。",
+                p_text: "我们仅收集必要的交付数据以优化服务体验。",
+                t_text: "访问 VortinT 瑞航即代表您同意我们的服务条款。",
+                r_text: "所有产品均享受 30 天质保及售后服务。",
                 companyName: "瑞航（深圳）国际家居用品有限公司",
                 companyAddr: "深圳市龙岗区平湖街道上木古社区新木路328号1303",
-                companySub: "SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.",
                 cats: ["全部", "带毛绒", "带书架", "展示柜", "带积木"]
             }
         };
 
-        // 滚动隐藏导航
+        // 导航栏滚动逻辑
         let lastScrollY = window.scrollY;
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
-            if (window.scrollY > lastScrollY && window.scrollY > 80) nav.classList.add('nav-hidden');
+            if (window.scrollY > lastScrollY && window.scrollY > 100) nav.classList.add('nav-hidden');
             else nav.classList.remove('nav-hidden');
             lastScrollY = window.scrollY;
-        });
+        }, { passive: true });
 
         function toggleLang() {
             currentLang = currentLang === 'en' ? 'zh' : 'en';
@@ -190,7 +196,6 @@
         function applyLang() {
             const t = i18n[currentLang];
             document.getElementById('visitor-label').innerText = t.visitors;
-            document.getElementById('footer-desc').innerText = t.footerDesc;
             document.getElementById('footer-legal-title').innerText = t.legalTitle;
             document.getElementById('lang-label').innerText = currentLang === 'en' ? 'EN / 中文' : '中文 / EN';
             document.getElementById('link-privacy').innerText = t.privacy;
@@ -201,7 +206,6 @@
             document.getElementById('txt-refund').innerText = t.r_text;
             document.getElementById('co-name-zh').innerText = t.companyName;
             document.getElementById('co-name-en').innerText = t.companyAddr;
-            document.getElementById('co-address').innerText = t.companySub;
         }
 
         function getCurrentFilteredData() {
@@ -229,11 +233,11 @@
             localStorage.setItem('v_count_stable', count);
             document.getElementById('visitor-count').innerText = count.toLocaleString();
             setInterval(() => {
-                if(Math.random() > 0.7) {
+                if(Math.random() > 0.75) {
                     count += 1;
                     document.getElementById('visitor-count').innerText = count.toLocaleString();
                 }
-            }, 8000);
+            }, 10000);
         }
 
         async function init() {
@@ -252,9 +256,9 @@
                 renderGrid(getCurrentFilteredData());
                 new Typed('#typed', {
                     strings: ['SMART STORAGE.', 'KIDS ROOM.', 'BY VORTINT™.'],
-                    typeSpeed: 50, backSpeed: 30, loop: true
+                    typeSpeed: 60, backSpeed: 40, loop: true
                 });
-            } catch (err) { console.error(err); }
+            } catch (err) { console.error("Sync Error:", err); }
             finally {
                 const splash = document.getElementById('splash');
                 if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 600); }
@@ -267,19 +271,17 @@
                 const f = p.fields;
                 const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || '');
                 return `
-                <div class="product-card bg-white p-4 rounded-[2.2rem] border border-blue-50/50 shadow-sm relative overflow-hidden" 
+                <div class="product-card bg-white p-3 md:p-4 rounded-[2rem] border border-blue-50 shadow-sm relative overflow-hidden" 
                      onclick="window.location.href='${f['链接'] || '#'}';">
                     <div class="product-index">${String(f['排序'] || 0).padStart(2, '0')}</div>
-                    <div class="overflow-hidden rounded-[1.8rem] mb-4 bg-slate-50 aspect-square">
+                    <div class="overflow-hidden rounded-[1.6rem] mb-3 bg-slate-50 aspect-square">
                         <img src="${img}" class="w-full h-full object-cover" loading="lazy">
                     </div>
-                    <div class="px-2">
-                        <h3 class="product-title text-[10px] font-black text-slate-800 uppercase tracking-tighter leading-tight">${f['标题']}</h3>
-                        <div class="flex justify-between items-center mt-3">
-                            <span class="text-blue-600 font-black text-[11px] tracking-tighter">${f['价格'] || 'ENQUIRE'}</span>
-                            <div class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-md">
-                                <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </div>
+                    <div class="px-1 flex justify-between items-center">
+                        <h3 class="product-title">${f['标题']}</h3>
+                        <span class="text-blue-600 font-black text-[11px] tracking-tighter">${f['价格'] || 'ENQUIRE'}</span>
+                        <div class="w-6 h-6 bg-blue-600 text-white rounded-full flex items-center justify-center shadow-md">
+                            <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </div>
                     </div>
                 </div>`;
