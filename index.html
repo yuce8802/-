@@ -20,19 +20,7 @@
         .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(59, 130, 246, 0.08); }
         .filter-btn { border: 1px solid #e2e8f0; border-radius: 9999px; padding: 8px 16px; font-size: 10px; font-weight: 800; text-transform: uppercase; transition: all 0.3s; color: #64748b; background: white; }
         .filter-btn.active { background: #2563eb; color: white; border-color: #2563eb; transform: scale(1.05); }
-        .product-index {
-            position: absolute;
-            top: 12px;
-            left: 12px;
-            background: rgba(15, 23, 42, 0.6);
-            backdrop-filter: blur(4px);
-            color: white;
-            font-size: 10px;
-            font-weight: 800;
-            padding: 2px 8px;
-            border-radius: 8px;
-            z-index: 10;
-        }
+        .product-index { position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); color: white; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 8px; z-index: 10; }
         .legal-content-box { display: none; margin-top: 2rem; padding: 2rem; background: #f8fafc; border-radius: 1.5rem; font-size: 11px; color: #64748b; line-height: 1.8; text-transform: uppercase; letter-spacing: 0.02em; border: 1px dashed #e2e8f0; }
         .legal-content-box:target { display: block; animation: fadeIn 0.5s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -51,15 +39,15 @@
         <div class="flex items-center space-x-3">
             <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg" class="h-10 w-10 rounded-full border-2 border-blue-500 object-cover shadow-sm">
             <div class="flex flex-col text-left">
-                <span class="text-[15px] font-bold text-blue-900 mt-1">Vortexd瑞航</span>
+                <span class="text-[15px] font-bold text-blue-900 mt-1">VortinT瑞航</span>
             </div>
         </div>
         <div class="flex items-center space-x-3">
             <button onclick="toggleLang()" class="bg-slate-100 hover:bg-blue-100 text-blue-600 font-black text-[10px] px-3 py-1.5 rounded-full border border-slate-200 transition-all uppercase">
-                <span id="lang-label">EN / ZH</span>
+                <span id="lang-label">EN / 中文</span>
             </button>
             <button onclick="window.location.href='https://wa.me/85269517551'" class="bg-blue-600 text-white p-2.5 rounded-full shadow-lg">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 00-5.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
             </button>
         </div>
     </nav>
@@ -73,7 +61,7 @@
             <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent"></div>
         </section>
 
-        <div class="flex flex-wrap justify-center gap-3 mb-12">
+        <div id="filter-container" class="flex flex-wrap justify-center gap-3 mb-12">
             <button onclick="filterByKeyword('all')" class="filter-btn active">ALL</button>
             <button onclick="filterByKeyword('Softness')" class="filter-btn">Collect the Softness</button>
             <button onclick="filterByKeyword('Reading')" class="filter-btn">Elevate Your Reading</button>
@@ -90,10 +78,8 @@
                 <div class="space-y-4">
                     <div class="flex items-center space-x-4">
                         <h4 class="text-blue-900 font-black text-xl italic leading-none">VortinT™</h4>
-                        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1777012728/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260424143420_370_74_nicx1c.jpg" 
-                             class="h-10 object-contain" alt="VortinT Logo Sub">
+                        <img src="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1777012728/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260424143420_370_74_nicx1c.jpg" class="h-10 object-contain">
                     </div>
-                    
                     <p id="footer-desc" class="text-slate-400 text-[10px] uppercase font-medium"></p>
                     <div class="text-slate-900 font-bold text-[10px] uppercase leading-relaxed">
                         <span id="co-name-zh">瑞航（深圳）国际家居用品有限公司</span><br>
@@ -148,28 +134,35 @@
         let allProducts = [];
         let currentLang = 'en';
 
+        // 语言包：精准加入分类名称
         const i18n = {
             en: { 
                 visitors: "Live Visitors", 
-                footerDesc: "Innovative home storage solutions. Elevating modern spaces.", 
+                footerDesc: "Innovative home storage solutions.", 
                 legalTitle: "Legal Framework", 
-                privacy: "Privacy Policy", 
-                terms: "Terms of Service", 
-                refund: "Refund Policy",
-                p_text: "We collect only essential data to fulfill orders. Your privacy is protected via global encryption standards.",
-                t_text: "By accessing VortinT, you agree to our commercial conduct codes and intellectual property protection.",
-                r_text: "30-day quality guarantee. We support returns for manufacturing defects under standard e-commerce protocols."
+                privacy: "Privacy Policy", terms: "Terms of Service", refund: "Refund Policy",
+                p_text: "We collect only essential data...",
+                t_text: "By accessing VortinT, you agree...",
+                r_text: "30-day quality guarantee.",
+                companyName: "SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.",
+                companyAddr: "Room 1303, No. 328 Xinmu Road, Shangmugu Community, Pinghu Street, Longgang District, Shenzhen",
+                companySub: "INNOVATING SPACE FOR KIDS",
+                // 新增分类英文
+                cats: ["ALL", "Collect the Softness", "Elevate Your Reading", "The Visual Diary", "Brick"]
             },
             zh: { 
                 visitors: "实时访客", 
-                footerDesc: "创新的家居收纳方案。用智能与格调提升生活空间。", 
+                footerDesc: "创新的家居收纳方案。", 
                 legalTitle: "法律信息", 
-                privacy: "隐私政策", 
-                terms: "服务条款", 
-                refund: "退换货政策",
-                p_text: "我们仅收集履行订单所需的必要信息。您的隐私受全球加密标准保护。",
-                t_text: "访问 VortinT 即表示您同意我们的商业行为准则和知识产权保护条款。",
-                r_text: "30天质量保证。针对制造缺陷，我们支持按照标准电商流程进行退换货服务。"
+                privacy: "隐私政策", terms: "服务条款", refund: "退换货政策",
+                p_text: "我们仅收集履行订单所需的必要信息。",
+                t_text: "访问 VortinT 即表示您同意我们的条款。",
+                r_text: "30天质量保证。",
+                companyName: "瑞航（深圳）国际家居用品有限公司",
+                companyAddr: "深圳市龙岗区平湖街道上木古社区新木路328号1303",
+                companySub: "SHENZHEN RUHANG INTERNATIONAL HOUSEHOLD PRODUCTS CO., LTD.",
+                // 新增分类中文：精准匹配你的要求
+                cats: ["全部", "带毛绒", "带书架", "展示柜", "带积木"]
             }
         };
 
@@ -177,6 +170,11 @@
             currentLang = currentLang === 'en' ? 'zh' : 'en';
             document.body.style.opacity = '0.5';
             applyLang();
+            // 在不改 HTML 的情况下，渲染当前语言的按钮文字
+            const btns = document.querySelectorAll('.filter-btn');
+            btns.forEach((btn, index) => {
+                btn.innerText = i18n[currentLang].cats[index];
+            });
             renderGrid(getCurrentFilteredData());
             setTimeout(() => document.body.style.opacity = '1', 200);
         }
@@ -186,28 +184,43 @@
             document.getElementById('visitor-label').innerText = t.visitors;
             document.getElementById('footer-desc').innerText = t.footerDesc;
             document.getElementById('footer-legal-title').innerText = t.legalTitle;
-            document.getElementById('lang-label').innerText = currentLang === 'en' ? 'EN / ZH' : 'ZH / EN';
+            document.getElementById('lang-label').innerText = currentLang === 'en' ? 'EN / 中文' : '中文 / EN';
             document.getElementById('link-privacy').innerText = t.privacy;
             document.getElementById('link-terms').innerText = t.terms;
             document.getElementById('link-refund').innerText = t.refund;
             document.getElementById('txt-privacy').innerText = t.p_text;
             document.getElementById('txt-terms').innerText = t.t_text;
             document.getElementById('txt-refund').innerText = t.r_text;
+            document.getElementById('co-name-zh').innerText = t.companyName;
+            document.getElementById('co-name-en').innerText = t.companyAddr;
+            document.getElementById('co-address').innerText = t.companySub;
         }
 
+        // 修改筛选逻辑，确保它根据索引对应的关键词筛选，而不是根据按钮显示的文字筛选
         function getCurrentFilteredData() {
             const activeBtn = document.querySelector('.filter-btn.active');
-            const keyword = activeBtn ? activeBtn.innerText : 'ALL';
-            if (keyword === 'ALL') {
+            if (!activeBtn) return allProducts;
+            
+            const btns = Array.from(document.querySelectorAll('.filter-btn'));
+            const activeIndex = btns.indexOf(activeBtn);
+            
+            // 关键词数组，顺序必须和 HTML 里的按钮顺序一致
+            const keywords = ['all', 'Softness', 'Reading', 'Diary', 'Brick'];
+            const keyword = keywords[activeIndex];
+
+            if (keyword === 'all') {
                 return allProducts.filter(p => p.fields['标题'] && p.fields['标题'] !== 'SERVICE_LINK');
             }
             return allProducts.filter(p => (p.fields['标题'] || "").toUpperCase().includes(keyword.toUpperCase()));
         }
 
         function filterByKeyword(keyword) {
-            document.querySelectorAll('.filter-btn').forEach(btn => {
+            const keywords = ['all', 'Softness', 'Reading', 'Diary', 'Brick'];
+            const btns = document.querySelectorAll('.filter-btn');
+            
+            btns.forEach((btn, i) => {
                 btn.classList.remove('active');
-                if(btn.innerText.toUpperCase().includes(keyword.toUpperCase()) || (keyword === 'all' && btn.innerText === 'ALL')) {
+                if(keywords[i].toLowerCase() === keyword.toLowerCase()) {
                     btn.classList.add('active');
                 }
             });
@@ -237,20 +250,19 @@
                 const json = await res.json();
                 allProducts = json.data.records;
                 allProducts.sort((a, b) => (a.fields['排序'] || 999) - (b.fields['排序'] || 999));
+                
                 const vRow = allProducts.find(r => r.fields['视频链接']);
                 if(vRow) document.getElementById('v-player').src = vRow.fields['视频链接'];
+                
                 renderGrid(getCurrentFilteredData());
                 new Typed('#typed', {
                     strings: ['SMART STORAGE.', 'KIDS ROOM.', 'BY VORTINT™.'],
                     typeSpeed: 50, backSpeed: 30, loop: true
                 });
-            } catch (err) { console.error(err); } 
+            } catch (err) { console.error(err); }
             finally {
                 const splash = document.getElementById('splash');
-                if(splash) {
-                    splash.style.opacity = '0';
-                    setTimeout(() => splash.remove(), 600);
-                }
+                if(splash) { splash.style.opacity = '0'; setTimeout(() => splash.remove(), 600); }
             }
         }
 
@@ -259,8 +271,7 @@
             grid.innerHTML = data.map((p) => {
                 const f = p.fields;
                 const img = Array.isArray(f['图片']) ? f['图片'][0].url : (f['图片'] || '');
-                const rawSortValue = f['排序'];
-                const displayIndex = rawSortValue ? String(rawSortValue).padStart(2, '0') : '--'; 
+                const displayIndex = f['排序'] ? String(f['排序']).padStart(2, '0') : '--'; 
                 return `
                 <div class="product-card bg-white p-4 rounded-[2.2rem] border border-blue-50/50 shadow-sm relative overflow-hidden" 
                      onclick="window.location.href='${f['链接'] || '#'}';">
