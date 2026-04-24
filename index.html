@@ -13,33 +13,43 @@
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
         
-        /* 基础样式与手机端流畅度优化 */
         body { font-family: 'Space Grotesk', sans-serif; background: #ffffff; color: #0f172a; overflow-x: hidden; transition: opacity 0.3s ease; -webkit-font-smoothing: antialiased; }
         ::-webkit-scrollbar { width: 0; }
         
-        /* 产品卡片交互 */
-        .product-card { transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); cursor: pointer; -webkit-tap-highlight-color: transparent; }
-        
-        /* 核心要求：彻底隐藏产品名 */
+        /* --- 分类动画优化部分 --- */
+        #p-grid { 
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1); 
+        }
+
+        .product-card { 
+            transition: all 0.5s cubic-bezier(0.23, 1, 0.32, 1); 
+            cursor: pointer; 
+            -webkit-tap-highlight-color: transparent;
+            /* 初始入场动画 */
+            animation: cardEnter 0.6s cubic-bezier(0.23, 1, 0.32, 1) both;
+        }
+
+        @keyframes cardEnter {
+            from { opacity: 0; transform: translateY(30px) scale(0.98); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        /* ----------------------- */
+
         .product-title { display: none !important; }
 
         @media (hover: hover) {
             .product-card:hover { transform: translateY(-12px); box-shadow: 0 20px 40px rgba(59, 130, 246, 0.08); }
         }
 
-        /* 动画与导航 */
         #splash { position: fixed; inset: 0; background: white; z-index: 9999; display: flex; align-items: center; justify-content: center; transition: opacity 0.6s; }
         .glass-nav { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(59, 130, 246, 0.08); transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1); }
         .nav-hidden { transform: translateY(-100%); }
 
-        /* 过滤按钮样式 */
         .filter-btn { border: 1px solid #e2e8f0; border-radius: 9999px; padding: 8px 18px; font-size: 10px; font-weight: 800; text-transform: uppercase; transition: all 0.3s; color: #64748b; background: white; }
         .filter-btn.active { background: #2563eb; color: white; border-color: #2563eb; transform: scale(1.05); }
 
-        /* 产品编号标签 */
         .product-index { position: absolute; top: 12px; left: 12px; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); color: white; font-size: 10px; font-weight: 800; padding: 2px 8px; border-radius: 8px; z-index: 10; }
 
-        /* 法律内容显示逻辑 */
         .legal-content-box { display: none; margin-top: 2rem; padding: 2rem; background: #f8fafc; border-radius: 1.5rem; font-size: 11px; color: #64748b; line-height: 1.8; text-transform: uppercase; letter-spacing: 0.02em; border: 1px dashed #e2e8f0; }
         .legal-content-box:target { display: block; animation: fadeIn 0.5s ease forwards; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
@@ -174,7 +184,6 @@
             }
         };
 
-        // 导航栏滚动逻辑
         let lastScrollY = window.scrollY;
         window.addEventListener('scroll', () => {
             const nav = document.querySelector('nav');
@@ -219,13 +228,36 @@
             return list.filter(p => (p.fields['标题'] || "").toUpperCase().includes(keyword.toUpperCase()));
         }
 
+        // --- 核心优化：带有平滑动画的过滤逻辑 ---
         function filterByKeyword(keyword) {
+            const grid = document.getElementById('p-grid');
             const keywords = ['all', 'Softness', 'Reading', 'Diary', 'Brick'];
+            
+            // 按钮激活态切换
             document.querySelectorAll('.filter-btn').forEach((btn, i) => {
                 btn.classList.toggle('active', keywords[i].toLowerCase() === keyword.toLowerCase());
             });
-            renderGrid(getCurrentFilteredData());
+
+            // 执行淡出效果
+            grid.style.opacity = '0';
+            grid.style.transform = 'translateY(10px)';
+
+            setTimeout(() => {
+                // 重新渲染数据
+                renderGrid(getCurrentFilteredData());
+                
+                // 执行淡入效果
+                grid.style.opacity = '1';
+                grid.style.transform = 'translateY(0)';
+                
+                // 为新生成的卡片添加交错入场延迟
+                const cards = grid.querySelectorAll('.product-card');
+                cards.forEach((card, index) => {
+                    card.style.animationDelay = `${index * 0.05}s`;
+                });
+            }, 300);
         }
+        // ------------------------------------
 
         function initCounter() {
             let count = parseInt(localStorage.getItem('v_count_stable')) || 15284;
