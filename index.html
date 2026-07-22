@@ -9,7 +9,6 @@
     <link rel="apple-touch-icon" href="https://res.cloudinary.com/dpr2pn5rs/image/upload/v1775785448/%E5%BE%AE%E4%BF%A1%E5%9B%BE%E7%89%87_20260313164434_36_18_pwgssq.jpg">
 
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/typed.js@2.1.0/dist/typed.umd.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&display=swap');
         
@@ -94,19 +93,7 @@
     </nav>
 
     <main class="max-w-6xl mx-auto px-4 pt-24 pb-10 min-h-[80vh]">
-        <!-- 视频英雄区 -->
-        <section class="mb-10 rounded-[2rem] overflow-hidden bg-slate-900 aspect-video relative shadow-2xl border-[4px] border-white flex items-center justify-center">
-            <video id="v-player" class="w-full h-full object-cover hidden" autoplay muted loop playsinline></video>
-            <!-- 视频加载失败的降级底图 -->
-            <div id="v-fallback" class="absolute inset-0 bg-[url('https://chatgpt.com/backend-api/estuary/content?id=file_000000007be471f888aeabcc287ab5c9&ts=494929&p=fs&cid=1&sig=a6fce313f62c486b5c3d40a06432ae8168f5e7b2cb841c0d5285dc0748659730&v=0')] bg-cover bg-center ></div>
-            
-            <div class="absolute bottom-6 left-6 z-10">
-                <h2 id="typed" class="text-white text-xl md:text-3xl font-black drop-shadow-xl italic tracking-tighter"></h2>
-            </div>
-            <div class="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent pointer-events-none"></div>
-        </section>
-
-        <!-- 过滤器 (由 JS 动态渲染) -->
+<!-- 过滤器 (由 JS 动态渲染) -->
         <div id="filter-container" class="flex overflow-x-auto no-scrollbar justify-start md:justify-center gap-3 mb-10 pb-2 relative">
             <!-- 占位，防闪烁 -->
         </div>
@@ -370,15 +357,6 @@
                 
                 if (json.success) {
                     allProducts = json.data.records.sort((a, b) => (a.fields['排序'] || 999) - (b.fields['排序'] || 999));
-                    
-                    // 视频处理
-                    const vRow = allProducts.find(r => r.fields['视频链接']);
-                    const player = document.getElementById('v-player');
-                    if(vRow && vRow.fields['视频链接']) {
-                        player.src = vRow.fields['视频链接'];
-                        player.classList.remove('hidden');
-                    }
-                    
                     renderGrid(getCurrentFilteredData());
                 } else {
                     throw new Error("API Error");
@@ -388,12 +366,6 @@
                 document.getElementById('empty-state').innerText = "CONNECTION FAILED";
                 document.getElementById('empty-state').classList.remove('hidden');
             } finally {
-                // 打字机效果
-                new Typed('#typed', {
-                    strings:['SMART STORAGE.', 'KIDS ROOM.', 'BY VORTINT™.'],
-                    typeSpeed: 60, backSpeed: 40, loop: true
-                });
-
                 // 移除加载屏
                 const splash = document.getElementById('splash');
                 if(splash) { 
