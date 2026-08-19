@@ -1,1 +1,97 @@
 
+/**
+ * VortinT 瑞航 AI 客服 - Vercel Serverless Function (Edge Runtime)
+ *
+ * 部署方法：
+ * 1. 把本文件放到你的 Vercel 项目根目录下的 api/chat.js
+ * 2. 在 Vercel 项目设置 → Environment Variables 添加：
+ *    DEEPSEEK_API_KEY = 你的 DeepSeek API Key
+ * 3. 重新部署即可，接口地址自动是 https://你的域名/api/chat
+ */
+
+export const config = { runtime: 'edge' };
+
+const CORS_HEADERS = {
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Methods': 'POST, OPTIONS',
+  'Access-Control-Allow-Headers': 'Content-Type',
+};
+
+export default async function handler(req) {
+  // CORS 预检
+  if (req.method === 'OPTIONS') {
+    return new Response(null, { headers: CORS_HEADERS });
+  }
+
+  if (req.method !== 'POST') {
+    return new Response('Method Not Allowed', { status: 405 });
+  }
+
+  let body;
+  try {
+    body = await req.json();
+  } catch (e) {
+    return new Response('Invalid JSON', { status: 400 });
+  }
+
+  const { messages = [], products = [] } = body;
+  if (!Array.isArray(messages) || messages.length === 0) {
+    return new Response('messages required', { status: 400 });
+  }
+
+  const apiKey = process.env.DEEPSEEK_API_KEY;
+  if (!apiKey) {
+    return new Response('Server not configured: DEEPSEEK_API_KEY missing', { status: 500 });
+  }
+
+  // 构建商品目录文本（最多带 30 个商品）
+  const productLines = products
+    .slice(0, 30)
+    .map((p, i) => `${i + 1}. ${p.title} | 价格: ${p.price || '咨询'} | ${p.link || ''}`)
+    .join('\n');
+
+  const systemPrompt = `你是「VORTEX瑞航」官方客服 AI 助手，一个专业、热情、简洁的智能导购。
+你的职责：
+1. 回答访客关于产品、物流、售后、退换货等问题；
+2. 根据下方商品目录，主动推荐最匹配访客需求的商品；
+3. 引导访客下单或联系客服（WhatsApp: https://wa.me/85269517551）。
+要求：
+- 语言跟随访客（中文用中文，英文用英文）；
+- 回答简洁，商品推荐时给出名称和价格；
+- 不知道的信息不要编造，引导访客联系客服。
+
+当前商品目录：
+${productLines || '（暂无商品数据）'}`;
+
+  // 调用 DeepSeek（流式）
+  const upstream = await fetch('https://api.deepseek.com/chat/completions', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
+    body: JSON.stringify({
+      model: 'deepseek-chat',
+      messages: [{ role: 'system', content: systemPrompt }, ...messages],
+      temperature: 0.7,
+      max_tokens: 800,
+      stream: true,
+    }),
+  });
+
+  if (!upstream.ok) {
+    const errText = await upstream.text();
+    return new Response(`DeepSeek API error: ${upstream.status} ${errText}`, {
+      status: upstream.status,
+      headers: CORS_HEADERS,
+    });
+  }
+
+  return new Response(upstream.body, {
+    headers: {
+      'Content-Type': 'text/event-stream; charset=utf-8',
+      'Cache-Control': 'no-cache',
+      ...CORS_HEADERS,
+    },
+  });
+}
